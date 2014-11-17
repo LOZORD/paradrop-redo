@@ -2,12 +2,12 @@
 
 /**
  * @ngdoc function
- * @name paradropApp.controller:MainCtrl
+ * @name paradropApp.controller:ContactCtrl
  * @description
- * # MainCtrl
+ * # ContactCtrl
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MainCtrl', ['$scope'], function ($scope) {
+  .controller('ControlCtrl', ['$scope'], function ($scope) {
     //Nothing
   });
