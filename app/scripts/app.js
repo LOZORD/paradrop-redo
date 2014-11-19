@@ -8,8 +8,7 @@
  *
  * Main module of the application.
  */
-angular
-  .module('paradropApp', [
+angular.module('paradropApp', [
     'ngAnimate',
     'ngAria',
     'ngCookies',
@@ -34,13 +33,40 @@ angular
         controller: 'ContactCtrl'
       })
       .when('/login', {
-        templateUrl: 'view/login.html',
+        templateUrl: 'views/login_form.html',
         controller: 'LoginCtrl'
+      })
+      .when('/my_paradrop', {
+        templateUrl: 'views/mypdp.html',
+        controller: 'MyParadropCtrl'
       })
       .otherwise({
         redirectTo: '/'
       });
   })
+  .run(
+    //protect from minification?
+    function ($routeScope, AUTH_EVENTS, AuthService) {
+      $rootScope.$on('$stateChangeStart',
+        function (event, next) {
+          var authorizedRoles = next.data.authorizedRoles;
+
+          if (!AuthService.isAuthorized(authorizedRoles)) {
+            event.preventDefault();
+
+            if (AuthService.isAuthenticated()) {
+              //logged in user is not allowed access to the next page
+              $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+            }
+            else {
+              //user is not logged in
+              $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+            }
+          }
+        }
+      );
+    }
+  )
   .contant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',
     loginFailed: 'auth-login-failed',

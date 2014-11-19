@@ -9,7 +9,7 @@
  * Included in the <body> tag, this controller has global scope
  */
 angular.module('paradropApp')
-  .controller('ApplicationCtrl', ['$scope', 'USER_ROLES', 'AuthService'], 
+  .controller('ApplicationCtrl', ['$scope', '$location', 'USER_ROLES', 'AuthService'],
     function ($scope, USER_ROLES, AuthService) {
       $scope.currentUser = null;
 
@@ -19,5 +19,7 @@ angular.module('paradropApp')
       $scope.setCurrentUser = function (user) {
         $scope.currentUser = user;
       }
+
+      $scope.isLoginPage = ($location.path().indexOf('/login') != -1);
     }
   );
