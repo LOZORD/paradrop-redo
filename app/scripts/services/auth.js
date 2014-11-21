@@ -21,7 +21,8 @@ angular.module('paradropServices', ['ngResource'])
         //XXX needed?
         var credStr = angular.toJson(credentials);
 
-        var retData = $http.post(loginURL, credentials)
+        var retData = $http
+          .post(loginURL, credentials)
           .then(function (result) {
 
             var temp = result;

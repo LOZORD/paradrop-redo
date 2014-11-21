@@ -1,9 +1,7 @@
 <div ng-controller='LoginCtrl'>
   <h1>User Login</h1>
-  <iframe ng-src='/#/sink.html' name='sink' style='display:none'></iframe>
-
   <form name='loginForm'
-        action='sink.html' target='sink' method='post'
+        method='post'
         ng-controller='LoginCtrl'
         ng-submit='login(credentials)'
         novalidate form-autofill-fix>
