@@ -2,22 +2,59 @@
   <h1>New User Signup</h1>
 
   <form name='loginForm'
-        action='sink.html' target='sink' method='post'
+        method='post'
         ng-controller='LoginCtrl'
         ng-submit='login(credentials)'
         novalidate form-autofill-fix>
 
-    <label for='username'>
-      Username:
-    </label>
-    <input type='text' id='username' class='form-control' ng-model='credentials.username'>
+    <div class='form-group'>
+      <label for='username'>
+        Username:
+      </label>
+      <input type='text' id='username' class='form-control' ng-model='credentials.username'>
+    </div>
 
-    <label for='password'>
-      Password:
-    </label>
-    <input type='password' id='password' class='form-control' ng-model='credentials.password'>
+    <div class='form-group'>
+      <label for='password'>
+        Password:
+      </label>
+      <input type='password' id='password' class='form-control' ng-model='credentials.password'>
+    </div>
 
-    <br>
+    <div class='form-group'>
+      <label for='confirmation'>
+        Password Confirmation:
+      </label>
+      <input type='password' id='confirmation' class='form-control' ng-model='credentials.confirmation'>
+    </div>
+
+    <div class='form-group'>
+      <label for='fullname'>
+        Full Name:
+      </label>
+      <input type='text' id='fullname' class='form-control' ng-model='credentials.fullname'>
+    </div>
+
+    <div class='form-group'>
+      <label for='public'>
+        Public Name:
+      </label>
+      <input type='text' id='public' class='form-control' ng-model='credentials.public'>
+    </div>
+
+    <div class='form-group'>
+      <label for='email'>
+        Email:
+      </label>
+      <input type='text' id='email' class='form-control' ng-model='credentials.email'>
+    </div>
+
+    <div class='form-group'>
+      <label for='contact'>
+        Contact:
+      </label>
+      <input type='text' id='contact' class='form-control' ng-model='credentials.contact'>
+    </div>
 
     <button type='submit' class='btn btn-primary btn-block'>Sign up</button>
   </form>

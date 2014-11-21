@@ -13,7 +13,13 @@ angular.module('paradropServices', ['ngResource'])
 
         credentials.already_hashed = false;
 
-        var loginURL = 'http://paradrop.wings.cs.wisc.edu/authenticate/signin';
+        var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signin';
+
+        console.log('USING URL:\n');
+        console.log(loginURL);
+
+        //XXX needed?
+        var credStr = angular.toJson(credentials);
 
         var retData = $http.post(loginURL, credentials)
           .then(function (result) {

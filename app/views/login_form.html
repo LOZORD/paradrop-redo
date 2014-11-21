@@ -1,6 +1,6 @@
 <div ng-controller='LoginCtrl'>
   <h1>User Login</h1>
-  <iframe src='sink.html' name='sink' style='display:none'></iframe>
+  <iframe ng-src='/#/sink.html' name='sink' style='display:none'></iframe>
 
   <form name='loginForm'
         action='sink.html' target='sink' method='post'
@@ -8,17 +8,19 @@
         ng-submit='login(credentials)'
         novalidate form-autofill-fix>
 
-    <label for='username'>
-      Username:
-    </label>
-    <input type='text' id='username' class='form-control' ng-model='credentials.username'>
+    <div class='form-group'>
+      <label for='username'>
+        Username:
+      </label>
+      <input type='text' id='username' class='form-control' ng-model='credentials.username'>
+    </div>
 
-    <label for='password'>
-      Password:
-    </label>
-    <input type='password' id='password' class='form-control' ng-model='credentials.password'>
-
-    <br>
+    <div class='form-group'>
+      <label for='password'>
+        Password:
+      </label>
+      <input type='password' id='password' class='form-control' ng-model='credentials.password'>
+    </div>
 
     <button type='submit' class='btn btn-primary btn-block'>Login</button>
   </form>
