@@ -1,19 +1,24 @@
 'use strict';
 
 angular.module('paradropServices', ['ngResource'])
-  .factory('AuthService', ['$http', 'Session'],
+  .factory('AuthService', ['$http', 'Session',
     function($http, Session) {
       var authService = {};
 
       authService.login = function (credentials) {
-        var ret_data = $http.post('/login', credentials)
+        //TODO connect to backend API
+
+        console.log('GOT CREDENTIALS AS:\n');
+        console.log(credentials);
+
+        var retData = $http.post('/login', credentials)
           .then(function (result) {
             Session.create(result.data.id, result.data.user.id,
               result.data.user.role);
-            return result.data.user
+            return result.data.user;
           });
 
-        return ret_data;
+        return retData;
       };
 
       authService.isAuthenticated = function () {
@@ -25,40 +30,32 @@ angular.module('paradropServices', ['ngResource'])
           authorizedRoles = [authorizedRoles];
         }
 
-        var auth_is_good = (authService.isAuthenticated())
-          && (authorizedRoles.indexOf(Session.userRole) !== -1);
+        var authIsGood = (authService.isAuthenticated()) &&
+          (authorizedRoles.indexOf(Session.userRole) !== -1);
 
-        return auth_is_good;
+        return authIsGood;
       };
 
       return authService;
     }
-  )
+  ])
   .service('Session',
     function () {
       this.create = function (sessionId, userId, userRole) {
         this.id = sessionId;
         this.userId = userId;
         this.userRole = userRole;
-      }
+      };
 
       this.destroy = function () {
         this.id = null;
         this.userId = null;
         this.userRole = null;
-      }
+      };
 
       return this;
     }
   )
-  .config(function ($httpProvider) {
-    $httpProvider.interceptors.push([
-      '$injector',
-      function ($injector) {
-        return $injector.get('AuthInterceptor');
-      }
-    ]);
-  })
   .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
     return  {
       responseError: function (response) {

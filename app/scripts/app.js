@@ -16,7 +16,8 @@ angular.module('paradropApp', [
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'paradropServices'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -46,7 +47,7 @@ angular.module('paradropApp', [
   })
   .run(
     //protect from minification?
-    function ($routeScope, AUTH_EVENTS, AuthService) {
+    function ($rootScope, AUTH_EVENTS, AuthService) {
       $rootScope.$on('$stateChangeStart',
         function (event, next) {
           var authorizedRoles = next.data.authorizedRoles;
@@ -67,7 +68,15 @@ angular.module('paradropApp', [
       );
     }
   )
-  .contant('AUTH_EVENTS', {
+  .config(function ($httpProvider) {
+    $httpProvider.interceptors.push([
+      '$injector',
+      function ($injector) {
+        return $injector.get('AuthInterceptor');
+      }
+    ]);
+  })
+  .constant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',
     loginFailed: 'auth-login-failed',
     logoutSuccess: 'auth-logout-success',

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('paradropApp', [])
-  .directive('formAutofillFix', ['$timeout'],
+  .directive('formAutofillFix', ['$timeout',
     function ($timeout) {
       function ret (scope, element, attrs) {
         element.prop('method', 'post');
@@ -24,4 +24,4 @@ angular.module('paradropApp', [])
         }
       };
     }
-  );
+  ]);

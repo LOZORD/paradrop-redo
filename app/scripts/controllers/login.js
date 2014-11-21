@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('LoginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService'],
-    function ($scope) {
+  .controller('LoginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService',
+    function ($scope, $rootScope, AUTH_EVENTS, AuthService) {
       $scope.credentials = {
         username: '',
         password: ''
@@ -28,4 +28,5 @@ angular.module('paradropApp')
       };
 
     }
+  ]
 );

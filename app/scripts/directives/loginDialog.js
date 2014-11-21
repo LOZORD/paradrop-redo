@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('paradropApp', [])
-  .directive('loginDialog', ['AUTH_EVENTS'],
+  .directive('loginDialog', ['AUTH_EVENTS',
     function (AUTH_EVENTS) {
       return {
         restrict: 'A',
@@ -19,4 +19,4 @@ angular.module('paradropApp', [])
         }
       };
     }
-  );
+  ]);

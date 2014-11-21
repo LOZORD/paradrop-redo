@@ -8,6 +8,6 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MainCtrl', ['$scope'], function ($scope) {
+  .controller('MainCtrl', ['$scope', function ($scope) {
     //Nothing
-  });
+  }]);
