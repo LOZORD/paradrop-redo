@@ -12,7 +12,8 @@ angular.module('paradropApp')
     function ($scope, $rootScope, AUTH_EVENTS, AuthService) {
       $scope.credentials = {
         username: '',
-        password: ''
+        password: '',
+        already_hashed: false
       };
 
       $scope.login = function (credentials) {

@@ -11,8 +11,20 @@ angular.module('paradropServices', ['ngResource'])
         console.log('GOT CREDENTIALS AS:\n');
         console.log(credentials);
 
-        var retData = $http.post('/login', credentials)
+        credentials.already_hashed = false;
+
+        var loginURL = 'http://paradrop.wings.cs.wisc.edu/authenticate/signin';
+
+        var retData = $http.post(loginURL, credentials)
           .then(function (result) {
+
+            var temp = result;
+
+            console.log('GOT RESULT:\n');
+            console.log(temp);
+
+            result = { data : { id: 42, user: { id: 42, role: 'admin' } } };
+
             Session.create(result.data.id, result.data.user.id,
               result.data.user.role);
             return result.data.user;
