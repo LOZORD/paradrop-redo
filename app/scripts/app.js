@@ -41,6 +41,10 @@ angular.module('paradropApp', [
         templateUrl: 'views/mypdp.html',
         controller: 'MyParadropCtrl'
       })
+      .when('/user/new', {
+        templateUrl: 'views/signup_form.html',
+        controller: 'NewUserCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });
