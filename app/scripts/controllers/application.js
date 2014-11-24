@@ -14,11 +14,12 @@ angular.module('paradropApp')
       $scope.currentUser = null;
 
       $scope.userRoles = USER_ROLES;
+      $scope.isAuthenticated = AuthService.isAuthenticated;
       $scope.isAuthorized = AuthService.isAuthorized;
 
       $scope.setCurrentUser = function (user) {
         $scope.currentUser = user;
-      }
+      };
 
       $scope.isLoginPage = ($location.path().indexOf('/login') !== -1);
     }

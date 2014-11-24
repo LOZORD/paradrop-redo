@@ -95,6 +95,7 @@ angular.module('paradropApp', [
     notAuthenticated: 'auth-not-authenticated',
     notAuthorized: 'auth-not-authorized'
   })
+  //TODO remove?
   .constant('USER_ROLES', {
     all: '*',
     admin: 'admin',

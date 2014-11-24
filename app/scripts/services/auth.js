@@ -24,16 +24,14 @@ angular.module('paradropServices', ['ngResource'])
         var retData = $http
           .post(loginURL, credentials)
           .then(function (result) {
-
-            var temp = result;
-
             console.log('GOT RESULT:\n');
-            console.log(temp);
+            console.log(result);
 
-            result = { data : { id: 42, user: { id: 42, role: 'admin' } } };
+            //FIXME
+            //Session.create(result.data.id, result.data.user.id,
+            //  result.data.user.role);
 
-            Session.create(result.data.id, result.data.user.id,
-              result.data.user.role);
+            Session.create('dale', result.data.sessionId);
             return result.data.user;
           });
 
@@ -49,10 +47,17 @@ angular.module('paradropServices', ['ngResource'])
           authorizedRoles = [authorizedRoles];
         }
 
-        var authIsGood = (authService.isAuthenticated()) &&
-          (authorizedRoles.indexOf(Session.userRole) !== -1);
+        if (!authService.isAuthenticated()) {
+          return false;
+        }
 
-        return authIsGood;
+        for (var role in authorizedRoles) {
+          if (!Session[role]) {
+            return false;
+          }
+        }
+
+        return true;
       };
 
       return authService;
@@ -60,16 +65,25 @@ angular.module('paradropServices', ['ngResource'])
   ])
   .service('Session',
     function () {
-      this.create = function (sessionId, userId, userRole) {
+      this.create = function (username, sessionId, isDeveloper, isAdmin, isVerified, isDisabled, aps) {
+        this.username = username;
         this.id = sessionId;
-        this.userId = userId;
-        this.userRole = userRole;
+        //boolean (binary) fields
+        this.isDeveloper = parseInt(isDeveloper, 2);
+        this.isAdmin = parseInt(isAdmin, 2);
+        this.isVerified = parseInt(isVerified, 2);
+        this.isDisabled = parseInt(isDisabled, 2);
+        this.aps = aps;
       };
 
       this.destroy = function () {
+        this.username = null;
         this.id = null;
-        this.userId = null;
-        this.userRole = null;
+        this.isDeveloper = null;
+        this.isAdmin = null;
+        this.isVerified = null;
+        this.isDisabled = null;
+        this.aps = null;
       };
 
       return this;
