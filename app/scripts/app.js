@@ -73,6 +73,13 @@ angular.module('paradropApp', [
     }
   )
   .config(function ($httpProvider) {
+    //disregard browser pre-flight checks
+    var contentType = { 'Content-Type' : 'application/x-www-form-urlencoded' };
+    for (var verb in $httpProvider.defaults.headers)
+    {
+      $httpProvider.defaults.headers[verb] = contentType;
+    }
+
     $httpProvider.interceptors.push([
       '$injector',
       function ($injector) {
