@@ -6,4 +6,10 @@
   Here is some text!
 
   <div ng-if='currentUser.isAdmin'>You're admin.</div>
+
+  <hr>
+  In the currentUser object:
+  <div ng-repeat="(key, value) in currentUser">
+    {{ key }} goes to {{ value }}
+  </div>
 </div>

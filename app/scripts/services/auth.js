@@ -6,59 +6,45 @@ angular.module('paradropServices', ['ngResource'])
       var authService = {};
 
       authService.login = function (credentials) {
-        //TODO connect to backend API
-
-        console.log('GOT CREDENTIALS AS:\n');
-        console.log(credentials);
 
         credentials.already_hashed = false;
 
         var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signin';
 
-        console.log('USING URL:\n');
-        console.log(loginURL);
-
         var retData = $http
           .post(loginURL, credentials)
           .then(function (result) {
-            console.log('GOT RESULT:\n');
-            console.log(result);
-
-            //FIXME
-            //Session.create(result.data.id, result.data.user.id,
-            //  result.data.user.role);
-
-
-            //TODO check that the user is valid
 
             var theUser = null;
 
-            //FIXME change from stub to actual service!
-            if (false && result.data.hasOwnProperty('username'))
-            {
-              theUser = Session.create(
-                result.data.username,
-                result.data.sessionId,
-                result.data.isdeveloper,
-                result.data.admin,
-                result.data.isverified,
-                result.data.disabled,
-                result.data.aps
-              );
-            }
-            else
-            {
-              //build a fake user object
-              theUser = Session.create('dale', 'deadbeef123', '1', '1', '1', '0', { '123': 'FirstAP', '456': 'OtherAP' });
-            }
-
-            console.log(theUser);
-
-            //Session.create('dale', result.data.sessionId);
-            //return result.data.user;
+            theUser = Session.create(
+              credentials.username,
+              result.data.sessionToken,
+              result.data.isdeveloper,
+              result.data.admin,
+              result.data.isverified,
+              result.data.disabled,
+              result.data.aps
+            );
 
             return theUser;
           });
+          /*
+          XXX this function saves from bad login, but occurs too early.
+          We can just let the controller handle this error.
+          , function (received) {
+              if (received.status === 403)
+              {
+                //the authorization was bad
+                //TODO
+              }
+              else
+              {
+                //a strange error occured!
+              }
+
+              return null;
+          });*/
 
         return retData;
       };
@@ -94,10 +80,10 @@ angular.module('paradropServices', ['ngResource'])
         this.username = username;
         this.id = sessionId;
         //boolean (binary) fields
-        this.isDeveloper = parseInt(isDeveloper, 2);
-        this.isAdmin = parseInt(isAdmin, 2);
-        this.isVerified = parseInt(isVerified, 2);
-        this.isDisabled = parseInt(isDisabled, 2);
+        this.isDeveloper = parseInt(isDeveloper, 2) || 0;
+        this.isAdmin = parseInt(isAdmin, 2)         || 0;
+        this.isVerified = parseInt(isVerified, 2)   || 0;
+        this.isDisabled = parseInt(isDisabled, 2)   || 0;
         this.aps = aps;
         return this;
       };

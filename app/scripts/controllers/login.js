@@ -22,6 +22,7 @@ angular.module('paradropApp')
 
       $scope.login = function (credentials) {
         AuthService.login(credentials).then(
+          /* SUCCESSFUL LOGIN */
           function (user) {
             $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
             //set the currentUser as this user in the ApplicationCtrl scope
@@ -29,8 +30,10 @@ angular.module('paradropApp')
             //then redirect to their homepage
             $location.url('/my_paradrop');
           },
+          /* FAILED LOGIN */
           function () {
             $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+            console.log('-*- BAD LOGIN -*-'); //TODO
           }
         );
       };
