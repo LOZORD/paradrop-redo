@@ -12,24 +12,13 @@ angular.module('paradropApp')
 
 
     function ($scope, $rootScope, AUTH_EVENTS, AuthService, $location) {
+
       $scope.credentials = {
         username:       null,
         password:       null,
         already_hashed: false,
         return_aps:     true
       };
-
-      //console.log(currentUser);
-
-      //redirect to user page if already logged in
-      //FIXME
-      /*
-      if (currentUser !== null)
-      {
-        console.log('already logged in!');
-        //$location.url('/my_paradrop');
-      }
-      */
 
       $scope.login = function (credentials) {
         AuthService.login(credentials).then(

@@ -23,8 +23,9 @@
     <div class="container">
       <div class="header">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a ng-href="#">Home</a></li>
-          <li><a ng-href="#/login">Login</a></li>
+          <li class="active"><a ng-href="#/">Home</a></li>
+          <li ng-if="!isAuthenticated()"><a ng-href="#/login">Login</a></li>
+          <li ng-if=" isAuthenticated()"><a ng-href="#/my_paradrop">My Paradrop</a></li>
           <li><a ng-href="#/about">About</a></li>
           <li><a ng-href="#/contact">Contact</a></li>
         </ul>

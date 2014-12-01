@@ -54,6 +54,8 @@ angular.module('paradropApp', [
     function ($rootScope, AUTH_EVENTS, AuthService) {
       $rootScope.$on('$stateChangeStart',
         function (event, next) {
+          /*
+          FIXME
           var authorizedRoles = next.data.authorizedRoles;
 
           if (!AuthService.isAuthorized(authorizedRoles)) {
@@ -68,6 +70,7 @@ angular.module('paradropApp', [
               $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
             }
           }
+          */
         }
       );
     }

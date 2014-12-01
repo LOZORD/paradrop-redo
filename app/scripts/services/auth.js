@@ -18,9 +18,6 @@ angular.module('paradropServices', ['ngResource'])
         console.log('USING URL:\n');
         console.log(loginURL);
 
-        //XXX needed?
-        var credStr = angular.toJson(credentials);
-
         var retData = $http
           .post(loginURL, credentials)
           .then(function (result) {
@@ -31,15 +28,42 @@ angular.module('paradropServices', ['ngResource'])
             //Session.create(result.data.id, result.data.user.id,
             //  result.data.user.role);
 
-            Session.create('dale', result.data.sessionId);
-            return result.data.user;
+
+            //TODO check that the user is valid
+
+            var theUser = null;
+
+            if (result.data.hasOwnProperty('username'))
+            {
+              theUser = Session.create(
+                result.data.username,
+                result.data.sessionId,
+                result.data.isdeveloper,
+                result.data.admin,
+                result.data.isverified,
+                result.data.disabled,
+                result.data.aps
+              );
+            }
+            else
+            {
+              //build a fake user object
+              theUser = Session.create('dale', 'deadbeef123', '1', '1', '1', '0', { '123': 'FirstAP', '456': 'OtherAP' });
+            }
+
+            console.log(theUser);
+
+            //Session.create('dale', result.data.sessionId);
+            //return result.data.user;
+
+            return theUser;
           });
 
         return retData;
       };
 
       authService.isAuthenticated = function () {
-        return !!Session.userId;
+        return !!Session.id;
       };
 
       authService.isAuthorized = function (authorizedRoles) {
@@ -74,6 +98,7 @@ angular.module('paradropServices', ['ngResource'])
         this.isVerified = parseInt(isVerified, 2);
         this.isDisabled = parseInt(isDisabled, 2);
         this.aps = aps;
+        return this;
       };
 
       this.destroy = function () {

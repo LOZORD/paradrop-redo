@@ -1,11 +1,9 @@
 <div ng-controller='MyParadropCtrl'>
-  <div ng-if='currentUser'>Welcome, {{ currentUser.username }}!</div>
-
-  <div ng-if='isAuthorized(userRoles.admin)'>You're admin.</div>
-
-  <div ng-switch on='currentUser.role'>
-    <div ng-switch-when='userRoles.admin'>You're admin.</div>
-    <div ng-switch-when='userRoles.editor'>You're editor</div>
-    <div ng-switch-default>You're something else.</div>
+  <div ng-if='currentUser'>
+    Welcome, {{ currentUser.username }}!
   </div>
+
+  Here is some text!
+
+  <div ng-if='currentUser.isAdmin'>You're admin.</div>
 </div>
