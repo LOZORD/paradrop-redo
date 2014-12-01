@@ -8,6 +8,6 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ContactCtrl', ['$scope', function ($scope) {
+  .controller('ContactCtrl', [function () {
     //Nothing
   }]);

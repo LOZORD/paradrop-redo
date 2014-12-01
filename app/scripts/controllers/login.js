@@ -33,7 +33,7 @@ angular.module('paradropApp')
           /* FAILED LOGIN */
           function () {
             $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-            console.log('-*- BAD LOGIN -*-'); //TODO
+            alert('-*- BAD LOGIN -*-'); //TODO
           }
         );
       };

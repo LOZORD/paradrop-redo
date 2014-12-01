@@ -29,23 +29,6 @@ angular.module('paradropServices', ['ngResource'])
 
             return theUser;
           });
-          /*
-          XXX this function saves from bad login, but occurs too early.
-          We can just let the controller handle this error.
-          , function (received) {
-              if (received.status === 403)
-              {
-                //the authorization was bad
-                //TODO
-              }
-              else
-              {
-                //a strange error occured!
-              }
-
-              return null;
-          });*/
-
         return retData;
       };
 

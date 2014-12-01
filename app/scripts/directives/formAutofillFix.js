@@ -3,7 +3,7 @@
 angular.module('paradropApp', [])
   .directive('formAutofillFix', ['$timeout',
     function ($timeout) {
-      function ret (scope, element, attrs) {
+      return function (scope, element, attrs) {
         element.prop('method', 'post');
         
         if (attrs.ngSubmit) {
