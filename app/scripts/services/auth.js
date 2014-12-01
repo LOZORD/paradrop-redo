@@ -33,7 +33,8 @@ angular.module('paradropServices', ['ngResource'])
 
             var theUser = null;
 
-            if (result.data.hasOwnProperty('username'))
+            //FIXME change from stub to actual service!
+            if (false && result.data.hasOwnProperty('username'))
             {
               theUser = Session.create(
                 result.data.username,

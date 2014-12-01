@@ -28,6 +28,7 @@
           <li ng-if=" isAuthenticated()"><a ng-href="#/my_paradrop">My Paradrop</a></li>
           <li><a ng-href="#/about">About</a></li>
           <li><a ng-href="#/contact">Contact</a></li>
+          <li ng-if=" isAuthenticated()"><a ng-href="#/" ng-click="logout()">Logout</a></li>
         </ul>
         <h3 class="text-muted">Paradrop</h3>
       </div>
