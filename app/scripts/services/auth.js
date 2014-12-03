@@ -84,8 +84,21 @@ angular.module('paradropServices', ['ngResource'])
         this.isDeveloper = parseInt(isDeveloper, 2) || 0;
         this.isAdmin = parseInt(isAdmin, 2)         || 0;
         this.isVerified = parseInt(isVerified, 2)   || 0;
-        this.isDisabled = parseInt(isDisabled, 2)   || 0;
+
+        var temp  = parseInt(isDisabled, 2);
+
+        if (temp === 0)
+        {
+          this.isEnabled = 1;
+        }
+        else
+        {
+          this.isEnabled = 0;
+        }
+
+        //array of AP objects
         this.aps = aps;
+
         return this;
       };
 
@@ -95,7 +108,7 @@ angular.module('paradropServices', ['ngResource'])
         this.isDeveloper = null;
         this.isAdmin = null;
         this.isVerified = null;
-        this.isDisabled = null;
+        this.isEnabled = null;
         this.aps = null;
       };
 

@@ -39,7 +39,8 @@ angular.module('paradropApp', [
       })
       .when('/my_paradrop', {
         templateUrl: 'views/mypdp.html',
-        controller: 'MyParadropCtrl'
+        controller: 'MyParadropCtrl',
+        permissions: []//[USER_ROLES] //TODO
       })
       .when('/user/new', {
         templateUrl: 'views/signup_form.html',
@@ -54,23 +55,8 @@ angular.module('paradropApp', [
     function ($rootScope, AUTH_EVENTS, AuthService) {
       $rootScope.$on('$stateChangeStart',
         function (event, next) {
-          /*
-          FIXME
-          var authorizedRoles = next.data.authorizedRoles;
-
-          if (!AuthService.isAuthorized(authorizedRoles)) {
-            event.preventDefault();
-
-            if (AuthService.isAuthenticated()) {
-              //logged in user is not allowed access to the next page
-              $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-            }
-            else {
-              //user is not logged in
-              $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-            }
-          }
-          */
+          //window.alert('hello world!');
+          //TODO
         }
       );
     }
@@ -83,6 +69,7 @@ angular.module('paradropApp', [
       $httpProvider.defaults.headers[verb] = contentType;
     }
 
+    //check page authorizations first
     $httpProvider.interceptors.push([
       '$injector',
       function ($injector) {
@@ -98,10 +85,11 @@ angular.module('paradropApp', [
     notAuthenticated: 'auth-not-authenticated',
     notAuthorized: 'auth-not-authorized'
   })
-  //TODO remove?
   .constant('USER_ROLES', {
-    all: '*',
-    admin: 'admin',
-    editor: 'editor',
-    guest: 'guest'
+    all: '',
+    enabled:    'isEnabled',
+    verified:   'isVerified',
+    developer:  'isDeveloper',
+    admin:      'isAdmin',
+    loggedIn:   'isEnabled'
   });
