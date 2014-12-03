@@ -22,8 +22,19 @@ angular.module('paradropApp')
       };
 
       $scope.logout = function () {
-        $scope.currentUser.destroy();
-        $location.url('/');
+        AuthService.logout()
+        .then(
+            /* SUCCESSFUL LOGOUT */
+            function(result) {
+              $location.url('/');
+            },
+            /* FAILURE LOGOUT */
+            function (result) {
+              //TODO
+              alert('-*- SIGN OUT DID NOT WORK! -*-');
+              console.log(result);
+            }
+        );
       };
 
       $scope.isLoginPage = ($location.path().indexOf('/login') !== -1);

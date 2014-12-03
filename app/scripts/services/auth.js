@@ -36,6 +36,24 @@ angular.module('paradropServices', ['ngResource'])
         return !!Session.id;
       };
 
+      authService.logout = function () {
+        var logoutURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signout';
+        var payload = { sessionToken: Session.id };
+
+        Session.destroy();
+
+        var retData = $http
+          .post(logoutURL, payload)
+          .then(function(result) {
+            console.log('GOT RESULT:');
+            console.log(result);
+
+            return result;
+          });
+
+        return retData;
+      };
+
       authService.isAuthorized = function (authorizedRoles) {
         if (!angular.isArray(authorizedRoles)) {
           authorizedRoles = [authorizedRoles];
