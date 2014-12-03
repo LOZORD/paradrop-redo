@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('paradropServices', ['ngResource'])
-  .factory('AuthService', ['$http', 'Session',
-    function($http, Session) {
+angular.module('paradropServices', ['ngResource', 'ngCookies'])
+  .factory('AuthService', ['$http', 'Session', '$cookieStore',
+    function($http, Session, $cookieStore) {
       var authService = {};
 
       authService.login = function (credentials) {
@@ -31,7 +31,8 @@ angular.module('paradropServices', ['ngResource'])
             //Session.create(result.data.id, result.data.user.id,
             //  result.data.user.role);
 
-            Session.create('dale', result.data.sessionId);
+            $cookieStore.put('sessionToken', result.data.sessionToken);
+            Session.create('dale', result.data.sessionToken);
             return result.data.user;
           });
 

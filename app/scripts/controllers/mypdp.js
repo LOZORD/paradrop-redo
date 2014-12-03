@@ -8,6 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MyParadropCtrl', ['$scope', 'USER_ROLES', function ($scope, USER_ROLES) {
+  .controller('MyParadropCtrl', ['$scope', 'USER_ROLES', '$cookies', function ($scope, USER_ROLES, $cookies) {
+    console.log($cookies);
+    $scope.sessionToken = $cookies.sessionToken;
     $scope.authorizedRoles = [ USER_ROLES.admin, USER_ROLES.editor ];
   }]);
