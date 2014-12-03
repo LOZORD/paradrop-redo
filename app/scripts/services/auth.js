@@ -6,41 +6,37 @@ angular.module('paradropServices', ['ngResource', 'ngCookies'])
       var authService = {};
 
       authService.login = function (credentials) {
-        //TODO connect to backend API
-
-        console.log('GOT CREDENTIALS AS:\n');
-        console.log(credentials);
 
         credentials.already_hashed = false;
 
         var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signin';
 
-        console.log('USING URL:\n');
-        console.log(loginURL);
-
-        //XXX needed?
-        var credStr = angular.toJson(credentials);
-
         var retData = $http
           .post(loginURL, credentials)
           .then(function (result) {
-            console.log('GOT RESULT:\n');
-            console.log(result);
 
-            //FIXME
-            //Session.create(result.data.id, result.data.user.id,
-            //  result.data.user.role);
+            var theUser = null;
 
+            //store session token for restoring session
             $cookieStore.put('sessionToken', result.data.sessionToken);
-            Session.create('dale', result.data.sessionToken);
-            return result.data.user;
-          });
 
+            theUser = Session.create(
+              credentials.username,
+              result.data.sessionToken,
+              result.data.isdeveloper,
+              result.data.admin,
+              result.data.isverified,
+              result.data.disabled,
+              result.data.aps
+            );
+
+            return theUser;
+          });
         return retData;
       };
 
       authService.isAuthenticated = function () {
-        return !!Session.userId;
+        return !!Session.id;
       };
 
       authService.isAuthorized = function (authorizedRoles) {
@@ -70,11 +66,12 @@ angular.module('paradropServices', ['ngResource', 'ngCookies'])
         this.username = username;
         this.id = sessionId;
         //boolean (binary) fields
-        this.isDeveloper = parseInt(isDeveloper, 2);
-        this.isAdmin = parseInt(isAdmin, 2);
-        this.isVerified = parseInt(isVerified, 2);
-        this.isDisabled = parseInt(isDisabled, 2);
+        this.isDeveloper = parseInt(isDeveloper, 2) || 0;
+        this.isAdmin = parseInt(isAdmin, 2)         || 0;
+        this.isVerified = parseInt(isVerified, 2)   || 0;
+        this.isDisabled = parseInt(isDisabled, 2)   || 0;
         this.aps = aps;
+        return this;
       };
 
       this.destroy = function () {

@@ -12,6 +12,7 @@ angular.module('paradropApp')
 
 
     function ($scope, $rootScope, AUTH_EVENTS, AuthService, $location) {
+
       $scope.credentials = {
         username:       null,
         password:       null,
@@ -19,20 +20,9 @@ angular.module('paradropApp')
         return_aps:     true
       };
 
-      //console.log(currentUser);
-
-      //redirect to user page if already logged in
-      //FIXME
-      /*
-      if (currentUser !== null)
-      {
-        console.log('already logged in!');
-        //$location.url('/my_paradrop');
-      }
-      */
-
       $scope.login = function (credentials) {
         AuthService.login(credentials).then(
+          /* SUCCESSFUL LOGIN */
           function (user) {
             $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
             //set the currentUser as this user in the ApplicationCtrl scope
@@ -40,8 +30,10 @@ angular.module('paradropApp')
             //then redirect to their homepage
             $location.url('/my_paradrop');
           },
+          /* FAILED LOGIN */
           function () {
             $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+            alert('-*- BAD LOGIN -*-'); //TODO
           }
         );
       };

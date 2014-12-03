@@ -8,6 +8,5 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('NewUserCtrl', ['$scope', function ($scope) {
-    $scope.test = 'hello w0rld!';
+  .controller('NewUserCtrl', [function () {
   }]);

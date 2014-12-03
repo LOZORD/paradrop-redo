@@ -21,6 +21,11 @@ angular.module('paradropApp')
         $scope.currentUser = user;
       };
 
+      $scope.logout = function () {
+        $scope.currentUser.destroy();
+        $location.url('/');
+      };
+
       $scope.isLoginPage = ($location.path().indexOf('/login') !== -1);
     }
   ]);
