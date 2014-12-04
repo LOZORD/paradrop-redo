@@ -19,7 +19,15 @@ angular.module('paradropApp', [
     'ngTouch',
     'paradropServices'
   ])
-  .config(function ($routeProvider) {
+  .constant('USER_ROLES', {
+    all: '',
+    enabled:    'isEnabled',
+    verified:   'isVerified',
+    developer:  'isDeveloper',
+    admin:      'isAdmin',
+    loggedIn:   'isEnabled'
+  })
+  .config(function ($routeProvider, USER_ROLES) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -40,7 +48,7 @@ angular.module('paradropApp', [
       .when('/my_paradrop', {
         templateUrl: 'views/mypdp.html',
         controller: 'MyParadropCtrl',
-        permissions: []//[USER_ROLES] //TODO
+        permissions: [USER_ROLES.loggedIn]
       })
       .when('/user/new', {
         templateUrl: 'views/signup_form.html',
@@ -52,11 +60,29 @@ angular.module('paradropApp', [
   })
   .run(
     //protect from minification?
-    function ($rootScope, AUTH_EVENTS, AuthService) {
-      $rootScope.$on('$stateChangeStart',
+    function ($rootScope, AUTH_EVENTS, AuthService, $location) {
+      $rootScope.$on('$routeChangeStart',
         function (event, next) {
-          //window.alert('hello world!');
-          //TODO
+          var authorizedRoles = next.permissions || [];
+
+          if (!AuthService.isAuthorized(authorizedRoles))
+          {
+            event.preventDefault();
+
+            if (AuthService.isAuthenticated())
+            {
+              //user is not allowed
+              //$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+              alert('you are logged in but not authenticated');
+            }
+            else
+            {
+              //user is not logged in
+              //$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+              alert('access denied - not logged in');
+            }
+            $location.url('/login'); //FIXME
+          }
         }
       );
     }
@@ -84,12 +110,4 @@ angular.module('paradropApp', [
     sessionTimeout: 'auth-session-timeout',
     notAuthenticated: 'auth-not-authenticated',
     notAuthorized: 'auth-not-authorized'
-  })
-  .constant('USER_ROLES', {
-    all: '',
-    enabled:    'isEnabled',
-    verified:   'isVerified',
-    developer:  'isDeveloper',
-    admin:      'isAdmin',
-    loggedIn:   'isEnabled'
   });

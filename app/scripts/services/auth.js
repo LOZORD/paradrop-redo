@@ -59,12 +59,17 @@ angular.module('paradropServices', ['ngResource'])
           authorizedRoles = [authorizedRoles];
         }
 
+        if (authorizedRoles.length === 0) {
+          return true;
+        }
+
         if (!authService.isAuthenticated()) {
           return false;
         }
 
-        for (var role in authorizedRoles) {
-          if (!Session[role]) {
+        for (var i in authorizedRoles) {
+          var theRole = authorizedRoles[i];
+          if (!Session[theRole]) {
             return false;
           }
         }
