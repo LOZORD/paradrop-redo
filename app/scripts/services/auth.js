@@ -5,36 +5,61 @@ angular.module('paradropServices', ['ngResource', 'ngCookies'])
     function($http, Session, $cookieStore) {
       var authService = {};
 
-      authService.login = function (credentials) {
+      authService.login = function (credentials, isCloneSession) {
 
-        credentials.already_hashed = false;
+        if(!isCloneSession){
+          credentials.already_hashed = false;
 
-        var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signin';
+          var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signin';
 
-        var retData = $http
-          .post(loginURL, credentials)
-          .then(function (result) {
+          console.log(credentials);
+          var retData = $http
+            .post(loginURL, credentials)
+            .then(function (result) {
 
-            var theUser = null;
+              var theUser = null;
 
-            //store session token for restoring session
-            $cookieStore.put('sessionToken', result.data.sessionToken);
+              //store session token for restoring session
+              $cookieStore.put('sessionToken', result.data.sessionToken);
+            
+              theUser = Session.create(
+                credentials.username,
+                result.data.sessionToken,
+                result.data.isdeveloper,
+                result.data.admin,
+                result.data.isverified,
+                result.data.disabled,
+                result.data.aps
+              );
 
-            theUser = Session.create(
-              credentials.username,
-              result.data.sessionToken,
-              result.data.isdeveloper,
-              result.data.admin,
-              result.data.isverified,
-              result.data.disabled,
-              result.data.aps
-            );
+              return theUser;
+            });
+          return retData;
+        }else{
+          //restore session from token
+          var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/cloneSession';
+          console.log(credentials);
+          var retData = $http
+            .post(loginURL, credentials)
+            .then(function (result) {
 
-            return theUser;
-          });
-        return retData;
+              var theUser = null;
+
+              theUser = Session.create(
+                result.data.username,
+                result.data.sessionToken,
+                result.data.isdeveloper,
+                result.data.admin,
+                result.data.isverified,
+                result.data.disabled,
+                result.data.aps
+              );
+              return theUser;
+            });
+          return retData;
+        }
       };
-
+      
       authService.isAuthenticated = function () {
         return !!Session.id;
       };

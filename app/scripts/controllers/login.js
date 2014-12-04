@@ -21,7 +21,7 @@ angular.module('paradropApp')
       };
 
       $scope.login = function (credentials) {
-        AuthService.login(credentials).then(
+        AuthService.login(credentials, false).then(
           /* SUCCESSFUL LOGIN */
           function (user) {
             $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);

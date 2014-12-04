@@ -75,6 +75,37 @@ angular.module('paradropApp', [
       );
     }
   )
+  .run(
+      //restore session from token if not authenticated
+    function ($rootScope, $cookieStore, AUTH_EVENTS, AuthService) {
+      if(!AuthService.isAuthenticated()){
+        $rootScope.sessionToken = $cookieStore.get('sessionToken');
+        console.log("SESSION TOKEN: " + $rootScope.sessionToken);
+        //if they don't have a sessionToken in their cookie don't bother
+        if(!$rootScope.sessionToken){
+          return;
+        }
+        var credentials = {
+          sessionToken: $cookieStore.get('sessionToken')
+        };
+        AuthService.login(credentials, true).then(
+          /* SUCCESSFUL LOGIN */
+          function (user) {
+            $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
+            //set the currentUser as this user in the ApplicationCtrl scope
+            //$scope.setCurrentUser(user);
+            $rootScope.currentUser = user;
+          },
+          /* FAILED LOGIN */
+          function () {
+            $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
+            //then redirect to login?
+            //$location.url('/login');
+          }
+        );
+      }
+    }
+  )
   .config(function ($httpProvider) {
     //disregard browser pre-flight checks
     var contentType = { 'Content-Type' : 'application/x-www-form-urlencoded' };
