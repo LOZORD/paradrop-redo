@@ -17,7 +17,8 @@ angular.module('paradropApp', [
     'ngRoute',
     'ngSanitize',
     'ngTouch',
-    'paradropServices'
+    'paradropServices',
+    'ipCookie'
   ])
   .config(function ($routeProvider) {
     $routeProvider
@@ -77,16 +78,16 @@ angular.module('paradropApp', [
   )
   .run(
       //restore session from token if not authenticated
-    function ($rootScope, $cookieStore, AUTH_EVENTS, AuthService) {
+    function ($rootScope, ipCookie, AUTH_EVENTS, AuthService) {
       if(!AuthService.isAuthenticated()){
-        $rootScope.sessionToken = $cookieStore.get('sessionToken');
+        $rootScope.sessionToken = ipCookie('sessionToken');
         console.log("SESSION TOKEN: " + $rootScope.sessionToken);
         //if they don't have a sessionToken in their cookie don't bother
         if(!$rootScope.sessionToken){
           return;
         }
         var credentials = {
-          sessionToken: $cookieStore.get('sessionToken')
+          sessionToken: ipCookie('sessionToken')
         };
         AuthService.login(credentials, true).then(
           /* SUCCESSFUL LOGIN */

@@ -9,8 +9,8 @@
  * Included in the <body> tag, this controller has global scope
  */
 angular.module('paradropApp')
-  .controller('ApplicationCtrl', ['$scope', '$location', 'USER_ROLES', 'AuthService', '$rootScope', '$cookieStore',
-    function ($scope, $location, USER_ROLES, AuthService, $rootScope, $cookieStore) {
+  .controller('ApplicationCtrl', ['$scope', '$location', 'USER_ROLES', 'AuthService', '$rootScope', 'ipCookie',
+    function ($scope, $location, USER_ROLES, AuthService, $rootScope, ipCookie) {
       //$scope.currentUser = null;
 
       $scope.userRoles = USER_ROLES;
@@ -19,7 +19,7 @@ angular.module('paradropApp')
 
       $scope.setCurrentUser = function (user) {
         $rootScope.currentUser = user;
-        $rootScope.sessionToken = $cookieStore.get('sessionToken');
+        $rootScope.sessionToken = ipCookie('sessionToken');
       };
 
       $scope.logout = function () {

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('paradropServices', ['ngResource', 'ngCookies'])
-  .factory('AuthService', ['$http', 'Session', '$cookieStore',
-    function($http, Session, $cookieStore) {
+angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
+  .factory('AuthService', ['$http', 'Session', 'ipCookie',
+    function($http, Session, ipCookie) {
       var authService = {};
 
       authService.login = function (credentials, isCloneSession) {
@@ -20,7 +20,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies'])
               var theUser = null;
 
               //store session token for restoring session
-              $cookieStore.put('sessionToken', result.data.sessionToken);
+              ipCookie('sessionToken', result.data.sessionToken, { expires: 7});
             
               theUser = Session.create(
                 credentials.username,
@@ -44,6 +44,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies'])
             .then(function (result) {
 
               var theUser = null;
+
+              ipCookie('sessionToken', result.data.sessionToken, { expires: 7});
 
               theUser = Session.create(
                 result.data.username,

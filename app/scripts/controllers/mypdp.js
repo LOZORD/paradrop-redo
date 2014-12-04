@@ -8,7 +8,7 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MyParadropCtrl', ['$scope', 'USER_ROLES', '$location', function ($scope, USER_ROLES,$cookies, $location) {
+  .controller('MyParadropCtrl', ['$scope', 'USER_ROLES', '$location', function ($scope, USER_ROLES, $location) {
     $scope.authorizedRoles = [ USER_ROLES.admin, USER_ROLES.editor ];
 
     //FIXME -- authenticated pages
