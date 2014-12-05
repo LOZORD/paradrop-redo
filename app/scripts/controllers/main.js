@@ -8,6 +8,7 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MainCtrl', [function () {
+  .controller('MainCtrl', ['$scope', function ($scope) {
     //Nothing
+    //$scope.testing_works = 'yes!';
   }]);

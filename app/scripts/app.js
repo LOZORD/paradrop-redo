@@ -20,7 +20,16 @@ angular.module('paradropApp', [
     'paradropServices',
     'ipCookie'
   ])
-  .config(function ($routeProvider) {
+  .constant('USER_ROLES', {
+    all: '',
+    stranger:   'STRANGER',
+    enabled:    'isEnabled',
+    verified:   'isVerified',
+    developer:  'isDeveloper',
+    admin:      'isAdmin',
+    loggedIn:   'isEnabled'
+  })
+  .config(function ($routeProvider, USER_ROLES) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -40,11 +49,16 @@ angular.module('paradropApp', [
       })
       .when('/my_paradrop', {
         templateUrl: 'views/mypdp.html',
-        controller: 'MyParadropCtrl'
+        controller: 'MyParadropCtrl',
+        permissions: [USER_ROLES.loggedIn]
       })
       .when('/user/new', {
         templateUrl: 'views/signup_form.html',
-        controller: 'NewUserCtrl'
+        controller: 'NewUserCtrl',
+        permissions: [
+          //don't allow already logged in users to create a new user
+          USER_ROLES.stranger
+        ]
       })
       .otherwise({
         redirectTo: '/'
@@ -52,26 +66,28 @@ angular.module('paradropApp', [
   })
   .run(
     //protect from minification?
-    function ($rootScope, AUTH_EVENTS, AuthService) {
-      $rootScope.$on('$stateChangeStart',
+    function ($rootScope, AUTH_EVENTS, AuthService, $location) {
+      $rootScope.$on('$routeChangeStart',
         function (event, next) {
-          /*
-          FIXME
-          var authorizedRoles = next.data.authorizedRoles;
+          var authorizedRoles = next.permissions || [];
 
-          if (!AuthService.isAuthorized(authorizedRoles)) {
+          if (!AuthService.isAuthorized(authorizedRoles))
+          {
             event.preventDefault();
 
-            if (AuthService.isAuthenticated()) {
-              //logged in user is not allowed access to the next page
-              $rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+            if (AuthService.isAuthenticated())
+            {
+              //user is not allowed
+              //$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
+              alert('you are logged in but not authenticated');
             }
-            else {
+            else
+            {
               //user is not logged in
-              $rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+              //$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
+              alert('access denied - not logged in');
             }
           }
-          */
         }
       );
     }
@@ -84,6 +100,7 @@ angular.module('paradropApp', [
       $httpProvider.defaults.headers[verb] = contentType;
     }
 
+    //check page authorizations first
     $httpProvider.interceptors.push([
       '$injector',
       function ($injector) {
@@ -99,10 +116,7 @@ angular.module('paradropApp', [
     notAuthenticated: 'auth-not-authenticated',
     notAuthorized: 'auth-not-authorized'
   })
-  //TODO remove?
-  .constant('USER_ROLES', {
-    all: '*',
-    admin: 'admin',
-    editor: 'editor',
-    guest: 'guest'
+  .constant('URLS', {
+    http: 'http://paradrop.wings.cs.wisc.edu:30333/v1/',
+    https: 'https://paradrop.wings.cs.wisc.edu:30332/v1/',
   });

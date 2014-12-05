@@ -1,16 +1,15 @@
 'use strict';
 
 angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
-  .factory('AuthService', ['$http', 'Session', 'ipCookie',
-    function($http, Session, ipCookie) {
+  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS',
+    function($http, Session, ipCookie, URLS) {
       var authService = {};
 
-      authService.login = function (credentials, isCloneSession) {
+      authService.login = function (credentials) {
 
-        if(!isCloneSession){
           credentials.already_hashed = false;
 
-          var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signin';
+          var loginURL = URLS.https + 'authenticate/signin';
 
           var retData = $http
             .post(loginURL, credentials)
@@ -34,20 +33,22 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               return theUser;
             });
           return retData;
-        }else{
+      };
+      authService.cloneSession = function (credentials) {
           //restore session from token
-          var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/cloneSession';
+          var loginURL = URLS.https + 'authenticate/cloneSession';
           var retData = $http
             .post(loginURL, credentials)
             .then(function (result) {
 
               var theUser = null;
 
-              ipCookie('sessionToken', result.data.sessionToken, { expires: 7});
+              //validate cookie for 7 more days
+              ipCookie('sessionToken', credentials.sessionToken, { expires: 7});
 
               theUser = Session.create(
                 result.data.username,
-                result.data.sessionToken,
+                credentials.sessionToken,
                 result.data.isdeveloper,
                 result.data.admin,
                 result.data.isverified,
@@ -57,11 +58,25 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               return theUser;
             });
           return retData;
-        }
       };
       
       authService.isAuthenticated = function () {
         return !!Session.id;
+      };
+
+      authService.logout = function () {
+        var logoutURL = URLS.http + 'authenticate/signout';
+        var payload = { sessionToken: Session.id };
+
+        Session.destroy();
+
+        var retData = $http
+          .post(logoutURL, payload)
+          .then(function(result) {
+            return result;
+          });
+
+        return retData;
       };
 
       authService.isAuthorized = function (authorizedRoles) {
@@ -69,14 +84,49 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
           authorizedRoles = [authorizedRoles];
         }
 
+        if (authorizedRoles.length === 0) {
+          return true;
+        }
+
+        //if the user is a stranger and their session DNE
+        //FIXME don't trust this code just yet!
+        if (authorizedRoles.length === 1 && authorizedRoles[0] === 'STRANGER'
+          && !authService.isAuthorized()) {
+          return true;
+        }
+
+        /* Not neccessarily a permanent constraint
         if (!authService.isAuthenticated()) {
           return false;
         }
+        */
 
-        for (var role in authorizedRoles) {
-          if (!Session[role]) {
-            return false;
+        for (var i in authorizedRoles) {
+
+          var theRole = authorizedRoles[i];
+
+          /*if (angular.isString(theRole)) {
+            if (!Session.hasOwnProperty(theRole)) {
+              alert('Bad str property: ' + theRole);
+              return false;
+            }
+            else if (!Session[theRole]) {
+              return false;
+            }
           }
+          else if (angular.isObject(theRole)) {
+            if (!Session.hasOwnProperty(theRole.property)) {
+              alert('Bad obj property: ' + theRole.property);
+              return false;
+            }
+            else if (Session[theRole.property] !== theRole.value) {
+              return false;
+            }
+          }
+          else {
+            alert('Don\'t know what to do with ' + theRole.toString());
+            return false;
+          }*/
         }
 
         return true;
@@ -94,8 +144,21 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isDeveloper = parseInt(isDeveloper, 2) || 0;
         this.isAdmin = parseInt(isAdmin, 2)         || 0;
         this.isVerified = parseInt(isVerified, 2)   || 0;
-        this.isDisabled = parseInt(isDisabled, 2)   || 0;
+
+        var temp  = parseInt(isDisabled, 2);
+
+        if (temp === 0)
+        {
+          this.isEnabled = 1;
+        }
+        else
+        {
+          this.isEnabled = 0;
+        }
+
+        //array of AP objects
         this.aps = aps;
+
         return this;
       };
 
@@ -105,7 +168,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isDeveloper = null;
         this.isAdmin = null;
         this.isVerified = null;
-        this.isDisabled = null;
+        this.isEnabled = null;
         this.aps = null;
       };
 

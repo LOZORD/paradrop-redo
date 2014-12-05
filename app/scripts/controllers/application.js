@@ -22,7 +22,7 @@ angular.module('paradropApp')
         var credentials = {
           sessionToken: ipCookie('sessionToken')
         };
-        AuthService.login(credentials, true).then(
+        AuthService.cloneSession(credentials).then(
           /* SUCCESSFUL LOGIN */
           function (user) {
             $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
@@ -38,6 +38,7 @@ angular.module('paradropApp')
         );
       }
 
+      //$scope.myTEST_TEST = 600;
       $scope.userRoles = USER_ROLES;
       $scope.isAuthenticated = AuthService.isAuthenticated;
       $scope.isAuthorized = AuthService.isAuthorized;
@@ -48,8 +49,21 @@ angular.module('paradropApp')
       };
 
       $scope.logout = function () {
-        $scope.currentUser.destroy();
-        $location.url('/');
+        if ($scope.isAuthenticated() || currentUser)
+        {
+          AuthService.logout()
+          .then(
+              /* SUCCESSFUL LOGOUT */
+              function(result) {
+                $location.url('/');
+              },
+              /* FAILURE LOGOUT */
+              function (result) {
+                //TODO
+                alert('-*- SIGN OUT DID NOT WORK! -*-');
+              }
+          );
+        }
       };
 
       $scope.isLoginPage = ($location.path().indexOf('/login') !== -1);

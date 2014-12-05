@@ -3,6 +3,13 @@
     Welcome, {{ currentUser.username }}!
   </div>
 
+  <div ng-if='isAuthenticated()'>
+    <em>You're autheticated!</em>
+  </div>
+  <div ng-if='!isAuthenticated()'>
+    <em>YOU ARE NOT AUTHENTICATED</em>
+  </div>
+
   Here is some text!
 
   <div ng-if='currentUser.isAdmin'>You're admin.</div>
