@@ -60,9 +60,18 @@ angular.module('paradropServices', ['ngResource'])
           return true;
         }
 
+        //if the user is a stranger and their session DNE
+        //FIXME don't trust this code just yet!
+        if (authorizedRoles.length === 1 && authorizedRoles[0] === 'STRANGER'
+          && !authService.isAuthorized()) {
+          return true;
+        }
+
+        /* Not neccessarily a permanent constraint
         if (!authService.isAuthenticated()) {
           return false;
         }
+        */
 
         for (var i in authorizedRoles) {
 
@@ -70,7 +79,7 @@ angular.module('paradropServices', ['ngResource'])
 
           if (angular.isString(theRole)) {
             if (!Session.hasOwnProperty(theRole)) {
-              alert('Bad property: ' + theRole);
+              alert('Bad str property: ' + theRole);
               return false;
             }
             else if (!Session[theRole]) {
@@ -79,7 +88,7 @@ angular.module('paradropServices', ['ngResource'])
           }
           else if (angular.isObject(theRole)) {
             if (!Session.hasOwnProperty(theRole.property)) {
-              alert('Bad property: ' + theRole.property);
+              alert('Bad obj property: ' + theRole.property);
               return false;
             }
             else if (Session[theRole.property] !== theRole.value) {

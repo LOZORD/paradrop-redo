@@ -21,6 +21,7 @@ angular.module('paradropApp', [
   ])
   .constant('USER_ROLES', {
     all: '',
+    stranger:   'STRANGER',
     enabled:    'isEnabled',
     verified:   'isVerified',
     developer:  'isDeveloper',
@@ -52,7 +53,11 @@ angular.module('paradropApp', [
       })
       .when('/user/new', {
         templateUrl: 'views/signup_form.html',
-        controller: 'NewUserCtrl'
+        controller: 'NewUserCtrl',
+        permissions: [
+          //don't allow already logged in users to create a new user
+          USER_ROLES.stranger
+        ]
       })
       .otherwise({
         redirectTo: '/'
