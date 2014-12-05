@@ -9,11 +9,10 @@
  * Included in the <body> tag, this controller has global scope
  */
 angular.module('paradropApp')
-  .controller('ApplicationCtrl', ['$scope', '$location', 'USER_ROLES', 'AuthService',
-    function ($scope, $location, USER_ROLES, AuthService) {
+  .controller('ApplicationCtrl', ['$scope', '$location', 'AuthService',
+    function ($scope, $location, AuthService) {
       $scope.currentUser = null;
       //$scope.myTEST_TEST = 600;
-      $scope.userRoles = USER_ROLES;
       $scope.isAuthenticated = AuthService.isAuthenticated;
       $scope.isAuthorized = AuthService.isAuthorized;
 

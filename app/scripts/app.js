@@ -19,16 +19,7 @@ angular.module('paradropApp', [
     'ngTouch',
     'paradropServices'
   ])
-  .constant('USER_ROLES', {
-    all: '',
-    stranger:   'STRANGER',
-    enabled:    'isEnabled',
-    verified:   'isVerified',
-    developer:  'isDeveloper',
-    admin:      'isAdmin',
-    loggedIn:   'isEnabled'
-  })
-  .config(function ($routeProvider, USER_ROLES) {
+  .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -48,49 +39,16 @@ angular.module('paradropApp', [
       })
       .when('/my_paradrop', {
         templateUrl: 'views/mypdp.html',
-        controller: 'MyParadropCtrl',
-        permissions: [USER_ROLES.loggedIn]
+        controller: 'MyParadropCtrl'
       })
       .when('/user/new', {
         templateUrl: 'views/signup_form.html',
-        controller: 'NewUserCtrl',
-        permissions: [
-          //don't allow already logged in users to create a new user
-          USER_ROLES.stranger
-        ]
+        controller: 'NewUserCtrl'
       })
       .otherwise({
         redirectTo: '/'
       });
   })
-  .run(
-    //protect from minification?
-    function ($rootScope, AUTH_EVENTS, AuthService, $location) {
-      $rootScope.$on('$routeChangeStart',
-        function (event, next) {
-          var authorizedRoles = next.permissions || [];
-
-          if (!AuthService.isAuthorized(authorizedRoles))
-          {
-            event.preventDefault();
-
-            if (AuthService.isAuthenticated())
-            {
-              //user is not allowed
-              //$rootScope.$broadcast(AUTH_EVENTS.notAuthorized);
-              alert('you are logged in but not authenticated');
-            }
-            else
-            {
-              //user is not logged in
-              //$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
-              alert('access denied - not logged in');
-            }
-          }
-        }
-      );
-    }
-  )
   .config(function ($httpProvider) {
     //disregard browser pre-flight checks
     var contentType = { 'Content-Type' : 'application/x-www-form-urlencoded' };

@@ -8,14 +8,14 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MyParadropCtrl', ['$scope', 'USER_ROLES', '$location', function ($scope, USER_ROLES, $location) {
-    $scope.authorizedRoles = [ USER_ROLES.admin, USER_ROLES.editor ];
+  .controller('MyParadropCtrl', ['$scope', '$location',
+    function ($scope, $location) {
+      //TODO
 
-    //FIXME -- authenticated pages
-    /*
-    if (!$scope.currentUser)
-    {
-      $location.url('/login');
+      if (!$scope.isAuthenticated() ||
+          !$scope.currentUser.isEnabled ||
+          !$scope.currentUser.isVerified) {
+        $location.url('/');
+      }
     }
-    */
-  }]);
+  ]);
