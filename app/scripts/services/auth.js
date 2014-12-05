@@ -12,7 +12,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
           var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/signin';
 
-          console.log(credentials);
           var retData = $http
             .post(loginURL, credentials)
             .then(function (result) {
@@ -38,7 +37,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         }else{
           //restore session from token
           var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/authenticate/cloneSession';
-          console.log(credentials);
           var retData = $http
             .post(loginURL, credentials)
             .then(function (result) {
