@@ -65,8 +65,29 @@ angular.module('paradropServices', ['ngResource'])
         }
 
         for (var i in authorizedRoles) {
+
           var theRole = authorizedRoles[i];
-          if (!Session[theRole]) {
+
+          if (angular.isString(theRole)) {
+            if (!Session.hasOwnProperty(theRole)) {
+              alert('Bad property: ' + theRole);
+              return false;
+            }
+            else if (!Session[theRole]) {
+              return false;
+            }
+          }
+          else if (angular.isObject(theRole)) {
+            if (!Session.hasOwnProperty(theRole.property)) {
+              alert('Bad property: ' + theRole.property);
+              return false;
+            }
+            else if (Session[theRole.property] !== theRole.value) {
+              return false;
+            }
+          }
+          else {
+            alert('Don\'t know what to do with ' + theRole.toString());
             return false;
           }
         }
