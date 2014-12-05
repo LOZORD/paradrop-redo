@@ -32,7 +32,6 @@ angular.module('paradropApp')
             function (result) {
               //TODO
               alert('-*- SIGN OUT DID NOT WORK! -*-');
-              console.log(result);
             }
         );
       };

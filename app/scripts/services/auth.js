@@ -45,9 +45,6 @@ angular.module('paradropServices', ['ngResource'])
         var retData = $http
           .post(logoutURL, payload)
           .then(function(result) {
-            console.log('GOT RESULT:');
-            console.log(result);
-
             return result;
           });
 

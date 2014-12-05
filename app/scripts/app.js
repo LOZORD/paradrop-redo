@@ -81,7 +81,6 @@ angular.module('paradropApp', [
               //$rootScope.$broadcast(AUTH_EVENTS.notAuthenticated);
               alert('access denied - not logged in');
             }
-            $location.url('/login'); //FIXME
           }
         }
       );
