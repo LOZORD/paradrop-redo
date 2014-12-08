@@ -9,9 +9,14 @@
  */
 angular.module('paradropApp')
   .controller('LoginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService', '$location',
-
-
     function ($scope, $rootScope, AUTH_EVENTS, AuthService, $location) {
+
+      if ($scope.currentUser && $scope.isAuthenticated()) {
+        $location.url('/my_paradrop');
+      }
+      else {
+        //allow access
+      }
 
       $scope.credentials = {
         username:       null,

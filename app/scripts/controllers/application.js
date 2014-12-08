@@ -39,7 +39,6 @@ angular.module('paradropApp')
       }
 
       //$scope.myTEST_TEST = 600;
-      $scope.userRoles = USER_ROLES;
       $scope.isAuthenticated = AuthService.isAuthenticated;
       $scope.isAuthorized = AuthService.isAuthorized;
 
