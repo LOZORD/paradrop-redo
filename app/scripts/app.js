@@ -50,6 +50,12 @@ angular.module('paradropApp', [
         redirectTo: '/'
       });
   })
+  .config(function($locationProvider) {
+    //setup urls for crawler to get static html
+      $locationProvider
+    .html5Mode(false)
+    .hashPrefix('!');
+  })
   .config(function ($httpProvider) {
     //disregard browser pre-flight checks
     var contentType = { 'Content-Type' : 'application/x-www-form-urlencoded' };
