@@ -393,9 +393,18 @@ module.exports = function (grunt) {
     htmlSnapshot: {
       all: {
         options: {
-          snapshotPath: 'snapshots/',
+          snapshotPath: 'dist/',
           sitePath: 'http://alldayap.wings.cs.wisc.edu/nick/paradrop2.0/dist/', 
-          urls: ['#!/', '#!/about', '#!/contact']
+          fileNamePrefix: '',
+          //Replace arbitrary parts of the html
+          replaceStrings:[
+              {'#!/contact': '___contact.html'},
+              {'#!/about': '___about.html'},
+              {'#!/login': '___login.html'},
+              {'#!/user/new': '___user_new.html'},
+              {'#!/': '___.html'}
+          ],
+          urls: ['#!/', '#!/about', '#!/contact', '#!/login', '#!/user/new']
         }
       }
     }
