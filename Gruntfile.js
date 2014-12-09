@@ -21,6 +21,9 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  //include grunt-html-snapshot task
+  grunt.loadNpmTasks('grunt-html-snapshot');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -384,8 +387,21 @@ module.exports = function (grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true
       }
+    },
+
+    //html snapshots for crawler
+    htmlSnapshot: {
+      all: {
+        options: {
+          snapshotPath: 'snapshots/',
+          sitePath: 'http://alldayap.wings.cs.wisc.edu/nick/paradrop2.0/dist/', 
+          urls: ['#!/', '#!/about', '#!/contact']
+        }
+      }
     }
-  });
+  }); 
+
+  grunt.registerTask('default', ['htmlSnapshot']);
 
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {
