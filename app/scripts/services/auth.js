@@ -5,9 +5,25 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
     function($http, Session, ipCookie, URLS, $rootScope) {
       var authService = {};
 
-      //TODO refactor so both login() and cloneSession() share Session creation code
-      //just need to give the http object the same "then" func
+      //this function is used by login and cloneSession
+      function buildSession (result) {
+        var theUser = null;
 
+        //store session token for restoring session
+        ipCookie('sessionToken', result.data.sessionToken, { expires: 7 });
+
+        theUser = Session.create(
+          result.data.username,
+          result.data.sessionToken,
+          result.data.isdeveloper,
+          result.data.admin,
+          result.data.aps
+        );
+
+        return theUser;
+      }
+
+      //log in the user via login form
       authService.login = function (credentials) {
 
           credentials.already_hashed = false;
@@ -16,46 +32,17 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
           var retData = $http
             .post(loginURL, credentials)
-            .then(function (result) {
+            .then(buildSession);
 
-              var theUser = null;
-
-              //store session token for restoring session
-              ipCookie('sessionToken', result.data.sessionToken, { expires: 7});
-            
-              theUser = Session.create(
-                result.data.username,
-                result.data.sessionToken,
-                result.data.isdeveloper,
-                result.data.admin,
-                result.data.aps
-              );
-
-              return theUser;
-            });
           return retData;
       };
+
+      //restore session from token
       authService.cloneSession = function (credentials) {
-          //restore session from token
           var loginURL = URLS.https + 'authenticate/cloneSession';
           var retData = $http
             .post(loginURL, credentials)
-            .then(function (result) {
-
-              var theUser = null;
-
-              //validate cookie for 7 more days
-              ipCookie('sessionToken', result.data.sessionToken, { expires: 7});
-
-              theUser = Session.create(
-                result.data.username,
-                result.data.sessionToken,
-                result.data.isdeveloper,
-                result.data.admin,
-                result.data.aps
-              );
-              return theUser;
-            });
+            .then(buildSession);
           return retData;
       };
       
