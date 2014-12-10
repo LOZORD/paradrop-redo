@@ -56,7 +56,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
                 result.data.aps
               );
               return theUser;
-            },function(){ipCookie.remove('sessionToken');});
+            });
           return retData;
       };
       
