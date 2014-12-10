@@ -5,6 +5,9 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
     function($http, Session, ipCookie, URLS, $rootScope) {
       var authService = {};
 
+      //TODO refactor so both login() and cloneSession() share Session creation code
+      //just need to give the http object the same "then" func
+
       authService.login = function (credentials) {
 
           credentials.already_hashed = false;
@@ -25,8 +28,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
                 result.data.sessionToken,
                 result.data.isdeveloper,
                 result.data.admin,
-                result.data.isverified,
-                result.data.disabled,
                 result.data.aps
               );
 
@@ -51,8 +52,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
                 result.data.sessionToken,
                 result.data.isdeveloper,
                 result.data.admin,
-                result.data.isverified,
-                result.data.disabled,
                 result.data.aps
               );
               return theUser;
@@ -65,7 +64,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       };
 
       authService.logout = function () {
-        var logoutURL = URLS.http + 'authenticate/signout';
+        var logoutURL = URLS.https + 'authenticate/signout';
         var payload = { sessionToken: Session.id };
 
         Session.destroy();
@@ -81,59 +80,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
       authService.getSession = function () {
         return Session.getSession();
-      }
-
-      authService.isAuthorized = function (authorizedRoles) {
-        if (!angular.isArray(authorizedRoles)) {
-          authorizedRoles = [authorizedRoles];
-        }
-
-        if (authorizedRoles.length === 0) {
-          return true;
-        }
-
-        //if the user is a stranger and their session DNE
-        //FIXME don't trust this code just yet!
-        if (authorizedRoles.length === 1 && authorizedRoles[0] === 'STRANGER'
-          && !authService.isAuthorized()) {
-          return true;
-        }
-
-        /* Not neccessarily a permanent constraint
-        if (!authService.isAuthenticated()) {
-          return false;
-        }
-        */
-
-        for (var i in authorizedRoles) {
-
-          var theRole = authorizedRoles[i];
-
-          /*if (angular.isString(theRole)) {
-            if (!Session.hasOwnProperty(theRole)) {
-              alert('Bad str property: ' + theRole);
-              return false;
-            }
-            else if (!Session[theRole]) {
-              return false;
-            }
-          }
-          else if (angular.isObject(theRole)) {
-            if (!Session.hasOwnProperty(theRole.property)) {
-              alert('Bad obj property: ' + theRole.property);
-              return false;
-            }
-            else if (Session[theRole.property] !== theRole.value) {
-              return false;
-            }
-          }
-          else {
-            alert('Don\'t know what to do with ' + theRole.toString());
-            return false;
-          }*/
-        }
-
-        return true;
       };
 
       return authService;
@@ -145,33 +91,24 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       this.id = null;
       this.isDeveloper = null;
       this.isAdmin = null;
-      this.isVerified = null;
-      this.isEnabled = null;
       this.aps = null;
 
       this.getSession = function () {
-        return { username: this.username, id: this.id, isDeveloper: this.isDeveloper, isAdmin: this.isAdmin, isVerified: this.isVerified, isEnabled: this.isEnabled, aps: this.aps };
-      }
+        return {
+          username: this.username,
+          id: this.id,
+          isDeveloper: this.isDeveloper,
+          isAdmin: this.isAdmin,
+          aps: this.aps
+        };
+      };
 
-      this.create = function (username, sessionId, isDeveloper, isAdmin, isVerified, isDisabled, aps) {
+      this.create = function (username, sessionId, isDeveloper, isAdmin, aps) {
         this.username = username;
         this.id = sessionId;
-        //boolean (binary) fields
+        //boolean (binary) fields, default to 0 (false)
         this.isDeveloper = parseInt(isDeveloper, 2) || 0;
         this.isAdmin = parseInt(isAdmin, 2)         || 0;
-        this.isVerified = parseInt(isVerified, 2)   || 0;
-
-        var temp  = parseInt(isDisabled, 2);
-
-        if (temp === 0)
-        {
-          this.isEnabled = 1;
-        }
-        else
-        {
-          this.isEnabled = 0;
-        }
-
         //array of AP objects
         this.aps = aps;
 
@@ -183,8 +120,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.id = null;
         this.isDeveloper = null;
         this.isAdmin = null;
-        this.isVerified = null;
-        this.isEnabled = null;
         this.aps = null;
       };
 

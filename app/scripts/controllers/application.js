@@ -18,7 +18,6 @@ angular.module('paradropApp')
       });
       //$scope.myTEST_TEST = 600;
       $scope.isAuthenticated = AuthService.isAuthenticated;
-      $scope.isAuthorized = AuthService.isAuthorized;
 
       $scope.setCurrentUser = function (user) {
         $scope.currentUser = AuthService.getSession();
