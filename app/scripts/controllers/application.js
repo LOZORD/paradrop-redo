@@ -9,12 +9,11 @@
  * Included in the <body> tag, this controller has global scope
  */
 angular.module('paradropApp')
-  .controller('ApplicationCtrl', ['Session', '$q', '$scope', '$location', 'AuthService', 'ipCookie',
-    function (Session, $q, $scope, $location, AuthService, ipCookie) {
+  .controller('ApplicationCtrl', ['$q', '$scope', '$location', 'AuthService', 'ipCookie',
+    function ($q, $scope, $location, AuthService, ipCookie) {
     $scope.initCurrentUser = $q.defer();
       $scope.restoreSession.promise.then(function(){
-        $scope.currentUser = Session;
-        $scope.sessionToken = Session.id;
+        $scope.currentUser = AuthService.getSession();
         $scope.initCurrentUser.resolve();
       });
       //$scope.myTEST_TEST = 600;
@@ -22,8 +21,7 @@ angular.module('paradropApp')
       $scope.isAuthorized = AuthService.isAuthorized;
 
       $scope.setCurrentUser = function (user) {
-        $scope.currentUser = user;
-        $scope.sessionToken = ipCookie('sessionToken');
+        $scope.currentUser = AuthService.getSession();
       };
 
       $scope.logout = function () {
@@ -33,6 +31,7 @@ angular.module('paradropApp')
           .then(
               /* SUCCESSFUL LOGOUT */
               function(result) {
+                $scope.currentUser = null;
                 $location.url('/');
               },
               /* FAILURE LOGOUT */

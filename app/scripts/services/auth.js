@@ -79,6 +79,10 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         return retData;
       };
 
+      authService.getSession = function () {
+        return Session.getSession();
+      }
+
       authService.isAuthorized = function (authorizedRoles) {
         if (!angular.isArray(authorizedRoles)) {
           authorizedRoles = [authorizedRoles];
@@ -144,6 +148,10 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       this.isVerified = null;
       this.isEnabled = null;
       this.aps = null;
+
+      this.getSession = function () {
+        return { username: this.username, id: this.id, isDeveloper: this.isDeveloper, isAdmin: this.isAdmin, isVerified: this.isVerified, isEnabled: this.isEnabled, aps: this.aps };
+      }
 
       this.create = function (username, sessionId, isDeveloper, isAdmin, isVerified, isDisabled, aps) {
         this.username = username;
