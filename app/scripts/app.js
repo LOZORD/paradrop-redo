@@ -72,6 +72,16 @@ angular.module('paradropApp', [
       }
     ]);
   })
+  .run(function(Session, AuthService, ipCookie, $q, $rootScope) {
+    $rootScope.restoreSession = $q.defer();
+    if(Session.id === null && ipCookie('sessionToken') != null){
+      var credentials = { sessionToken: ipCookie('sessionToken') };
+      AuthService.cloneSession(credentials).then(function() {
+        $rootScope.restoreSession.resolve();
+      },function() {$rootScope.restoreSession.resolve();});
+    }
+
+  })
   .constant('AUTH_EVENTS', {
     loginSuccess: 'auth-login-success',
     loginFailed: 'auth-login-failed',

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
-  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS',
-    function($http, Session, ipCookie, URLS) {
+  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope',
+    function($http, Session, ipCookie, URLS, $rootScope) {
       var authService = {};
 
       authService.login = function (credentials) {
@@ -21,7 +21,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               ipCookie('sessionToken', result.data.sessionToken, { expires: 7});
             
               theUser = Session.create(
-                credentials.username,
+                result.data.username,
                 result.data.sessionToken,
                 result.data.isdeveloper,
                 result.data.admin,
@@ -44,11 +44,11 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               var theUser = null;
 
               //validate cookie for 7 more days
-              ipCookie('sessionToken', credentials.sessionToken, { expires: 7});
+              ipCookie('sessionToken', result.data.sessionToken, { expires: 7});
 
               theUser = Session.create(
                 result.data.username,
-                credentials.sessionToken,
+                result.data.sessionToken,
                 result.data.isdeveloper,
                 result.data.admin,
                 result.data.isverified,
@@ -56,7 +56,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
                 result.data.aps
               );
               return theUser;
-            });
+            },function(){ipCookie.remove('sessionToken');});
           return retData;
       };
       
@@ -137,6 +137,14 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
   ])
   .service('Session',
     function () {
+      this.username = null;
+      this.id = null;
+      this.isDeveloper = null;
+      this.isAdmin = null;
+      this.isVerified = null;
+      this.isEnabled = null;
+      this.aps = null;
+
       this.create = function (username, sessionId, isDeveloper, isAdmin, isVerified, isDisabled, aps) {
         this.username = username;
         this.id = sessionId;
@@ -171,6 +179,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isEnabled = null;
         this.aps = null;
       };
+
 
       return this;
     }

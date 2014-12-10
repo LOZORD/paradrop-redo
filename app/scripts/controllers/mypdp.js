@@ -11,11 +11,12 @@ angular.module('paradropApp')
   .controller('MyParadropCtrl', ['$scope', '$location',
     function ($scope, $location) {
       //TODO
-
-      if (!$scope.isAuthenticated() ||
-          !$scope.currentUser.isEnabled ||
-          !$scope.currentUser.isVerified) {
-        $location.url('/');
-      }
+      $scope.initCurrentUser.promise.then(function(){
+        if (!$scope.isAuthenticated() ||
+            !$scope.currentUser.isEnabled ||
+            !$scope.currentUser.isVerified) {
+          $location.url('/login');
+        }
+      });
     }
   ]);
