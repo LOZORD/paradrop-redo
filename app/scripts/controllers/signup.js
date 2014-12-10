@@ -8,8 +8,9 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('NewUserCtrl', ['$scope', '$location', '$http',
-    function ($scope, $location, $http) {
+  .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS',
+    function ($scope, $location, $http, URLS) {
+
       if ($scope.isAuthenticated()) {
         $location.url('/my_paradrop');
       }
@@ -21,7 +22,8 @@ angular.module('paradropApp')
         fullname:     null,
         publicname:   null,
         email:        null,
-        contact:      null
+        contact:      null,
+        isDeveloper:  false
       };
 
       $scope.create = function (data) {
@@ -30,6 +32,7 @@ angular.module('paradropApp')
             alert('bad data!');
             return;
           }
+	  console.log('GOT ' + key + ' -> ' + data[key]);
         }
 
         if (data.password !== data.confirmation) {
@@ -37,7 +40,9 @@ angular.module('paradropApp')
           return;
         }
 
-        var loginURL = 'http://paradrop.wings.cs.wisc.edu:30333/v1/user/new';
+        //can do more validation below...
+
+        var loginURL = URLS.http + 'user/new';
 
         var sendResult = $http
           .post(loginURL, data)
