@@ -21,6 +21,9 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  //include grunt-html-snapshot task
+  grunt.loadNpmTasks('grunt-html-snapshot');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 
@@ -66,10 +69,10 @@ module.exports = function (grunt) {
     // The actual grunt server settings
     connect: {
       options: {
-        port: 9000,
+        port: grunt.option('port') || 9000,
         // Change this to '0.0.0.0' to access the server from outside.
         hostname: '0.0.0.0',
-        livereload: 35729
+        livereload: grunt.option('livereload') || 35729
       },
       livereload: {
         options: {
@@ -88,7 +91,7 @@ module.exports = function (grunt) {
       },
       test: {
         options: {
-          port: 9001,
+          port: grunt.option('port') || 9001,
           middleware: function (connect) {
             return [
               connect.static('.tmp'),
@@ -384,8 +387,30 @@ module.exports = function (grunt) {
         configFile: 'test/karma.conf.js',
         singleRun: true
       }
+    },
+
+    //html snapshots for crawler
+    htmlSnapshot: {
+      all: {
+        options: {
+          snapshotPath: 'snapshots/',
+          sitePath: 'http://alldayap.wings.cs.wisc.edu/nick/paradrop2.0/dist/', 
+          fileNamePrefix: '',
+          //Replace arbitrary parts of the html
+          /*replaceStrings:[
+              {'#!/contact': '___contact.html'},
+              {'#!/about': '___about.html'},
+              {'#!/login': '___login.html'},
+              {'#!/user/new': '___user_new.html'},
+              {'#!/': '___.html'}
+          ],*/
+          urls: ['#!/', '#!/about', '#!/contact', '#!/login', '#!/user/new']
+        }
+      }
     }
-  });
+  }); 
+
+  grunt.registerTask('default', ['htmlSnapshot']);
 
 
   grunt.registerTask('serve', 'Compile then start a connect web server', function (target) {

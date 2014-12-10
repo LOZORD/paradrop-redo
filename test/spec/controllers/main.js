@@ -3,7 +3,9 @@
 describe('Controller: MainCtrl', function () {
 
   // load the controller's module
-  beforeEach(module('paradropApp'));
+  beforeEach(function () {
+    module('paradropApp');
+  });
 
   var MainCtrl,
     scope;
@@ -15,5 +17,4 @@ describe('Controller: MainCtrl', function () {
       $scope: scope
     });
   }));
-
 });
