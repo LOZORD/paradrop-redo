@@ -52,7 +52,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
       authService.logout = function () {
         var logoutURL = URLS.https + 'authenticate/signout';
-        var payload = { sessionToken: Session.id };
+        var payload = { sessionToken: ipCookie('sessionToken') };
+        ipCookie.remove('sessionToken');
 
         Session.destroy();
 
@@ -67,6 +68,10 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
       authService.getSession = function () {
         return Session.getSession();
+      };
+
+      authService.destroySession = function () {
+        Session.destroy();
       };
 
       return authService;

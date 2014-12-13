@@ -74,7 +74,8 @@ angular.module('paradropApp', [
   })
   .run(function(Session, AuthService, ipCookie, $q, $rootScope) {
     $rootScope.restoreSession = $q.defer();
-    if(Session.id === null){
+    //attempt to clone the session if they are not logged in (has an id==token)
+    if(!Session.id){
       //first check that they have a cookie
       var tokenCookie = ipCookie('sessionToken');
       //attempt to clone the session using the cookie data

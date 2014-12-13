@@ -24,7 +24,7 @@ angular.module('paradropApp')
       };
 
       $scope.logout = function () {
-        if ($scope.isAuthenticated() || currentUser)
+        if ($scope.isAuthenticated() || $scope.currentUser)
         {
           AuthService.logout()
           .then(
