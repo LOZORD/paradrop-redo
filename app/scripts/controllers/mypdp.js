@@ -12,9 +12,7 @@ angular.module('paradropApp')
     function ($scope, $location) {
       //TODO
       $scope.initCurrentUser.promise.then(function(){
-        if (!$scope.isAuthenticated() ||
-            !$scope.currentUser.isEnabled ||
-            !$scope.currentUser.isVerified) {
+        if (!$scope.isAuthenticated()) {
           $location.url('/login');
         }
       });
