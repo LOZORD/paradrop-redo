@@ -36,9 +36,19 @@ angular.module('paradropApp')
             $location.url('/my_paradrop');
           },
           /* FAILED LOGIN */
-          function () {
+          function (error) {
             $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
-            alert('-*- BAD LOGIN -*-'); //TODO
+            if(error.data === 'User is not verified!'){
+              alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
+            }else if(error.data === 'User is disabled!'){
+              alert('Your account has been disabled. Please contact us at admin@paradrop.io if you think there has been an error.'); //TODO
+            }else if(error.data === 'Threshold Met!'){
+              alert('Your account has been temporarily frozen due to too many failed attempts to login. If you think there has been an error contact admin@paradrop.io');
+            }else if(error.data){
+              alert(error.data);
+            }else{
+              alert('Login Failed!');
+            }
           }
         );
       };
