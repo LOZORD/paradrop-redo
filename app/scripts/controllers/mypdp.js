@@ -8,11 +8,11 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MyParadropCtrl', ['$scope', '$location', 'ipCookie',
-    function ($scope, $location, ipCookie) {
+  .controller('MyParadropCtrl', ['AuthService', '$scope', '$location', 'ipCookie',
+    function (AuthService, $scope, $location, ipCookie) {
       //TODO
       $scope.initCurrentUser.promise.then(function(){
-        if (!($scope.isAuthenticated()  && ipCookie('sessionToken'))) {
+        if (!$scope.isAuthenticated()  || !ipCookie('sessionToken')) {
           $location.url('/login');
 
           //if the token exists for the client, but it is invalid by the server
