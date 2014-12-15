@@ -23,15 +23,23 @@ angular.module('paradropApp')
         $scope.currentUser = AuthService.getSession();
       };
 
+      $scope.$on('$routeChangeStart', function(next, current){
+        //update current user every page change
+        $scope.setCurrentUser();
+        //check if session still exists(for cases of multiple instances of app)
+        if(!ipCookie('sessionToken')){
+          AuthService.destroySession();
+        }
+      });
+
       $scope.logout = function () {
-        if ($scope.isAuthenticated() || currentUser)
+        if (($scope.isAuthenticated() || $scope.currentUser) && ipCookie('sessionToken'))
         {
           AuthService.logout()
           .then(
               /* SUCCESSFUL LOGOUT */
               function(result) {
                 $scope.currentUser = null;
-                $location.url('/');
               },
               /* FAILURE LOGOUT */
               function (result) {
