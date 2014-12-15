@@ -26,6 +26,13 @@ angular.module('paradropApp')
       };
 
       $scope.login = function (credentials) {
+        if(!credentials.username){
+          alert('The username field cannot be blank. Please enter your username.');
+          return;
+        }else if(!credentials.password){
+          alert('The password field cannot be blank. Please enter your password.');
+          return;
+        }
         AuthService.login(credentials).then(
           /* SUCCESSFUL LOGIN */
           function (user) {
