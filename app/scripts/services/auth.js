@@ -9,9 +9,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       function buildSession (result) {
         var theUser = null;
 
-        //store session token for restoring session
-        ipCookie('sessionToken', result.data.sessionToken, { expires: 7 });
-
         theUser = Session.create(
           result.data.username,
           result.data.sessionToken,
@@ -24,6 +21,15 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       }
 
       //log in the user via login form
+      //TODO first check if they have a cookie
+      //if they do, run cloneSession instead
+      /*
+        For example, if the user has two tabs open:
+        1) Logs in using tab A (NOT cloneSession, assume no valid cookie yet)
+        2) Navigates to login page on tab B
+        3) Our app should detect that they now have a valid cookie
+        4) They should be automatically logged in on Tab B using the new cookie & cloneSession
+      */
       authService.login = function (credentials) {
 
           credentials.already_hashed = false;
@@ -32,8 +38,17 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
           var retData = $http
             .post(loginURL, credentials)
-            .then(buildSession);
-
+            .then(buildSession)
+            .then(function (someSession) {
+              console.log(credentials.persist);
+              if (credentials.persist) {
+                ipCookie('shouldPersist', true, { expires: 7 });
+                ipCookie('sessionToken', someSession.id, { expires: 7 });
+              }
+              else {
+                ipCookie('sessionToken', someSession.id);
+              }
+            });
           return retData;
       };
 
@@ -42,7 +57,18 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
           var loginURL = URLS.https + 'authenticate/cloneSession';
           var retData = $http
             .post(loginURL, credentials)
-            .then(buildSession);
+            .then(buildSession)
+            .then(function (someSession) {
+              var shouldPersist = ipCookie('shouldPersist');
+
+              if (shouldPersist) {
+                ipCookie('shouldPersist', true, { expires: 7 });
+                ipCookie('sessionToken', someSession.id, { expires: 7 });
+              }
+              else {
+                ipCookie('sessionToken', someSession.id);
+              }
+            });
           return retData;
       };
       
@@ -54,6 +80,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         var logoutURL = URLS.https + 'authenticate/signout';
         var payload = { sessionToken: ipCookie('sessionToken') };
         ipCookie.remove('sessionToken');
+        ipCookie.remove('shouldPersist');
 
         Session.destroy();
 
