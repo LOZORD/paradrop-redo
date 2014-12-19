@@ -40,7 +40,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
             .post(loginURL, credentials)
             .then(buildSession)
             .then(function (someSession) {
-              console.log(credentials.persist);
               if (credentials.persist) {
                 ipCookie('shouldPersist', true, { expires: 7 });
                 ipCookie('sessionToken', someSession.id, { expires: 7 });
