@@ -16,7 +16,6 @@ angular.module('paradropApp', [
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngStorage',
     'ngTouch',
     'paradropServices',
     'ipCookie'

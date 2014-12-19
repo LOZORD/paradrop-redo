@@ -21,6 +21,7 @@ angular.module('paradropApp')
       $scope.credentials = {
         username:       null,
         password:       null,
+        persist:        false,
         already_hashed: false,
         return_aps:     true
       };
