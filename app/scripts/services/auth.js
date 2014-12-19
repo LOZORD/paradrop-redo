@@ -38,7 +38,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       };
 
       //restore session from token
-      authService.cloneSession = function (credentials) {
+      authService.cloneSession = function () {
+          var credentials = {sessionToken: ipCookie('sessionToken')};
           var loginURL = URLS.https + 'authenticate/cloneSession';
           var retData = $http
             .post(loginURL, credentials)

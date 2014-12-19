@@ -82,8 +82,7 @@ angular.module('paradropApp', [
         var tokenCookie = ipCookie('sessionToken');
         //attempt to clone the session using the cookie data
         if (tokenCookie) {
-          var credentials = { sessionToken: tokenCookie };
-          AuthService.cloneSession(credentials).then(
+          AuthService.cloneSession().then(
             /* SUCCESSFUL CLONING */
             function() {
               $rootScope.restoreSession.resolve();
