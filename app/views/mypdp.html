@@ -1,20 +1,89 @@
 <div ng-if='currentUser'>
-  Welcome, {{ currentUser.username }}!
+  <h1>Welcome, {{ currentUser.username }}!</h1>
 </div>
 
-<div ng-if='isAuthenticated()'>
-  <em>You're autheticated!</em>
-</div>
-<div ng-if='!isAuthenticated()'>
-  <em>YOU ARE NOT AUTHENTICATED</em>
-</div>
-
-Here is some text!
-
-<div ng-if='currentUser.isAdmin'>You're admin.</div>
+<div ng-if='currentUser.isAdmin'>You're an admin<span ng-if='currentUser.isDeveloper'> and a developer</span>.</div>
 
 <hr>
-In the currentUser object:
-<div ng-repeat="(key, value) in currentUser">
-  {{ key }} goes to {{ value }}
+<div class="row">
+  <div class="col-sm-6">
+    <h2>Access Point's</h2>
+    <div class="panel-group" id="apCollapse">
+      <div ng-repeat="(key, ap) in currentUser.aps" class="panel panel-default">
+        <div class="panel-heading accordion-toggle" data-toggle="collapse" data-target="#collapse{{key}}" ng-click="collapse{{key}}.open =!collapse{{key}}.open">
+          <h4 class="panel-title">
+            {{ap.name}} ({{ap.type}}) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': collapse{{key}}.open, 'glyphicon-chevron-right': !collapse{{key}}.open}"></i>
+          </h4>
+        </div>
+        <div id="collapse{{key}}" class="panel-collapse collapse">
+          <div class="panel-body">
+            <a data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>
+            <p>Location: {{ap.devinfo.location}}</p>
+            <p>List apps here!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class='col-sm-6'>
+    <h2>Groups</h2>
+    <div class="panel-group" id="apCollapse">
+      <div ng-repeat="group in groups" class="panel panel-default">
+        <div class="panel-heading accordion-toggle" data-toggle="collapse" data-target="#group{{group}}" ng-click="group{{group}}.open =!group{{group}}.open">
+          <h4 class="panel-title">
+            Group: {{group}} <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': group{{group}}.open, 'glyphicon-chevron-right': !group{{group}}.open}"></i>
+          </h4>
+        </div>
+        <div id="group{{group}}" class="panel-collapse collapse">
+          <div class="panel-body">
+            <a data-toggle="modal" data-target="#modalGroup{{group}}">Configure this Group of Access Points</a>
+            <h4>AP's in this Group</h4>
+            <ul>
+              <li ng-repeat="(name, belongs) in groups_map" ng-if="group == belongs">{{name}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<div ng-repeat="(key, ap) in currentUser.aps" class="modal fade" id="modal{{key}}" tabindex="-1" role="dialog" aria-labelledby="ap{{key}}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">{{ap.name}}</h4>
+      </div>
+      <div class="modal-body">
+        In this area you will be able to configure {{ap.name}}!!
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div ng-repeat="group in groups" class="modal fade" id="modalGroup{{group}}" tabindex="-1" role="dialog" aria-labelledby="group{{group}}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Group: {{group}}</h4>
+      </div>
+      <div class="modal-body">
+        <p>In this area you will be able to configure Access Points in Group {{group}}!!</p>
+        <p>This includes these Access Points:</p>
+        <ul>
+          <li ng-repeat="(name, belongs) in groups_map" ng-if="group == belongs">{{name}}</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
 </div>

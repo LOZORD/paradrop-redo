@@ -18,8 +18,14 @@ angular.module('paradropApp', [
     'ngSanitize',
     'ngTouch',
     'paradropServices',
-    'ipCookie'
+    'ipCookie',
+    'snap'
   ])
+  .config(function(snapRemoteProvider) {
+    snapRemoteProvider.globalOptions.disable = 'right';
+    snapRemoteProvider.globalOptions.tapToClose = false;
+    snapRemoteProvider.globalOptions.touchToDrag = false;
+  })
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {

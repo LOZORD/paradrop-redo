@@ -22,6 +22,18 @@ angular.module('paradropApp')
             AuthService.destroySession();
           }
         }
+        $scope.groups = [1,2,3];
+
+        $scope.groups_map = {
+          fakeAp1: 1,
+          fakeAp2: 3,
+          fakeAp3: 2,
+          fakeAp4: 3,
+          fakeAp5: 2,
+          fakeAp6: 2,
+          fakeAp7: 3,
+          fakeAp8: 2
+        };
       });
     }
   ]);

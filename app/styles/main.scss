@@ -19,6 +19,48 @@ body {
   padding-bottom: 20px;
 }
 
+.main-content {
+  background: #FFF;
+}
+
+.slide-menu {
+  background: #ccc;
+}
+
+/* CSSTerm.com Simple CSS menu */
+
+.slide-menu ul {
+  margin: 0; 
+  padding: 0;
+  width:100%;
+  list-style-type: none;
+}
+
+.slide-menu li {
+  border-bottom-style: dotted;
+  border-width: 1px;
+}
+.slide-menu ul li a {
+  text-decoration: none;
+  color: white; 
+  padding: 10.5px 11px;
+  background-color: #ccc;
+  display:block;
+}
+
+.slide-menu h4 {
+  color: #000;  
+}
+ 
+.slide-menu ul li a:visited {
+  color: white;
+}
+ 
+.slide-menu ul li a:hover, .menu_simple ul li .current {
+  color: white;
+  background-color: #ddd;
+}
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
@@ -92,4 +134,9 @@ body {
   .jumbotron {
     border-bottom: 0;
   }
+}
+
+//for logo
+.nav-logo {
+  padding-left: 15px;
 }

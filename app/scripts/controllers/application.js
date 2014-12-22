@@ -9,8 +9,8 @@
  * Included in the <body> tag, this controller has global scope
  */
 angular.module('paradropApp')
-  .controller('ApplicationCtrl', ['$q', '$scope', '$location', 'AuthService', 'ipCookie',
-    function ($q, $scope, $location, AuthService, ipCookie) {
+  .controller('ApplicationCtrl', ['snapRemote', '$q', '$scope', '$location', 'AuthService', 'ipCookie',
+    function (snapRemote, $q, $scope, $location, AuthService, ipCookie) {
     $scope.initCurrentUser = $q.defer();
       $scope.restoreSession.promise.then(function(){
         $scope.currentUser = AuthService.getSession();
@@ -40,6 +40,7 @@ angular.module('paradropApp')
               /* SUCCESSFUL LOGOUT */
               function(result) {
                 $scope.currentUser = null;
+                snapRemote.close();
               },
               /* FAILURE LOGOUT */
               function (result) {
