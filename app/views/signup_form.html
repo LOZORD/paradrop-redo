@@ -2,8 +2,9 @@
 <div ng-controller='LoginCtrl'>
   <h1>New User Signup</h1>
 
-  <form name='loginForm'
+  <form name='signupForm'
         method='post'
+        novalidate
         ng-controller='NewUserCtrl'
         ng-submit='create(signupData)'
         novalidate form-autofill-fix>
@@ -12,56 +13,142 @@
       <label for='username'>
         Username:
       </label>
-      <input type='text' id='username' class='form-control' ng-model='signupData.username'>
+      <input  type='text'
+              id='username'
+              name='username'
+              class='form-control'
+              required
+              ng-model='signupData.username'>
+      <div  class='error-container'
+            ng-show='signupForm.username.$dirty && signupForm.username.$invalid'>
+        <small class='error' ng-show='signupForm.username.$error.required'>
+          A username is required!
+        </small>
+      </div>
     </div>
 
     <div class='form-group'>
       <label for='password'>
         Password:
       </label>
-      <input type='password' id='password' class='form-control' ng-model='signupData.password'>
+      <input  type='password'
+              id='password'
+              name='password'
+              class='form-control'
+              required
+              ng-model='signupData.password'>
+      <div  class='error-container'
+            ng-show='signupForm.password.$dirty && signupForm.password.$invalid'>
+        <small class='error' ng-show='signupForm.password.$error.required'>
+          A password is required!
+        </small>
+      </div>
     </div>
 
     <div class='form-group'>
       <label for='confirmation'>
         Password Confirmation:
       </label>
-      <input type='password' id='confirmation' class='form-control' ng-model='signupData.confirmation'>
+      <input  type='password'
+              id='confirmation'
+              name='confirmation'
+              class='form-control'
+              required
+              ng-model='signupData.confirmation'>
+      <div  class='error-container'
+            ng-show='signupForm.confirmation.$dirty && signupForm.confirmation.$invalid'>
+        <small class='error' ng-show='signupForm.confirmation.$error.required'>
+          A confirmation is required!
+        </small>
+        <!-- TODO -> confirmation should match password
+        <small class='error' ng-show='signupForm.confirmation.value!==signupForm.password.value'>
+          Confirmation doesn't match password!
+        </small>
+        -->
+      </div>
     </div>
 
     <div class='form-group'>
       <label for='fullname'>
         Full Name:
       </label>
-      <input type='text' id='fullname' class='form-control' ng-model='signupData.fullname'>
+      <input  type='text'
+              id='fullname'
+              name='fullname'
+              class='form-control'
+              required
+              ng-model='signupData.fullname'>
+      <div  class='error-container'
+            ng-show='signupForm.fullname.$dirty && signupForm.fullname.$invalid'>
+        <small class='error' ng-show='signupForm.fullname.$error.required'>
+          A full name is required!
+        </small>
+      </div>
     </div>
 
     <div class='form-group'>
       <label for='public'>
         Public Name:
       </label>
-      <input type='text' id='public' class='form-control' ng-model='signupData.public'>
+      <input  type='text'
+              id='public'
+              name='public'
+              class='form-control'
+              required
+              ng-model='signupData.public'>
+      <div  class='error-container'
+            ng-show='signupForm.public.$dirty && signupForm.public.$invalid'>
+        <small class='error' ng-show='signupForm.public.$error.required'>
+          A public name is required!
+        </small>
+      </div>
     </div>
 
     <div class='form-group'>
       <label for='email'>
         Email:
       </label>
-      <input type='email' id='email' class='form-control' ng-model='signupData.email'>
+      <input  type='email'
+              id='email'
+              name='email'
+              class='form-control'
+              required
+              ng-model='signupData.email'>
+      <div  class='error-container'
+            ng-show='signupForm.email.$dirty && signupForm.email.$invalid'>
+        <small class='error' ng-show='signupForm.email.$error.required'>
+          An email is required!
+        </small>
+        <small class='error' ng-show='signupForm.email.$error.email'>
+          Please enter a valid email.
+        </small>
+      </div>
     </div>
 
     <div class='form-group'>
       <label for='contact'>
         Contact:
       </label>
-      <input type='text' id='contact' class='form-control' ng-model='signupData.contact'>
+      <input  type='text'
+              id='contact'
+              name='contact'
+              class='form-control'
+              required
+              ng-model='signupData.contact'>
+      <div  class='error-container'
+            ng-show='signupForm.contact.$dirty && signupForm.contact.$invalid'>
+        <small class='error' ng-show='signupForm.contact.$error.required'>
+          A contact is required!
+        </small>
+      </div>
     </div>
 
     <div class='form-group'>
       <label for='isDeveloper'>
         Develop for Paradrop?
       </label>
-      <input type='checkbox' ng-model='signupData.isDeveloper'>
+      <input  type='checkbox'
+              ng-model='signupData.isDeveloper'>
     </div>
 
     <button type='submit' class='btn btn-primary btn-block'>Sign up</button>

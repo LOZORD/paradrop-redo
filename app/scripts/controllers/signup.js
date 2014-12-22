@@ -37,6 +37,9 @@ angular.module('paradropApp')
             console.log('GOT ' + key + ' -> ' + data[key]);
           }
 
+
+          //TODO something with loginForm[fieldNames].$valid
+
           console.log('removing confirmation field');
           delete data.confirmation;
 
