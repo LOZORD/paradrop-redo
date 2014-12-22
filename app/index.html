@@ -35,6 +35,7 @@
           </div>
           <div class="collapse navbar-collapse" id="paradrop-navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
+              <li ng-if="!isAuthenticated()"><a ng-href="#!/user/new">Signup</a></li>
               <li ng-if="!isAuthenticated()"><a ng-href="#!/login">Login</a></li>
               <li ng-if=" isAuthenticated()"><a ng-href="#!/my_paradrop">My Paradrop</a></li>
               <li><a ng-href="#!/">Home</a></li>

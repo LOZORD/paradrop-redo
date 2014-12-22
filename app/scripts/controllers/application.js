@@ -16,8 +16,12 @@ angular.module('paradropApp')
         $scope.currentUser = AuthService.getSession();
         $scope.initCurrentUser.resolve();
       });
-      //$scope.myTEST_TEST = 600;
+
       $scope.isAuthenticated = AuthService.isAuthenticated;
+
+      $scope.hasSessionCookie = function() {
+        return !!ipCookie('sessionToken');
+      };
 
       $scope.setCurrentUser = function (user) {
         $scope.currentUser = AuthService.getSession();
