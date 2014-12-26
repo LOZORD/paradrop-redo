@@ -24,6 +24,11 @@ module.exports = function (grunt) {
   //include grunt-html-snapshot task
   grunt.loadNpmTasks('grunt-html-snapshot');
 
+  //include grunt-forever
+  /* Leo: this allows us to run `grunt serve` in the background */
+  // TODO figure out how to use!
+  //grunt.loadNpmTasks('grunt-forever');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
 

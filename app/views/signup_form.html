@@ -18,11 +18,20 @@
               name='username'
               class='form-control'
               required
+              ng-trim
+              ng-maxlength=50
+              ng-pattern=/^[\w]+$/
               ng-model='signupData.username'>
-      <div  class='error-container'
+      <div  class='error-container bg-danger'
             ng-show='signupForm.username.$dirty && signupForm.username.$invalid'>
         <small class='error' ng-show='signupForm.username.$error.required'>
           A username is required!
+        </small>
+        <small class='error' ng-show='signupForm.username.$error.maxlength'>
+          Usernames must be less than 51 characters!
+        </small>
+        <small class='error' ng-show='signupForm.username.$error.pattern'>
+          Usernames can only contain alphanumerics and underscores!
         </small>
       </div>
     </div>
@@ -36,11 +45,15 @@
               name='password'
               class='form-control'
               required
+              ng-maxlength=50
               ng-model='signupData.password'>
-      <div  class='error-container'
+      <div  class='error-container bg-danger'
             ng-show='signupForm.password.$dirty && signupForm.password.$invalid'>
         <small class='error' ng-show='signupForm.password.$error.required'>
           A password is required!
+        </small>
+        <small class='error' ng-show='signupForm.password.$error.maxlength'>
+          Passwords can only be less than 51 characters!
         </small>
       </div>
     </div>
@@ -54,11 +67,15 @@
               name='confirmation'
               class='form-control'
               required
+              ng-maxlength=50
               ng-model='signupData.confirmation'>
-      <div  class='error-container'
+      <div  class='error-container bg-danger'
             ng-show='signupForm.confirmation.$dirty && signupForm.confirmation.$invalid'>
         <small class='error' ng-show='signupForm.confirmation.$error.required'>
           A confirmation is required!
+        </small>
+        <small class='error' ng-show='signupForm.confirmation.$error.maxlength'>
+          Password confirmations can only be less than 51 characters!
         </small>
         <!-- TODO -> confirmation should match password
         <small class='error' ng-show='signupForm.confirmation.value!==signupForm.password.value'>
@@ -77,11 +94,16 @@
               name='fullname'
               class='form-control'
               required
+              ng-trim
+              ng-maxlength=50
               ng-model='signupData.fullname'>
-      <div  class='error-container'
+      <div  class='error-container bg-danger'
             ng-show='signupForm.fullname.$dirty && signupForm.fullname.$invalid'>
         <small class='error' ng-show='signupForm.fullname.$error.required'>
           A full name is required!
+        </small>
+        <small class='error' ng-show='signupForm.fullname.$error.maxlength'>
+          Due to our current system, full names can only be less than 51 characters.
         </small>
       </div>
     </div>
@@ -95,11 +117,16 @@
               name='public'
               class='form-control'
               required
+              ng-trim
+              ng-maxlength=50
               ng-model='signupData.public'>
-      <div  class='error-container'
+      <div  class='error-container bg-danger'
             ng-show='signupForm.public.$dirty && signupForm.public.$invalid'>
         <small class='error' ng-show='signupForm.public.$error.required'>
           A public name is required!
+        </small>
+        <small class='error' ng-show='signupForm.public.$error.maxlength'>
+          Due to our current system, public names can only be less than 51 characters
         </small>
       </div>
     </div>
@@ -113,14 +140,19 @@
               name='email'
               class='form-control'
               required
+              ng-trim
+              ng-maxlength=50
               ng-model='signupData.email'>
-      <div  class='error-container'
+      <div  class='error-container bg-danger'
             ng-show='signupForm.email.$dirty && signupForm.email.$invalid'>
         <small class='error' ng-show='signupForm.email.$error.required'>
           An email is required!
         </small>
         <small class='error' ng-show='signupForm.email.$error.email'>
           Please enter a valid email.
+        </small>
+        <small class='error' ng-show='signupForm.email.$error.maxlength'>
+          Emails must be less than 51 characters!
         </small>
       </div>
     </div>
@@ -134,11 +166,16 @@
               name='contact'
               class='form-control'
               required
+              ng-trime
+              ng-maxlength=50
               ng-model='signupData.contact'>
-      <div  class='error-container'
+      <div  class='error-container bg-danger'
             ng-show='signupForm.contact.$dirty && signupForm.contact.$invalid'>
         <small class='error' ng-show='signupForm.contact.$error.required'>
           A contact is required!
+        </small>
+        <small class='error' ng-show='signupForm.contact.$error.maxlength'>
+          Contacts must be less than 51 characters!
         </small>
       </div>
     </div>
