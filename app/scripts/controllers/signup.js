@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS',
-    function ($scope, $location, $http, URLS) {
+  .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS', '$routeParams',
+    function ($scope, $location, $http, URLS, $routeParams) {
       /*
         first attempt to login the user b/c if they have a valid
         session, they should be required to log out if they want to
@@ -108,6 +108,27 @@ angular.module('paradropApp')
               }
           ); //end API call
         }; //end scope.create
+
+        $scope.vToken = $routeParams.verificationToken;
+
+        if ($scope.vToken) {
+          console.log('got verf token as ', $scope.vToken);
+          var verifyUrl = URLS.https + 'verify/' + $scope.vToken.toString();
+          $http.post(verifyUrl, {})
+          .then(
+            /* SUCCESS */
+            function (response) {
+              console.log(response);
+              //TODO
+              console.log('NOW DO CLONE SESSION WITH ', response.data.sessionToken);
+              //then redirect to my_pdp
+            },
+            /* FAILURE */
+            function (response) {
+              console.log('ERROR VERIFYING USER!!!');
+            }
+          );
+        }
       }); //end initCurrentUser check
     }
   ]);

@@ -50,6 +50,9 @@ angular.module('paradropApp', [
         templateUrl: 'views/signup/notify.html'
       })
       .when('/verify', {
+        redirectTo: '/'
+      })
+      .when('/verify/:verificationToken', {
         templateUrl: 'views/signup/verify.html',
         controller:   'NewUserCtrl'
       })
