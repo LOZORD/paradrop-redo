@@ -6,7 +6,7 @@
         method='post'
         novalidate
         ng-controller='NewUserCtrl'
-        ng-submit='create(signupData)'
+        ng-submit='create(signupData, signupForm.$valid)'
         novalidate form-autofill-fix>
 
     <div class='form-group'>
@@ -188,7 +188,7 @@
               ng-model='signupData.isDeveloper'>
     </div>
 
-    <button type='submit' class='btn btn-primary btn-block'>Sign up</button>
+    <button type='submit' class='btn btn-primary btn-block' ng-disabled='signupForm.$invalid'>Sign up</button>
   </form>
   <br>
   <div>

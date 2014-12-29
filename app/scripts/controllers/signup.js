@@ -32,18 +32,19 @@ angular.module('paradropApp')
           isDeveloper:  false
         };
 
-        $scope.create = function (data) {
+        $scope.create = function (data, isValid) {
           for (var key in data) {
             console.log('GOT ' + key + ' -> ' + data[key]);
+          }
+
+          if (isValid !== true) {
+            console.log('got isValid as falsy ', isValid);
+            return;
           }
 
 
           //TODO something with loginForm[fieldNames].$valid
 
-          console.log('removing confirmation field');
-          delete data.confirmation;
-
-          /*
           if (data.password !== data.confirmation) {
             alert('password does not match confirmation');
             return;
@@ -53,28 +54,36 @@ angular.module('paradropApp')
 
           //TODO actually, we can do live validation with angular!
 
-          */
+
+          var payload = {
+            username:     data.username,
+            password:     data.password,
+            fullname:     data.fullname,
+            'public':     data['public'],
+            email:        data.email,
+            contact:      data.contact,
+            isDeveloper:  data.isDeveloper
+          };
 
           console.log('SENDING:');
 
-          console.log(data);
+          console.log(payload);
 
           var signupURL = URLS.https + 'user/new';
 
           console.log(signupURL);
 
           var sendResult = $http
-            .post(signupURL, data)
+            .post(signupURL, payload)
             .then(
               /* USER SIGNUP might have been ok */
               function (response) {
-                console.log(result);
-                if (response.result === true) {
+                console.log(response);
+                if (response.data.result === true) {
                   //yay! it worked
                   console.log('it worked!');
-                  //display success modal
-                  //TODO
                   //redirect to verification page
+                  //TODO
                 }
                 else {
                   alert('errors in signing up');
