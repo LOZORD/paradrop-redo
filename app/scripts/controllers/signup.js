@@ -42,7 +42,6 @@ angular.module('paradropApp')
             return;
           }
 
-
           //TODO something with loginForm[fieldNames].$valid
 
           if (data.password !== data.confirmation) {
@@ -51,9 +50,7 @@ angular.module('paradropApp')
           }
 
           //can do more validation below...
-
           //TODO actually, we can do live validation with angular!
-
 
           var payload = {
             username:     data.username,
@@ -64,6 +61,8 @@ angular.module('paradropApp')
             contact:      data.contact,
             isDeveloper:  data.isDeveloper
           };
+
+          //$scope.signupData = payload;
 
           console.log('SENDING:');
 
@@ -83,7 +82,7 @@ angular.module('paradropApp')
                   //yay! it worked
                   console.log('it worked!');
                   //redirect to verification page
-                  //TODO
+                  $location.url('/notify');
                 }
                 else {
                   alert('errors in signing up');
