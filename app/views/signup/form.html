@@ -22,6 +22,7 @@
               ng-maxlength=50
               ng-pattern=/^[\w]+$/
               ng-model='signupData.username'>
+              <!-- TODO add ajax username-available-validator -->
       <div  class='error-container bg-danger'
             ng-show='signupForm.username.$dirty && signupForm.username.$invalid'>
         <small class='error' ng-show='signupForm.username.$error.required'>
@@ -46,6 +47,7 @@
               class='form-control'
               required
               ng-maxlength=50
+              confirm-password
               ng-model='signupData.password'>
       <div  class='error-container bg-danger'
             ng-show='signupForm.password.$dirty && signupForm.password.$invalid'>
@@ -68,6 +70,7 @@
               class='form-control'
               required
               ng-maxlength=50
+              confirm-password
               ng-model='signupData.confirmation'>
       <div  class='error-container bg-danger'
             ng-show='signupForm.confirmation.$dirty && signupForm.confirmation.$invalid'>
@@ -77,11 +80,9 @@
         <small class='error' ng-show='signupForm.confirmation.$error.maxlength'>
           Password confirmations can only be less than 51 characters!
         </small>
-        <!-- TODO -> confirmation should match password
-        <small class='error' ng-show='signupForm.confirmation.value!==signupForm.password.value'>
+        <small class='error' ng-show='signupForm.confirmation.$error.confirmPassword'>
           Confirmation doesn't match password!
         </small>
-        -->
       </div>
     </div>
 
