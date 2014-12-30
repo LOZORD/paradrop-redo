@@ -32,6 +32,19 @@ angular.module('paradropApp')
         }
       });
 
+      $scope.authorizePage = function ()  { 
+        if (!$scope.isAuthenticated()  || !ipCookie('sessionToken')) {
+          $location.url('/login');
+
+          //if the token exists for the client, but it is invalid by the server
+          //or by previous (other tab) logout
+          if ($scope.isAuthenticated()) {
+            $scope.currentUser = null;
+            AuthService.destroySession();
+          }
+        }
+      };
+
       $scope.logout = function () {
         if (($scope.isAuthenticated() || $scope.currentUser) && ipCookie('sessionToken'))
         {
