@@ -34,7 +34,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
           credentials.already_hashed = false;
 
-          var loginURL = URLS.https + 'authenticate/signin';
+          var loginURL = URLS.current + 'authenticate/signin';
 
           var retData = $http
             .post(loginURL, credentials)
@@ -54,7 +54,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       //restore session from token
       authService.cloneSession = function () {
           var credentials = {sessionToken: ipCookie('sessionToken')};
-          var loginURL = URLS.https + 'authenticate/cloneSession';
+          var loginURL = URLS.current + 'authenticate/cloneSession';
           var retData = $http
             .post(loginURL, credentials)
             .then(buildSession)
@@ -77,7 +77,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       };
 
       authService.logout = function () {
-        var logoutURL = URLS.https + 'authenticate/signout';
+        var logoutURL = URLS.current + 'authenticate/signout';
         var payload = { sessionToken: ipCookie('sessionToken') };
         ipCookie.remove('sessionToken');
         ipCookie.remove('shouldPersist');

@@ -91,20 +91,16 @@ angular.module('paradropApp', [
         var tokenCookie = ipCookie('sessionToken');
         //attempt to clone the session using the cookie data
         if (tokenCookie) {
-          if(ipCookie('sessionToken') != ipCookie('oldToken')){
-            //so we don't double call clone session
-            ipCookie('oldToken', ipCookie('sessionToken'), { expires: 7 });
-            AuthService.cloneSession().then(
-              /* SUCCESSFUL CLONING */
-              function() {
-                $rootScope.restoreSession.resolve();
-              },
-              /* UNSUCCESSFUL CLONING */
-              function() {
-                $rootScope.restoreSession.resolve();
-              }
-            );
-          }
+          AuthService.cloneSession().then(
+            /* SUCCESSFUL CLONING */
+            function() {
+              $rootScope.restoreSession.resolve();
+            },
+            /* UNSUCCESSFUL CLONING */
+            function() {
+              $rootScope.restoreSession.resolve();
+            }
+          );
         }
         //otherwise, just resolve the promise w/o using the cookie
         else {
@@ -124,4 +120,7 @@ angular.module('paradropApp', [
   .constant('URLS', {
     http: 'http://paradrop.wings.cs.wisc.edu:30333/v1/',
     https: 'https://paradrop.wings.cs.wisc.edu:30332/v1/',
-  });
+    //Change the current url to change all calls globally
+    current: 'https://paradrop.wings.cs.wisc.edu:30332/v1/'
+  })
+  .constant('DEV_MODE', true);

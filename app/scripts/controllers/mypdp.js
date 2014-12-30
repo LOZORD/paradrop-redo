@@ -11,7 +11,7 @@ angular.module('paradropApp')
   .controller('MyParadropCtrl', ['AuthService', '$scope', '$location', 'ipCookie',
     function (AuthService, $scope, $location, ipCookie) {
       //TODO
-      $scope.initCurrentUser.promise.then($scope.authorizePage());
+      $scope.initCurrentUser.promise.then(function(){$scope.authorizePage();});
         $scope.groups = [1,2,3];
 
         $scope.groups_map = {

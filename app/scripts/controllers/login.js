@@ -58,13 +58,13 @@ angular.module('paradropApp')
                   if(error.data === 'User is not verified!'){
                     alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
                   }else if(error.data === 'User is disabled!'){
-                    alert('Your account has been disabled. Please contact us at admin@paradrop.io if you think there has been an error.'); //TODO
+                    alert('Your account has been disabled. Please contact us at admin@paradrop.io if you think there has been an error.');
                   }else if(error.data === 'Threshold Met!'){
                     alert('Your account has been temporarily frozen due to too many failed attempts to login. If you think there has been an error contact admin@paradrop.io');
                   }else if(error.data){
                     alert(error.data);
                   }else{
-                    alert('Login Failed!');
+                    alert('Login Failed! This site is currently in development if you are seeing this error please visit https://paradrop.wings.cs.wisc.edu:30332/v1 and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
                   }
                 }
               );
