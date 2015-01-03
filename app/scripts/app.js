@@ -30,6 +30,14 @@ angular.module('paradropApp', [
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl'
       })
+      .when('/blog', {
+        templateUrl: 'views/blog/index.html',
+        controller: 'BlogCtrl'
+      })
+      .when('/blog/:ts', {
+        templateUrl: 'views/blog/show.html',
+        controller: 'BlogCtrl'
+      })
       .when('/contact', {
         templateUrl: 'views/contact.html',
         controller: 'ContactCtrl'
