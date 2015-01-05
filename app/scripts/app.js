@@ -10,6 +10,8 @@
  */
 angular.module('paradropApp', [
     'ngAnimate',
+    'd3',
+    'paradropApp.directive',
     'ngAria',
     'ngCookies',
     'ngMessages',
