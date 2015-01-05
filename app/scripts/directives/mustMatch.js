@@ -30,7 +30,9 @@ angular.module('paradropApp')
 
       };
 
-      //scope.$watch(masterInput, ctrl.$validators.mustMatch);
+      //FIXME, this validator func also needs to be called when password is changed
+      //case: user enters password, enters conf, then changes password s.t. pw!=conf
+      scope.$watch(masterInput, ctrl.$validators.mustMatch);
       masterInput.focus(ctrl.$validators.mustMatch);
     }
 
