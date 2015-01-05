@@ -68,6 +68,7 @@ angular.module('paradropApp')
                 }
                 else {
                   alert('We could not complete the signup process. Please try again.');
+                  alert(response.data.errMsg.join('<br>'));
                 }
               },
               /* USER SIGNUP FAILED */

@@ -69,19 +69,23 @@
               class='form-control'
               required
               ng-maxlength=50
-              compare-to='signupData.password'
+              must-match='password'
               ng-model='signupData.confirmation'>
       <div  class='error-container bg-danger'
-            ng-show='signupForm.confirmation.$dirty && signupForm.confirmation.$invalid'>
-        <small class='error' ng-show='signupForm.confirmation.$error.required'>
-          A confirmation is required!
-        </small>
-        <small class='error' ng-show='signupForm.confirmation.$error.maxlength'>
-          Password confirmations can only be less than 51 characters!
-        </small>
-        <small class='error' ng-show='signupForm.confirmation.$error.compareTo'>
-          Confirmation doesn't match password!
-        </small>
+            ng-show='signupForm.confirmation.$invalid'>
+        <div class='error-container' ng-show='signupForm.confirmation.$dirty'>
+          <small class='error' ng-show='signupForm.confirmation.$error.required'>
+            A confirmation is required!
+          </small>
+          <small class='error' ng-show='signupForm.confirmation.$error.maxlength'>
+            Password confirmations can only be less than 51 characters!
+          </small>
+        </div>
+        <div ng-show='!!signForm.confirmation.$error.required'>
+          <small class='error' ng-show='signupForm.confirmation.$error.mustMatch'>
+            Confirmation doesn't match password!
+          </small>
+        </div>
       </div>
     </div>
 
