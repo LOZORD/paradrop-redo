@@ -33,24 +33,16 @@ angular.module('paradropApp')
         };
 
         $scope.create = function (data, isValid) {
-          for (var key in data) {
-            console.log('GOT ' + key + ' -> ' + data[key]);
-          }
-
           if (isValid !== true) {
-            console.log('got isValid as falsy ', isValid);
             return;
           }
 
-          //TODO something with loginForm[fieldNames].$valid
-
+          //FIXME should not be done in controller!
+          //TODO: use directive instead
           if (data.password !== data.confirmation) {
             alert('password does not match confirmation');
             return;
           }
-
-          //can do more validation below...
-          //TODO actually, we can do live validation with angular!
 
           var payload = {
             username:     data.username,
@@ -62,86 +54,54 @@ angular.module('paradropApp')
             isDeveloper:  data.isDeveloper
           };
 
-          //$scope.signupData = payload;
-
-          console.log('SENDING:');
-
-          console.log(payload);
-
           var signupURL = URLS.https + 'user/new';
-
-          console.log(signupURL);
 
           var sendResult = $http
             .post(signupURL, payload)
             .then(
               /* USER SIGNUP might have been ok */
               function (response) {
-                console.log(response);
                 if (response.data.result === true) {
                   //yay! it worked
-                  console.log('it worked!');
                   //redirect to verification page
                   $location.url('/notify');
                 }
                 else {
-                  alert('errors in signing up');
-                  var errors = response.errorMessages;
-
-                  //TODO
-                  for (var e in errors) {
-                    console.log(errors[e]);
-                  }
+                  alert('We could not complete the signup process. Please try again.');
                 }
               },
               /* USER SIGNUP FAILED */
               function (response) {
-                console.log(response);
-                alert('ya done goofed!');
-                alert('errors in signing up');
-                var errors = response.errorMessages;
-
-                //TODO
-                for (var e in errors) {
-                  console.log(errors[e]);
-                }
+                alert('There was a failure in the signup process. Please try again.');
               }
           ); //end API call
         }; //end scope.create
 
+        /* VERIFICATION CODE BELOW */
         $scope.vToken = $routeParams.verificationToken;
 
         if ($scope.vToken) {
-          console.log('got verf token as', $scope.vToken);
           var verifyUrl = URLS.https + 'user/verify/' + $scope.vToken.toString();
-          $http.post(verifyUrl, {})
+          $http.post(verifyUrl, {}) //send an empty JSON
           .then(
             /* SUCCESS */
             function (response) {
-              console.log(response);
-              var newToken = response.data.sessionToken;
-              console.log('NOW DO CLONE SESSION WITH', newToken);
-              var credentials = { sessionToken: newToken };
+              var credentials = { sessionToken: response.data.sessionToken };
               AuthService.cloneSession(credentials)
                 .then(
                   /* SUCCESS */
                   function (cloneResponse) {
-                    console.log('successful cloning!');
                     $location.url('/my_paradrop');
                   },
                   /* FAILURE */
                   function (cloneResponse) {
-                    alert('could not clone new session from verif');
-                    //XXX perhaps redirect to home or signup
+                    alert('We could not set us your new account. Please try reverifying using the email we sent you.');
                   }
                );
-              //then redirect to my_pdp
             },
             /* FAILURE */
             function (response) {
-              console.log('ERROR VERIFYING USER!!!');
-              //XXX perhaps refresh page/empty forms
-              //or prompt user to attempt again
+              $location.url('/user/new');
             }
           );
         }
