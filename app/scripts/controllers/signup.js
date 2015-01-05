@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS', '$routeParams',
-    function ($scope, $location, $http, URLS, $routeParams) {
+  .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS', '$routeParams', 'AuthService',
+    function ($scope, $location, $http, URLS, $routeParams, AuthService) {
       /*
         first attempt to login the user b/c if they have a valid
         session, they should be required to log out if they want to
@@ -112,20 +112,36 @@ angular.module('paradropApp')
         $scope.vToken = $routeParams.verificationToken;
 
         if ($scope.vToken) {
-          console.log('got verf token as ', $scope.vToken);
-          var verifyUrl = URLS.https + 'verify/' + $scope.vToken.toString();
+          console.log('got verf token as', $scope.vToken);
+          var verifyUrl = URLS.https + 'user/verify/' + $scope.vToken.toString();
           $http.post(verifyUrl, {})
           .then(
             /* SUCCESS */
             function (response) {
               console.log(response);
-              //TODO
-              console.log('NOW DO CLONE SESSION WITH ', response.data.sessionToken);
+              var newToken = response.data.sessionToken;
+              console.log('NOW DO CLONE SESSION WITH', newToken);
+              var credentials = { sessionToken: newToken };
+              AuthService.cloneSession(credentials)
+                .then(
+                  /* SUCCESS */
+                  function (cloneResponse) {
+                    console.log('successful cloning!');
+                    $location.url('/my_paradrop');
+                  },
+                  /* FAILURE */
+                  function (cloneResponse) {
+                    alert('could not clone new session from verif');
+                    //XXX perhaps redirect to home or signup
+                  }
+               );
               //then redirect to my_pdp
             },
             /* FAILURE */
             function (response) {
               console.log('ERROR VERIFYING USER!!!');
+              //XXX perhaps refresh page/empty forms
+              //or prompt user to attempt again
             }
           );
         }
