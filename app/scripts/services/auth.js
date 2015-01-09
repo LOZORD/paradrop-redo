@@ -14,7 +14,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
           result.data.sessionToken,
           result.data.isdeveloper,
           result.data.admin,
-          result.data.aps
+          result.data.aps,
+          result.data.fullname
         );
 
         return theUser;
@@ -111,6 +112,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       this.isDeveloper = null;
       this.isAdmin = null;
       this.aps = null;
+      this.fullname = null;
 
       this.getSession = function () {
         return {
@@ -118,12 +120,14 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
           id: this.id,
           isDeveloper: this.isDeveloper,
           isAdmin: this.isAdmin,
-          aps: this.aps
+          aps: this.aps,
+          fullname: this.fullname
         };
       };
 
-      this.create = function (username, sessionId, isDeveloper, isAdmin, aps) {
+      this.create = function (username, sessionId, isDeveloper, isAdmin, aps, fullname) {
         this.username = username;
+        this.fullname = fullname;
         this.id = sessionId;
         //boolean (binary) fields, default to 0 (false)
         this.isDeveloper = parseInt(isDeveloper, 2) || 0;
@@ -140,6 +144,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isDeveloper = null;
         this.isAdmin = null;
         this.aps = null;
+        this.fullname = null;
       };
 
 

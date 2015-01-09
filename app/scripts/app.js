@@ -11,7 +11,6 @@
 angular.module('paradropApp', [
     'ngAnimate',
     'd3',
-    'paradropApp.directive',
     'ngAria',
     'ngCookies',
     'ngMessages',
@@ -19,6 +18,7 @@ angular.module('paradropApp', [
     'ngRoute',
     'ngSanitize',
     'ngTouch',
+    'highcharts-ng',
     'paradropServices',
     'ipCookie',
     'snap'
@@ -122,7 +122,9 @@ angular.module('paradropApp', [
   .constant('URLS', {
     http: 'http://paradrop.wings.cs.wisc.edu:30333/v1/',
     https: 'https://paradrop.wings.cs.wisc.edu:30332/v1/',
+    pdropvpn: 'https://10.1.0.214:30332/v1/',
+    alldayvpn: 'https://10.1.0.230:30332/v1/',
     //Change the current url to change all calls globally
-    current: 'https://paradrop.wings.cs.wisc.edu:30332/v1/'
+    current: 'https://dev.dbapi.paradrop.io/v1/'
   })
   .constant('DEV_MODE', true);

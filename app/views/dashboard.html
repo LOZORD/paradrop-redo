@@ -1,90 +1,58 @@
-<h1>Project Recon DashBoard Group: {{group_id}}</h1>
-metaData}}
-<div class='row'>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
+<h1>Project Recon {{group_id}}</h1>
+<div role="tabpanel">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li ng-click="redraw()" role="presentation" class="active"><a data-target="#dashboard" aria-controls="dashboard"  role="tab" data-toggle="tab">Dashboard</a></li>
+    <li role="presentation" ><a data-target="#home" aria-controls="home" role="tab" data-toggle="tab">Overview</a></li>
+    <li role="presentation"><a data-target="#tracking" aria-controls="tracking" role="tab" data-toggle="tab">Location Tracking</a></li>
+    <li role="presentation"><a data-target="#advanced" aria-controls="advanced" role="tab" data-toggle="tab">Advanced Settings</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane" id="home"><h1>Coming Soon!</h1></div>
+    <div role="tabpanel" class="tab-pane active" id="dashboard">
+      <div class='row'>
+        <div class='col-sm-12'>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Total Users</h3>
+            </div>
+            <div class="panel-body">
+              <img class="img-responsive center-block" ng-show="!contentLoaded" ng-src='http://alldayap.wings.cs.wisc.edu/nick/paradrop2.0/app/images/spinner.gif'/>
+              <highchart ng-show="contentLoaded" id="chart1" config="chartConfig"></highchart>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="panel-body">
-        {{currentUser.aps}}
+      <div class='row'>
+        <div class='col-sm-12'>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Chart 2</h3>
+            </div>
+            <div class="panel-body">
+              Chart 2
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
-      </div>
-      <div class="panel-body">
-        <div d3-bars bar-height="20" bar-padding="5"></div>
-      </div>
-    </div>
-  </div>
-</div>
-<div class='row'>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
-      </div>
-      <div class="panel-body">
-        CHART HERE!
-      </div>
-    </div>
-  </div>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
-      </div>
-      <div class="panel-body">
-        CHART HERE!
-      </div>
-    </div>
-  </div>
-</div>
-<div class='row'>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
-      </div>
-      <div class="panel-body">
-        CHART HERE!
+      <div class='row'>
+        <div class='col-sm-12'>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Chart 3</h3>
+            </div>
+            <div class="panel-body">
+              Chart 3
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+    <div role="tabpanel" class="tab-pane" id="tracking"><h1>Coming Soon!!</h1></div>
+    <div role="tabpanel" class="tab-pane" id="advanced"><h1>Coming Soon!!!</h1></div>
   </div>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
-      </div>
-      <div class="panel-body">
-        CHART HERE!
-      </div>
-    </div>
-  </div>
-</div>
-<div class='row'>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
-      </div>
-      <div class="panel-body">
-        CHART HERE!
-      </div>
-    </div>
-  </div>
-  <div class='col-sm-6'>
-    <div class="panel panel-primary">
-      <div class="panel-heading">
-        <h3 class="panel-title">Chart</h3>
-      </div>
-      <div class="panel-body">
-        CHART HERE!
-      </div>
-    </div>
-  </div>
+
 </div>
