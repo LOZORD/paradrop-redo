@@ -33,7 +33,8 @@
               <h3 class="panel-title">Chart 2</h3>
             </div>
             <div class="panel-body">
-              Chart 2
+              <img class="img-responsive center-block" ng-show="!content2Loaded" ng-src='http://alldayap.wings.cs.wisc.edu/nick/paradrop2.0/app/images/spinner.gif'/>
+              <highchart ng-show="content2Loaded" id="chart2" config="chartConfig2"></highchart>
             </div>
           </div>
         </div>

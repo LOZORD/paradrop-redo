@@ -1,14 +1,18 @@
-'use strict';
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+//  MODULE: Recon                                                            //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+//  DESCRIPTION: Helper class that deals with the sniff data coming from     //
+//  the dbapi. Instantiate this class with the original data from the dbapi  //
+//  data/get call to have it parse through the data into a reasonable format //
+//  you can then use this classes methods to return objects to graph.        //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
 
-/**
- * @ngdoc service
- * @name paradropApp.Recon
- * @description
- * # Recon
- * Service in the paradropApp.
- */
-angular.module('paradropApp')
-  .service('Recon', function () {
+
+function Recon () {
     this.data = null;
 
     /**
@@ -27,13 +31,13 @@ angular.module('paradropApp')
      */
     this.parseData = function(data) {
         var ts = Math.floor(Date.now() / 1000);
-        //console.log("Parsing data..." + ts);
+        console.log("Parsing data..." + ts);
         //console.log(data);
 
         this.data = {};
         
         // Run through all data to fill up
-        for (var i = 0; i < data.length; i++) {
+        for (i = 0; i < data.length; i++) {
             var mac = data[i].sendmac;
             var ts = data[i].ts;
             var ap = data[i].apid;
@@ -69,15 +73,15 @@ angular.module('paradropApp')
      */
     this.printData = function() {
         if(this.data !== null) {
-            //console.log('== Internal Recon.data:');
+            console.log('== Internal Recon.data:');
             var indent = "";
             var oldIndent = "";
 
             for(var mac in this.data) {
-                //console.log(mac + ':');
+                console.log(mac + ':');
                 indent = "    ";
                 for(var ts in this.data[mac]) {
-                    //console.log(indent + ts + ':');
+                    console.log(indent + ts + ':');
                     oldIndent = indent;
                     indent = "        ";
                     if(this.data[mac][ts].inside)
@@ -87,7 +91,7 @@ angular.module('paradropApp')
 
                     for(i = 0; i < this.data[mac][ts].signals.length; i++) {
                         var obj = this.data[mac][ts].signals[i];
-                        //console.log(indent + obj.ap + ": " + obj.rssi);
+                        console.log(indent + obj.ap + ": " + obj.rssi);
 
                     }
                     indent = oldIndent;
@@ -110,7 +114,7 @@ angular.module('paradropApp')
         for(var mac in this.data) {
             // We need to guarantee there are at least 2 ts's in the data for this to work
             if(this.data[mac].length < 2) {
-                //console.log('Skipping ' + mac + ' not enough data');
+                console.log('Skipping ' + mac + ' not enough data');
                 continue;
             }
             var minTS = undefined;
@@ -165,16 +169,16 @@ angular.module('paradropApp')
      *  reconGraphObject = {x: X data, y: Y data, ...}
      */
     this.getTotalGroupByTS = function(start, stop, gran) {
-        //console.log('getTotalGroupByTS: ' + start + '-' + stop);
+        console.log('getTotalGroupByTS: ' + start + '-' + stop);
         // First define the X time vector
         var x = [];
-        for(var i = start; i <= stop+gran; i += gran) {
+        for(i = start; i <= stop+gran; i += gran) {
             x[x.length] = i;
         }
 
         // Initialize Y data
         var y = [];
-        for(var i = 0; i < x.length; i += 1) {
+        for(i = 0; i < x.length; i += 1) {
             y[i] = 0;
         }
 
@@ -248,10 +252,10 @@ angular.module('paradropApp')
      *  {x: X data, y: Y data, ...}
      */
     this.getEngagementByTS = function(buckets) {
-        //console.log('getEngagementByTS: ' + buckets);
+        console.log('getEngagementByTS: ' + buckets);
         // Initialize Y data
         var y = [];
-        for(var i = 0; i < buckets.length; i++) {
+        for(i = 0; i < buckets.length; i++) {
             y[i] = 0;
         }
 
@@ -260,11 +264,11 @@ angular.module('paradropApp')
 
         // For each mac in the temp data, determine what time duration it falls into
         for(var mac in tmpData) {
-            for(var dur = 0; dur < tmpData[mac].length; dur++) {
+            for(dur = 0; dur < tmpData[mac].length; dur++) {
                 var d = tmpData[mac][dur].duration;
                 var found = false;
                 // Compare the duration against the buckets to figure out where it goes
-                for(var i = 0; i < buckets.length-1; i++) {
+                for(i = 0; i < buckets.length-1; i++) {
                     if(buckets[i] <= d && d < buckets[i+1]) {
                         y[i]++;
                         found = true;
@@ -305,5 +309,9 @@ angular.module('paradropApp')
         return {total: total, repeat: repeats};
     }
 
+}
 
-  });
+
+// Export Recon to the world
+module.exports = Recon;
+

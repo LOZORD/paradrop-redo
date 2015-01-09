@@ -1,0 +1,145 @@
+'use strict';
+
+/**
+ * @ngdoc service
+ * @name paradropApp.chartBuilder
+ * @description
+ * # chartBuilder
+ * Factory in the paradropApp.
+ */
+angular.module('paradropApp')
+  .factory('chartBuilder',['Recon', '$rootScope', function (Recon, $rootScope) {
+    // Service logic
+    // ...
+
+    var charts = {};
+
+    // Public API here
+    charts.buildTotalUsers = function(){
+      var chartInfo = {};
+      var graphData = Recon.getTotalGroupByTS(1419175642, 1419262042, 3600);
+      var plot = [];
+      var xTimes = [];
+      for(var i = 0; i < graphData.x.length; i++){ 
+        var time = new Date(graphData.x[i] * 1000);
+        var hours = time.getHours();
+        var suffix = '';
+        if(hours >= 12){
+          suffix = 'PM';
+          if(hours >= 13){
+            hours -= 12;
+          }
+        }else{
+          suffix = 'AM';
+        }
+        xTimes.push(hours + ':' + time.getMinutes() + suffix);
+        plot.push({name: xTimes[i], y: graphData.y[i]});
+      }
+      var chartConfig = {
+        //This is not a highcharts object. It just looks a little like one!
+        options: {
+          //This is the Main Highcharts chart config. Any Highchart options are valid here.
+          //will be ovverriden by values specified below.
+          chart: {
+            type: 'line'
+          },
+          tooltip: {
+            style: {
+              padding: 10,
+              fontWeight: 'bold'
+            }
+          }
+        },
+
+        //The below properties are watched separately for changes.
+
+        //Series object (optional) - a list of series using normal highcharts series options.
+        series: [{
+          data: plot,
+          name: 'Total Users'
+        }],
+        //Title configuration (optional)
+        title: {
+          text: 'Total Users'
+        },
+        //Boolean to control showng loading status on chart (optional)
+        //Could be a string if you want to show specific loading text.
+        loading: false,
+        //Configuration for the xAxis (optional). Currently only one x axis can be dynamically controlled.
+        //properties currentMin and currentMax provied 2-way binding to the chart's maximimum and minimum
+        xAxis: {
+          categories: xTimes,
+          title: {text: 'Time'},
+          labels: {
+            step: 3,
+            maxStaggerLines: 1
+          }
+        },
+        yAxis: {
+         title: {text: 'Total Users'},
+         floor: 0
+        },
+        //Whether to use HighStocks instead of HighCharts (optional). Defaults to false.
+        useHighStocks: false,
+        //size (optional) if left out the chart will default to size of the div or something sensible.
+        //function (optional)
+        func: function (chart) {
+          //setup some logic for the chart
+          chartInfo.chart = chart;
+          $rootScope.initChart.resolve();
+        }
+
+      };
+      chartInfo.chartConfig = chartConfig;
+      return chartInfo;
+    }
+
+    charts.buildEngagementChart = function(){
+      var chartInfo = {};
+      var graphData = Recon.getEngagementByTS([0, 300, 600, 900]);
+      var chartConfig = {
+        //This is not a highcharts object. It just looks a little like one!
+        options: {
+          //This is the Main Highcharts chart config. Any Highchart options are valid here.
+          //will be ovverriden by values specified below.
+          chart: {
+            type: 'pie'
+          },
+          tooltip: {
+            style: {
+              padding: 10,
+              fontWeight: 'bold'
+            },
+            //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          }
+        },
+
+        //The below properties are watched separately for changes.
+
+        //Series object (optional) - a list of series using normal highcharts series options.
+        series: [{
+          data: [['0-5 min', graphData.y[0]], ['5-10 min', graphData.y[1]],['10-15 min', graphData.y[2]],['15+ min', graphData.y[3]]],
+          name: "% of Customers",
+        }],
+        //Title configuration (optional)
+        title: {
+          text: 'Length of Customer Engagement'
+        },
+        //Boolean to control showng loading status on chart (optional)
+        //Could be a string if you want to show specific loading text.
+        loading: false,
+        useHighStocks: false,
+        //function (optional)
+        func: function (chart) {
+          //setup some logic for the chart
+          chartInfo.chart = chart;
+          $rootScope.initChart2.resolve();
+        }
+
+      };
+      chartInfo.chartConfig = chartConfig;
+      return chartInfo;
+    }
+
+    return charts;
+  }]);
