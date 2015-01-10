@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('LoginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService', '$location',
-    function ($scope, $rootScope, AUTH_EVENTS, AuthService, $location) {
+  .controller('LoginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService', '$location', 'URLS',
+    function ($scope, $rootScope, AUTH_EVENTS, AuthService, $location, URLS) {
 
       if ($scope.currentUser && $scope.isAuthenticated()) {
         $location.url('/my_paradrop');
@@ -64,7 +64,7 @@ angular.module('paradropApp')
                   }else if(error.data){
                     alert(error.data);
                   }else{
-                    alert('Login Failed! This site is currently in development if you are seeing this error please visit https://paradrop.wings.cs.wisc.edu:30332/v1 and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
+                    alert('Login Failed! This site is currently in development if you are seeing this error please visit ' + URLS.current +' and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
                   }
                 }
               );
