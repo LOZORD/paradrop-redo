@@ -25,7 +25,14 @@ angular.module('paradropApp')
             $rootScope.initChart.promise.then(
               function(){
                 $scope.contentLoaded = true;
-                setTimeout(function(){$scope.chartInfo.chart.reflow();},0);
+                setTimeout(function(){
+                  $scope.chartInfo.chart.reflow();
+                  $scope.redraw = function(){
+                    setTimeout(function(){
+                      $scope.chartInfo.chart.reflow();
+                    },0);
+                  };
+                },0);
               }
             );
             $rootScope.initChart2 = $q.defer();
@@ -34,7 +41,36 @@ angular.module('paradropApp')
             $rootScope.initChart2.promise.then(
               function(){
                 $scope.content2Loaded = true;
-                setTimeout(function(){$scope.chartInfo2.chart.reflow();},0);
+                setTimeout(function(){
+                  $scope.chartInfo2.chart.reflow();
+                  $scope.redraw2 = function(){
+                    setTimeout(function(){
+                      $scope.chartInfo2.chart.reflow();
+                    },0);
+                  };
+                },0);
+              }
+            );
+            $rootScope.initChart3 = $q.defer();
+            var body = { sessionToken: $scope.currentUser.id };
+            var metaURL = URLS.current + 'recon/meta/' + $scope.group_id + '/distinctmac';
+            var chart = $http.post(metaURL, body).then(
+              function(seenMacs){
+                $scope.chartInfo3 = chartBuilder.buildRepeatVisitsChart(seenMacs.data); 
+                $scope.chartConfig3 = $scope.chartInfo3.chartConfig;
+                $rootScope.initChart3.promise.then(
+                  function(){
+                    $scope.content3Loaded = true;
+                    setTimeout(function(){
+                      $scope.chartInfo3.chart.reflow();
+                      $scope.redraw3 = function(){
+                        setTimeout(function(){
+                          $scope.chartInfo3.chart.reflow();
+                        },0);
+                      };
+                    },0);
+                  }
+                );
               }
             );
           });

@@ -97,6 +97,8 @@ angular.module('paradropApp')
     charts.buildEngagementChart = function(){
       var chartInfo = {};
       var graphData = Recon.getEngagementByTS([0, 300, 600, 900]);
+      var total = graphData.y.reduce(function(prev,curr){return prev + curr;}); 
+
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!
         options: {
@@ -109,8 +111,20 @@ angular.module('paradropApp')
             style: {
               padding: 10,
               fontWeight: 'bold'
-            },
-            //pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            }
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+              }
+            }
           }
         },
 
@@ -119,7 +133,7 @@ angular.module('paradropApp')
         //Series object (optional) - a list of series using normal highcharts series options.
         series: [{
           data: [['0-5 min', graphData.y[0]], ['5-10 min', graphData.y[1]],['10-15 min', graphData.y[2]],['15+ min', graphData.y[3]]],
-          name: "% of Customers",
+          name: "# of Customers",
         }],
         //Title configuration (optional)
         title: {
@@ -134,6 +148,65 @@ angular.module('paradropApp')
           //setup some logic for the chart
           chartInfo.chart = chart;
           $rootScope.initChart2.resolve();
+        }
+
+      };
+      chartInfo.chartConfig = chartConfig;
+      return chartInfo;
+    }
+
+    charts.buildRepeatVisitsChart = function(seenMacs){
+      var chartInfo = {};
+      var graphData = Recon.getRepeatVisits(seenMacs);
+      var chartConfig = {
+        //This is not a highcharts object. It just looks a little like one!
+        options: {
+          //This is the Main Highcharts chart config. Any Highchart options are valid here.
+          //will be ovverriden by values specified below.
+          chart: {
+            type: 'pie'
+          },
+          tooltip: {
+            style: {
+              padding: 10,
+              fontWeight: 'bold'
+            }
+          },
+          plotOptions: {
+            pie: {
+              allowPointSelect: true,
+              cursor: 'pointer',
+              dataLabels: {
+                enabled: true,
+                format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                style: {
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                }
+              }
+            }
+          }
+        },
+
+        //The below properties are watched separately for changes.
+
+        //Series object (optional) - a list of series using normal highcharts series options.
+        series: [{
+          data: [['New Customers', graphData.total - graphData.repeat], ['Repeat Customers', graphData.repeat]],
+          name: "Number of Customers",
+        }],
+        //Title configuration (optional)
+        title: {
+          text: 'New vs. Repeat Customers'
+        },
+        //Boolean to control showng loading status on chart (optional)
+        //Could be a string if you want to show specific loading text.
+        loading: false,
+        useHighStocks: false,
+        //function (optional)
+        func: function (chart) {
+          //setup some logic for the chart
+          chartInfo.chart = chart;
+          $rootScope.initChart3.resolve();
         }
 
       };

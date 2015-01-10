@@ -125,6 +125,6 @@ angular.module('paradropApp', [
     pdropvpn: 'https://10.1.0.214:30332/v1/',
     alldayvpn: 'https://10.1.0.230:30332/v1/',
     //Change the current url to change all calls globally
-    current: 'https://dev.dbapi.paradrop.io/v1/'
+    current: 'https://dbapi.paradrop.io/v1/'
   })
   .constant('DEV_MODE', true);

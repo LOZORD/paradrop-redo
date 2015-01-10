@@ -294,7 +294,7 @@ angular.module('paradropApp')
         var total = 0;
         for(var mac in this.data) {
             total++;
-            for(i = 0; i < seenMacs.length; i++){
+            for(var i = 0; i < seenMacs.length; i++){
                 if(mac == seenMacs[i]) {
                     repeats++;
                     break;
