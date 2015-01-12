@@ -32,10 +32,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         4) They should be automatically logged in on Tab B using the new cookie & cloneSession
       */
       authService.login = function (credentials) {
-          //wait if there is a pending session creation
-          while(ipCookie('pending')){
-            //do nothing
-          }
           ipCookie('pending',true);
 
           credentials.already_hashed = false;
@@ -66,10 +62,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               this.message = "No Session Token";
               this.name = "NoSessionTokenException";
             };
-          }
-          //wait if there is a pending session creation
-          while(ipCookie('pending')){
-            //do nothing
           }
           ipCookie('pending',true);
           var credentials = {sessionToken: ipCookie('sessionToken')};

@@ -16,14 +16,11 @@
     <!-- endbuild -->
   </head>
   <body ng-app="paradropApp" ng-controller='ApplicationCtrl'>
-    <div class=slide-menu snap-drawer>
+    <div ng-cloak class=slide-menu snap-drawer>
       <ul>
-        <li ng-if=" isAuthenticated()">
-          <a ng-href="#!/my_paradrop"><h4>My Paradrop</h4></a>
-        </li>
-        <li ng-if=" isAuthenticated()">
+        <!--<li ng-if=" isAuthenticated()">
           <a href=""><h4>Edit My Account</h4></a>
-        </li>
+        </li>-->
         <li ng-if=" isAuthenticated()">
           <a ng-href="#!/" ng-click="logout()"><h4>Logout</h4></a>
         </li>
@@ -42,10 +39,10 @@
                  <span class="icon-bar"></span>
                  <span class="icon-bar"></span>
               </button>
-              <div ng-if="isAuthenticated()" snap-toggle="left" class="btn btn-lg btn-default">
+              <span ng-cloak class="slide-btn"><div ng-if="isAuthenticated()" snap-toggle="left" class="btn btn-lg btn-default">
                 <span class="glyphicon glyphicon-user"></span>
-              </div>
-              <span class="nav-logo"><a href="#!/"><img ng-src='images/logo.png' width="40" height="40"/></a></span>
+            </div></span>
+              <span class="nav-logo"><a class="para-text" href="#!/"><img ng-src='images/logo.png' width="40" height="40"/><span class="para-text">Paradrop</span></a></span>
             </div>
             <div class="navbar-inner">
               <div class="navbar-center">
@@ -55,7 +52,7 @@
               <ul class="nav navbar-nav navbar-right">
                 <li><a ng-if="!isAuthenticated()" ng-href="#!/login">Login</a></li>
                 <li><a ng-if="!isAuthenticated()" ng-href="#!/">Home</a></li>
-                <li><a ng-if="isAuthenticated()" ng-href="#!/my_paradrop">My Paradrop</a></li>
+                <li ng-cloak><a ng-if="isAuthenticated()" ng-href="#!/my_paradrop">My Paradrop</a></li>
                 <li><a ng-href="#!/about">About</a></li>
                 <li><a ng-href="#!/contact">Contact</a></li>
               </ul>
@@ -71,7 +68,7 @@
         <div class="footer">
           <!--<p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>-->
           <p><span class='glyphicon glyphicon-copyright-mark'></span>&nbsp;Paradrop 2014. All rights reserved.</p>
-          <p ng-if='DEV_MODE'><b>DEVELOPMENT MODE: Currently using {{URL}} as base URL.</b></p>
+          <p ng-cloak ng-if='DEV_MODE'><b>DEVELOPMENT MODE: Currently using {{URL}} as base URL.</b></p>
         </div>
       </div>
     </div snap-content>
@@ -143,6 +140,7 @@
     <script src="scripts/services/chartbuilder.js"></script>
     <!-- endbuild -->
     <script src="http://code.highcharts.com/highcharts.src.js"></script>
+    <script src='http://maps.googleapis.com/maps/api/js'></script>
 
     <div login-dialog ng-if="!isLoginPage"></div>
 </body>

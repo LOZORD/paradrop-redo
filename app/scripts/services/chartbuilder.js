@@ -8,7 +8,7 @@
  * Factory in the paradropApp.
  */
 angular.module('paradropApp')
-  .factory('chartBuilder',['Recon', '$rootScope', function (Recon, $rootScope) {
+  .factory('chartBuilder',['Recon', '$rootScope', 'DEV_MODE', function (Recon, $rootScope, DEV_MODE) {
     // Service logic
     // ...
 
@@ -17,7 +17,17 @@ angular.module('paradropApp')
     // Public API here
     charts.buildTotalUsers = function(){
       var chartInfo = {};
-      var graphData = Recon.getTotalGroupByTS(1419175642, 1419262042, 3600);
+      var startts;
+      var stopts;
+      if(DEV_MODE){
+        startts = 1419175642;
+        stopts = 1419262042;
+      }else{
+        stopts = Date.now() / 1000;
+        startts = stopts - 86400;
+      }
+      var graphData = Recon.getTotalGroupByTS(startts, stopts, 3600);
+      console.log(graphData);
       var plot = [];
       var xTimes = [];
       for(var i = 0; i < graphData.x.length; i++){ 
@@ -31,6 +41,9 @@ angular.module('paradropApp')
           }
         }else{
           suffix = 'AM';
+          if(hours == 0){
+            hours = 12;
+          }
         }
         xTimes.push(hours + ':' + time.getMinutes() + suffix);
         plot.push({name: xTimes[i], y: graphData.y[i]});
@@ -71,7 +84,7 @@ angular.module('paradropApp')
           categories: xTimes,
           title: {text: 'Time'},
           labels: {
-            step: 3,
+            step: 4,
             maxStaggerLines: 1
           }
         },
@@ -211,6 +224,7 @@ angular.module('paradropApp')
 
       };
       chartInfo.chartConfig = chartConfig;
+      chartInfo.totalCusts = graphData.total;
       return chartInfo;
     }
 

@@ -13,6 +13,19 @@ font-family: 'Century Gothic', sans-serif;
   padding: 0.2em 0;
 }
 
+.para-text {
+  padding-left: 20px;
+  font-family: 'Century Gothic', sans-serif;
+  font-size: 30px;
+  color: black;
+}
+
+.para-text:hover {
+  cursor: pointer;
+  color: black;
+  text-decoration: none;
+}
+
 a:hover{
   cursor: pointer;
 }
@@ -156,7 +169,6 @@ body {
   }
 }
 
-//for logo
-.nav-logo {
-  padding-left: 15px;
+.slide-btn {
+  padding-left: 10px;
 }
