@@ -35,11 +35,8 @@
         </div>
         <div id="group{{group.trim}}" class="panel-collapse collapse {{uncollapse}}">
           <div class="panel-body">
-            <h4>Installed Apps</h4>
-            <a href='#!/dashboard/{{group.full}}'>Recon: Customer Analytics</a>
-            <p>
-              <a data-toggle="modal" data-target="#modalGroup{{group.trim}}">Configuration Options</a>
-            </p>
+            <p><a href='#!/dashboard/{{group.full}}'>Recon: Customer Analytics</a></p>
+            <button data-toggle="modal" data-target="#modalGroup{{group.trim}}" type="button" class="btn btn-primary">Config Options</button>
           </div>
         </div>
       </div>

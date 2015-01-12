@@ -13,6 +13,26 @@ font-family: 'Century Gothic', sans-serif;
   padding: 0.2em 0;
 }
 
+a:hover{
+  cursor: pointer;
+}
+
+a:focus{
+  outline: none;
+}
+
+.btn:focus{
+  outline:none;
+}
+
+.accordion-toggle:hover{
+  cursor:pointer;
+}
+
+.accordion-toggle:focus{
+  outline:none;
+}
+
 /* Space out content a bit */
 body {
   padding-top: 20px;

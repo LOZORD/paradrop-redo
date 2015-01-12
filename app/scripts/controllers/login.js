@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('LoginCtrl', ['$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService', '$location', 'URLS',
-    function ($scope, $rootScope, AUTH_EVENTS, AuthService, $location, URLS) {
+  .controller('LoginCtrl', ['ipCookie', '$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService', '$location', 'URLS',
+    function (ipCookie, $scope, $rootScope, AUTH_EVENTS, AuthService, $location, URLS) {
 
       if ($scope.currentUser && $scope.isAuthenticated()) {
         $location.url('/my_paradrop');
