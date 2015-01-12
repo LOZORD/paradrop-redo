@@ -32,6 +32,11 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         4) They should be automatically logged in on Tab B using the new cookie & cloneSession
       */
       authService.login = function (credentials) {
+          //wait if there is a pending session creation
+          while(ipCookie('pending')){
+            //do nothing
+          }
+          ipCookie('pending',true);
 
           credentials.already_hashed = false;
 
@@ -44,9 +49,11 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               if (credentials.persist) {
                 ipCookie('shouldPersist', true, { expires: 7 });
                 ipCookie('sessionToken', someSession.id, { expires: 7 });
+                ipCookie.remove('pending');
               }
               else {
                 ipCookie('sessionToken', someSession.id);
+                ipCookie.remove('pending');
               }
             });
           return retData;
@@ -54,6 +61,17 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
       //restore session from token
       authService.cloneSession = function () {
+          if(!ipCookie('sessionToken')){
+            throw new function(){
+              this.message = "No Session Token";
+              this.name = "NoSessionTokenException";
+            };
+          }
+          //wait if there is a pending session creation
+          while(ipCookie('pending')){
+            //do nothing
+          }
+          ipCookie('pending',true);
           var credentials = {sessionToken: ipCookie('sessionToken')};
           var loginURL = URLS.current + 'authenticate/cloneSession';
           var retData = $http
@@ -65,9 +83,11 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               if (shouldPersist) {
                 ipCookie('shouldPersist', true, { expires: 7 });
                 ipCookie('sessionToken', someSession.id, { expires: 7 });
+                ipCookie.remove('pending');
               }
               else {
                 ipCookie('sessionToken', someSession.id);
+                ipCookie.remove('pending');
               }
             });
           return retData;

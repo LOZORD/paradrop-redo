@@ -8,13 +8,13 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('DashboardCtrl', [ 'chartBuilder', '$q', '$scope', '$routeParams', '$sce', 'URLS', '$http', 'Recon','$rootScope', function (chartBuilder, $q, $scope, $routeParams, $sce, URLS, $http, Recon, $rootScope) {
+  .controller('DashboardCtrl', ['ipCookie', 'chartBuilder', '$q', '$scope', '$routeParams', '$sce', 'URLS', '$http', 'Recon','$rootScope', function (ipCookie, chartBuilder, $q, $scope, $routeParams, $sce, URLS, $http, Recon, $rootScope) {
     $scope.initCurrentUser.promise
     .then(function(){ $scope.authorizePage();})
     .then(
       function(){
         $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
-        var credentials = { sessionToken: $scope.currentUser.id, startts: 1419175301 /*new Date().getTime() / 1000 - 86400*/, stopts: new Date().getTime() / 1000 };
+        var credentials = { sessionToken: ipCookie('sessionToken'), startts: 1419175301 /*new Date().getTime() / 1000 - 86400*/, stopts: new Date().getTime() / 1000 };
         var groupURL = URLS.current + 'recon/data/get/' + $scope.group_id;
         $http.post(groupURL, credentials).then(
           function(json){
@@ -52,7 +52,7 @@ angular.module('paradropApp')
               }
             );
             $rootScope.initChart3 = $q.defer();
-            var body = { sessionToken: $scope.currentUser.id };
+            var body = { sessionToken: ipCookie('sessionToken') };
             var metaURL = URLS.current + 'recon/meta/' + $scope.group_id + '/distinctmac';
             var chart = $http.post(metaURL, body).then(
               function(seenMacs){

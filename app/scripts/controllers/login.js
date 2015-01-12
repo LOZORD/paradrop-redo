@@ -34,15 +34,27 @@ angular.module('paradropApp')
           alert('The password field cannot be blank. Please enter your password.');
           return;
         }
-        AuthService.cloneSession().then(
-            //Successful session restore
-            function() {
-              $scope.setCurrentUser();
-                  //then redirect to their homepage
-                  $location.url('/my_paradrop');
-            },
-            //failed to restore a session
-            function(){
+        try{
+          AuthService.cloneSession().then(
+              //Successful session restore
+              function() {
+                $scope.setCurrentUser();
+                    //then redirect to their homepage
+                    alert("You are already logged in. Please logout if you want to log in as a different user.");
+                    $location.url('/my_paradrop');
+              },
+              //failed to restore a session
+              function() {
+                //no longer pending session creation
+                ipCookie.remove('pending');
+                login(credentials);
+              }
+          );
+        }catch(e){
+          login(credentials);
+        }
+      };
+            function login(credentials){
               AuthService.login(credentials).then(
                 /* SUCCESSFUL LOGIN */
                 function (user) {
@@ -54,6 +66,8 @@ angular.module('paradropApp')
                 },
                 /* FAILED LOGIN */
                 function (error) {
+                  //no longer pending session creation
+                  ipCookie.remove('pending');
                   $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
                   if(error.data === 'User is not verified!'){
                     alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
@@ -69,8 +83,6 @@ angular.module('paradropApp')
                 }
               );
             }
-        );
-      };
     }
   ]
 );

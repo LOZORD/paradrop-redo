@@ -35,10 +35,11 @@
         </div>
         <div id="group{{group.trim}}" class="panel-collapse collapse {{uncollapse}}">
           <div class="panel-body">
-            <h4>App's installed for this group</h4>
-            <a href='#!/dashboard/{{group.full}}'>Project Recon</a>
-            <h4>{{group.aps.length}} APs in this Group</h4>
-            <a data-toggle="modal" data-target="#modalGroup{{group.trim}}">Configure this Group of Access Points</a>
+            <h4>Installed Apps</h4>
+            <a href='#!/dashboard/{{group.full}}'>Recon: Customer Analytics</a>
+            <p>
+              <a data-toggle="modal" data-target="#modalGroup{{group.trim}}">Configuration Options</a>
+            </p>
           </div>
         </div>
       </div>
@@ -72,6 +73,7 @@
         <h4 class="modal-title" id="myModalLabel">{{group.full}}</h4>
       </div>
       <div class="modal-body">
+        <h3>Coming Soon!</h3>
         <p>In this area you will be able to configure Access Points in this group!!</p>
         <p>This includes these Access Points:</p>
         <ul>

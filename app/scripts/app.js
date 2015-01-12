@@ -100,6 +100,8 @@ angular.module('paradropApp', [
             },
             /* UNSUCCESSFUL CLONING */
             function() {
+              //no longer pending session creation
+              ipCookie.remove('pending');
               $rootScope.restoreSession.resolve();
             }
           );
@@ -125,6 +127,6 @@ angular.module('paradropApp', [
     pdropvpn: 'https://10.1.0.214:30332/v1/',
     alldayvpn: 'https://10.1.0.230:30332/v1/',
     //Change the current url to change all calls globally
-    current: 'https://dbapi.paradrop.io/v1/'
+    current: 'https://dev.dbapi.paradrop.io/v1/'
   })
   .constant('DEV_MODE', true);
