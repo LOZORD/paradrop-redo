@@ -14,6 +14,15 @@ angular.module('paradropApp')
     .then(function(){ $scope.authorizePage();})
     .then(
       function(){
+        $scope.showMarkers = true;
+        $scope.markerBtnText = 'Hide';
+        $scope.changeMarkerText = function(){
+          if($scope.showMarkers){
+            $scope.markerBtnText = 'Hide';
+          }else{
+            $scope.markerBtnText = 'Show';
+          }
+        };
         $scope.apNameMap = {};
         for(var ap in $scope.currentUser.aps){
           $scope.apNameMap[$scope.currentUser.aps[ap].guid] = $scope.currentUser.aps[ap].name;

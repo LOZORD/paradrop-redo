@@ -22,8 +22,11 @@
         >
         <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
         </map-type>
-        <marker ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{apNameMap[ap.apid]}}"></marker>
+        <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{apNameMap[ap.apid]}}"></marker>
         <!-- ngRepeat: pos in positions -->
     </map>
+    <div class="padded-btn">
+      <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeMarkerText();">{{markerBtnText}} Markers</button>
+    </div>
   </div>
 </div>
