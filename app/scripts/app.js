@@ -59,6 +59,22 @@ angular.module('paradropApp', [
         templateUrl: 'views/dashboard.html',
         controller: 'DashboardCtrl'
       })
+      .when('/recon/map/:group_id*', {
+        templateUrl: 'views/recon/map.html',
+        controller: 'ReconMapCtrl'
+      })
+      .when('/recon/home/:group_id*', {
+        templateUrl: 'views/recon/home.html',
+        controller: 'ReconHomeCtrl'
+      })
+      .when('/recon/settings/:group_id*', {
+        templateUrl: 'views/recon/settings.html',
+        controller: 'ReconSettingsCtrl'
+      })
+      .when('/recon/dashboard/:group_id*', {
+        templateUrl: 'views/recon/dashboard.html',
+        controller: 'ReconDashboardCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });

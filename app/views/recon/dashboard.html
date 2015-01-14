@@ -1,0 +1,57 @@
+<h1>Recon: {{group_id}}</h1>
+<div>
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li><a ng-href="#!/recon/home/{{group_id}}">Overview</a></li>
+    <li class="active">
+      <a ng-href="#!/recon/dashboard/{{group_id}}">Dashboard</a>
+    </li>
+    <li><a ng-href="#!/recon/map/{{group_id}}">Location Tracking</a></li>
+    <li><a ng-href="#!/recon/settings/{{group_id}}">Advanced Settings</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div class="tab-pane active">
+      <div class='row'>
+        <div class='col-sm-12'>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Total Users</h3>
+            </div>
+            <div class="panel-body">
+              <img class="img-responsive center-block" ng-show="!contentLoaded" ng-src='images/spinner.gif'/>
+              <highchart ng-if="contentLoaded" id="chart1" config="chartConfig"></highchart>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-sm-12'>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">New vs Repeat Customers</h3>
+            </div>
+            <div class="panel-body">
+              <img class="img-responsive center-block" ng-show="!content3Loaded" ng-src='images/spinner.gif'/>
+              <highchart ng-if="content3Loaded" id="chart3" config="chartConfig3"></highchart>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-sm-12'>
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Customer Engagment</h3>
+            </div>
+            <div class="panel-body">
+              <img class="img-responsive center-block" ng-show="!content2Loaded" ng-src='images/spinner.gif'/>
+              <highchart ng-if="content2Loaded" id="chart2" config="chartConfig2"></highchart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

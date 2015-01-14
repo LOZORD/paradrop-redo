@@ -13,6 +13,21 @@ angular.module('paradropApp')
     // ...
 
     var charts = {};
+    this.totalUsersChart = null;
+    this.repeatVisitsChart = null;
+    this.engagementChart = null;
+
+    charts.getBuiltCharts = function(){
+      if(!this.totalUsersChart || !this.repeatVisitsChart || !this.engagementChart){
+        return null;
+      }else{
+        return {
+          totalUsers: this.totalUsersChart,
+          repeatVisits: this.repeatVisitsChart,
+          engagement: this.engagementChart
+        }
+      }
+    }
 
     // Public API here
     charts.buildTotalUsers = function(){
@@ -27,7 +42,6 @@ angular.module('paradropApp')
         startts = stopts - 86400;
       }
       var graphData = Recon.getTotalGroupByTS(startts, stopts, 3600);
-      console.log(graphData);
       var plot = [];
       var xTimes = [];
       for(var i = 0; i < graphData.x.length; i++){ 
@@ -99,11 +113,11 @@ angular.module('paradropApp')
         func: function (chart) {
           //setup some logic for the chart
           chartInfo.chart = chart;
-          $rootScope.initChart.resolve();
         }
 
       };
       chartInfo.chartConfig = chartConfig;
+      this.totalUsersChart = chartInfo;
       return chartInfo;
     }
 
@@ -160,11 +174,11 @@ angular.module('paradropApp')
         func: function (chart) {
           //setup some logic for the chart
           chartInfo.chart = chart;
-          $rootScope.initChart2.resolve();
         }
 
       };
       chartInfo.chartConfig = chartConfig;
+      this.engagementChart = chartInfo;
       return chartInfo;
     }
 
@@ -219,12 +233,12 @@ angular.module('paradropApp')
         func: function (chart) {
           //setup some logic for the chart
           chartInfo.chart = chart;
-          $rootScope.initChart3.resolve();
         }
 
       };
       chartInfo.chartConfig = chartConfig;
       chartInfo.totalCusts = graphData.total;
+      this.repeatVisitsChart = chartInfo;
       return chartInfo;
     }
 

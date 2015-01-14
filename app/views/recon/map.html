@@ -1,0 +1,29 @@
+<h1>Recon: {{group_id}}</h1>
+<div>
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li><a ng-href="#!/recon/home/{{group_id}}">Overview</a></li>
+    <li><a ng-href="#!/recon/dashboard/{{group_id}}">Dashboard</a></li>
+    <li class="active"><a ng-href="#!/recon/map/{{group_id}}">Location Tracking</a></li>
+    <li><a ng-href="#!/recon/settings/{{group_id}}">Advanced Settings</a></li>
+  </ul>
+  <!-- Tab panes -->
+  <div class="tab-pane">
+    <h1 ng-if="mapError">Error loading map</h1>
+    <img class="img-responsive center-block" ng-show="!mapReady" ng-src='images/spinner.gif'/>
+    <map ng-if="mapReady" style="height: 700px;" zoom="15" 
+      center="{{mapData.centerX}}, {{mapData.centerY}}" 
+        street-view-control="false" 
+        zoom-control="false" 
+        pan-control="false" 
+        map-type-id="{{mapData.typeid}}" 
+        map-type-control-options="{mapTypeIds: ['{{mapData.typeid}}']}"
+        on-click="onClick()" 
+        >
+        <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
+        </map-type>
+        <marker ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{apNameMap[ap.apid]}}"></marker>
+        <!-- ngRepeat: pos in positions -->
+    </map>
+  </div>
+</div>
