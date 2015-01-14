@@ -125,6 +125,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       this.isAdmin = null;
       this.aps = null;
       this.fullname = null;
+      this.defaultGroup = null;
 
       this.getSession = function () {
         return {
@@ -133,7 +134,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
           isDeveloper: this.isDeveloper,
           isAdmin: this.isAdmin,
           aps: this.aps,
-          fullname: this.fullname
+          fullname: this.fullname,
+          defaultGroup: this.defaultGroup
         };
       };
 
@@ -146,6 +148,12 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isAdmin = parseInt(isAdmin, 2)         || 0;
         //array of AP objects
         this.aps = aps;
+        for(var i = 0; i < aps.length; i++){
+          if(aps[i].groupname){
+            this.defaultGroup = aps[i].groupname;
+            break;
+          }
+        }
 
         return this;
       };
