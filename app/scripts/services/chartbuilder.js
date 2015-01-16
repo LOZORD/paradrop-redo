@@ -38,10 +38,18 @@ angular.module('paradropApp')
         startts = 1419175642;
         stopts = 1419262042;
       }else{
-        stopts = Date.now() / 1000;
-        startts = stopts - 86400;
+        var openTime = new Date();
+        openTime.setHours(9);
+        openTime.setMinutes(0);
+        openTime = Math.floor(openTime.getTime() / 1000);
+        var closeTime = new Date();
+        if(closeTime.getHours() > 19){
+          closeTime.setHours(19);
+        }
+        closeTime = Math.floor(closeTime.getTime() / 1000);
+        stopts = closeTime;
+        startts = openTime;
       }
-      console.log(Recon.recon);
       var graphData = Recon.recon.getTotalGroupByTS(startts, stopts, 3600);
       var plot = [];
       var xTimes = [];

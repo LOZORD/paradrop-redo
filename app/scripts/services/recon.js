@@ -24,9 +24,19 @@ angular.module('paradropApp')
       }
 
       self.recon = new Recon( { postFunc: post} );
+      var openTime = new Date();
+      openTime.setHours(9);
+      openTime.setMinutes(0);
+      openTime = Math.floor(openTime.getTime() / 1000);
+      var closeTime = new Date();
+      if(closeTime.getHours() > 19){
+        closeTime.setHours(19);
+      }
+      closeTime = Math.floor(closeTime.getTime() / 1000);
+
       var opts = { 
-        start: Math.floor(Date.now() / 1000 - 86400),
-        stop: Math.floor(Date.now() / 1000),
+        start: Math.floor(openTime),
+        stop: Math.floor(closeTime),
         groupName: Session.defaultGroup
       };
 
