@@ -18,7 +18,7 @@ angular.module('paradropApp')
     this.engagementChart = null;
 
     charts.getBuiltCharts = function(){
-      if(!this.totalUsersChart || !this.repeatVisitsChart || !this.engagementChart){
+      if(!this.totalUsersChart || !this.engagementChart){
         return null;
       }else{
         return {
@@ -41,7 +41,8 @@ angular.module('paradropApp')
         stopts = Date.now() / 1000;
         startts = stopts - 86400;
       }
-      var graphData = Recon.getTotalGroupByTS(startts, stopts, 3600);
+      console.log(Recon.recon);
+      var graphData = Recon.recon.getTotalGroupByTS(startts, stopts, 3600);
       var plot = [];
       var xTimes = [];
       for(var i = 0; i < graphData.x.length; i++){ 
@@ -123,7 +124,7 @@ angular.module('paradropApp')
 
     charts.buildEngagementChart = function(){
       var chartInfo = {};
-      var graphData = Recon.getEngagementByTS([0, 300, 600, 900]);
+      var graphData = Recon.recon.getEngagementByTS([0, 300, 600, 900]);
       var total = graphData.y.reduce(function(prev,curr){return prev + curr;}); 
 
       var chartConfig = {
@@ -184,7 +185,7 @@ angular.module('paradropApp')
 
     charts.buildRepeatVisitsChart = function(seenMacs){
       var chartInfo = {};
-      var graphData = Recon.getRepeatVisits(seenMacs);
+      var graphData = Recon.recon.getRepeatVisits(seenMacs);
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!
         options: {

@@ -16,6 +16,10 @@ angular.module('paradropApp')
       function(){
         $scope.showMarkers = true;
         $scope.markerBtnText = 'Hide';
+        $scope.showInfoBox = {};
+        $scope.showInfoWindow = function(apid){
+                $scope.showInfoBox[apid] = !$scope.showInfoBox[apid];
+        };
         $scope.changeMarkerText = function(){
           if($scope.showMarkers){
             $scope.markerBtnText = 'Hide';

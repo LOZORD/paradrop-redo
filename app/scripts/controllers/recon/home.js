@@ -8,7 +8,7 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ReconHomeCtrl',['$scope', '$sce', '$routeParams', 'Recon', 'chartBuilder', 'ipCookie', '$http', 'URLS', function ($scope, $sce, $routeParams, Recon, chartBuilder, ipCookie, $http, URLS) {
+  .controller('ReconHomeCtrl',['$scope', '$sce', '$routeParams', 'Recon', 'chartBuilder', 'ipCookie', '$http', 'URLS', '$q', '$rootScope', function ($scope, $sce, $routeParams, Recon, chartBuilder, ipCookie, $http, URLS, $q, $rootScope) {
   $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
   $scope.initCurrentUser.promise
   .then(function(){ $scope.authorizePage();})
@@ -17,31 +17,31 @@ angular.module('paradropApp')
       var charts = chartBuilder.getBuiltCharts();
       if(charts){
         //skip building charts
-        $scope.totalCusts = charts.repeatVisits.totalCusts;
+        //$scope.totalCusts = charts.repeatVisits.totalCusts;
+        $scope.totalCusts = Recon.recon.getNumberCustomersInside();
         $scope.contentLoaded = true;
       }else{ 
-        //build charts ahead of time
-        var credentials = { sessionToken: ipCookie('sessionToken'), startts: Date.now() / 1000 - 86400, stopts: Date.now() / 1000 };
-        var groupURL = URLS.current + 'recon/data/get/' + $scope.group_id;
-        $http.post(groupURL, credentials).then(
-          function(json){
-            Recon.parseData(json.data);
-            //build repeat first since it's needed
-            var body = { sessionToken: ipCookie('sessionToken'), upto: Date.now() /1000 - 86400 };
-            var metaURL = URLS.current + 'recon/meta/' + $scope.group_id + '/distinctmac';
-            var chart = $http.post(metaURL, body).then(
-              function(seenMacs){
-                var repeatChart = chartBuilder.buildRepeatVisitsChart(seenMacs.data); 
-                $scope.totalCusts = repeatChart.totalCusts;
-                $scope.contentLoaded = true;
-              }
-            );
-            //then build the  second two ahead of time
-            chartBuilder.buildTotalUsers(); 
-            chartBuilder.buildEngagementChart(); 
+          //build charts ahead of time
+          $rootScope.reconInit.promise.then(function(){
+          console.log('promise resolved');
+          var body = { sessionToken: ipCookie('sessionToken'), upto: Date.now() /1000 - 86400 };
+          var metaURL = URLS.current + 'recon/meta/' + $scope.group_id + '/distinctmac';
+          /*var chart = $http.post(metaURL, body).then(
+            function(seenMacs){
+              var repeatChart = chartBuilder.buildRepeatVisitsChart(seenMacs.data); 
+              $scope.totalCusts = repeatChart.totalCusts;
+              $scope.contentLoaded = true;
+            }
+          );*/
 
-          }
-        );
+          //then build the  second two ahead of time
+          $scope.totalCusts = Recon.recon.getNumberCustomersInside();
+          $scope.contentLoaded = true;
+          chartBuilder.buildTotalUsers(); 
+          console.log('Total Users Chart Built');
+          chartBuilder.buildEngagementChart(); 
+          console.log('Engagement Chart Built');
+        });
       }
     }
     );

@@ -1,9 +1,11 @@
 'use strict';
 
 angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
-  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope',
-    function($http, Session, ipCookie, URLS, $rootScope) {
+  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope', '$q',
+    function($http, Session, ipCookie, URLS, $rootScope, $q) {
       var authService = {};
+      //create session promise
+      $rootScope.sessionBuilt = $q.defer();
 
       //this function is used by login and cloneSession
       function buildSession (result) {
@@ -17,6 +19,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
           result.data.aps,
           result.data.fullname
         );
+        //resolve session promise
+        $rootScope.sessionBuilt.resolve();
 
         return theUser;
       }
