@@ -1,22 +1,24 @@
 'use strict';
 
-var compareTo = function () {
-  return {
-    require: 'ngModel',
-    scope: {
-      otherModelValue: '=compareTo'
-    },
-    link: function(scope, element, attributes, ngModel) {
-      
-      ngModel.$validates.compareTo = function (modelValue) {
-        return modelValue == scope.otherModelValue;
+angular.module('paradropApp')
+  .directive('compareTo', function() {
+
+    function linkFunc (scope, element, attrs, ngModel) {
+      ngModel.$validators.compareTo = function (modelValue) {
+        return modelValue === scope.otherModelValue;
       };
 
       scope.$watch('otherModelValue', function () {
         ngModel.$validate();
       });
     }
-  };
-};
 
-angular.module('paradropApp').directive('compareTo', compareTo);
+    //return obj
+    return {
+      require:  'ngModel',
+      scope:    {
+        otherModelValue: '=compareTo'
+      },
+      link:     linkFunc
+    };
+  });
