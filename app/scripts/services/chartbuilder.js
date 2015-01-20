@@ -18,7 +18,7 @@ angular.module('paradropApp')
     this.engagementChart = null;
 
     charts.getBuiltCharts = function(){
-      if(!this.totalUsersChart || !this.engagementChart){
+      if(!this.totalUsersChart || !this.repeatVisitsChart || !this.engagementChart){
         return null;
       }else{
         return {
@@ -34,15 +34,24 @@ angular.module('paradropApp')
       var chartInfo = {};
       var startts;
       var stopts;
+      var date = '';
       if(DEV_MODE){
         startts = 1419175642;
         stopts = 1419262042;
       }else{
         var openTime = new Date();
+        var closeTime = new Date();
+        if(openTime.getHours() < 10){
+          openTime.setDate(openTime.getDate() -1);
+          closeTime.setDate(closeTime.getDate() -1);
+          closeTime.setHours(19);
+        }
+        date = openTime.toDateString();
         openTime.setHours(9);
         openTime.setMinutes(0);
+        openTime.setSeconds(0);
+        openTime.setMilliseconds(0);
         openTime = Math.floor(openTime.getTime() / 1000);
-        var closeTime = new Date();
         if(closeTime.getHours() > 19){
           closeTime.setHours(19);
         }
@@ -68,8 +77,16 @@ angular.module('paradropApp')
             hours = 12;
           }
         }
-        xTimes.push(hours + ':' + time.getMinutes() + suffix);
+        xTimes.push(hours + ':0' + time.getMinutes() + suffix);
         plot.push({name: xTimes[i], y: graphData.y[i]});
+        var step = 4;
+        if(xTimes.length < 6){
+          step = 1;
+        }else if(xTimes.length < 12){
+          step = 2;
+        }else if(xTimes.length < 18){
+          step = 3;
+        }
       }
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!
@@ -96,7 +113,7 @@ angular.module('paradropApp')
         }],
         //Title configuration (optional)
         title: {
-          text: 'Total Users'
+          text: 'Total Users on ' + date
         },
         //Boolean to control showng loading status on chart (optional)
         //Could be a string if you want to show specific loading text.
@@ -107,8 +124,8 @@ angular.module('paradropApp')
           categories: xTimes,
           title: {text: 'Time'},
           labels: {
-            step: 4,
-            maxStaggerLines: 1
+            step: step,
+            maxStaggerLines: 2
           }
         },
         yAxis: {
@@ -191,9 +208,9 @@ angular.module('paradropApp')
       return chartInfo;
     }
 
-    charts.buildRepeatVisitsChart = function(seenMacs){
+    charts.buildRepeatVisitsChart = function(){
       var chartInfo = {};
-      var graphData = Recon.recon.getRepeatVisits(seenMacs);
+      var graphData = Recon.recon.getRepeatVisits();
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!
         options: {

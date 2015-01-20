@@ -93,10 +93,10 @@
 
         <div ng-view=""></div>
 
-        <div class="footer">
+        <div ng-cloak class="footer">
           <!--<p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>-->
           <p><span class='glyphicon glyphicon-copyright-mark'></span>&nbsp;Paradrop 2014. All rights reserved.</p>
-          <p ng-cloak ng-if='DEV_MODE'><b>DEVELOPMENT MODE: Currently using {{URL}} as base URL.</b></p>
+          <p ng-if='DEV_MODE'><b>DEVELOPMENT MODE: Currently using {{URL}} as base URL.</b></p>
         </div>
       </div>
     </div snap-content>

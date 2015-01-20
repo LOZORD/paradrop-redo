@@ -25,11 +25,11 @@ angular.module('paradropApp')
           $scope.chartConfig2 = $scope.chartInfo2.chartConfig;
           $scope.content2Loaded = true;
           //chart 3
-          /*$scope.chartInfo3 = charts.repeatVisits; 
+          $scope.chartInfo3 = charts.repeatVisits; 
           $scope.chartConfig3 = $scope.chartInfo3.chartConfig;
           $scope.totalCusts = $scope.chartInfo3.totalCusts;
           $scope.content3Loaded = true;
-          */
+          
         }else{
           //have to build charts
           $rootScope.reconInit.promise.then(
@@ -42,17 +42,15 @@ angular.module('paradropApp')
               $scope.chartConfig2 = $scope.chartInfo2.chartConfig;
               $scope.content2Loaded = true;
 
-              //var body = { sessionToken: ipCookie('sessionToken'), upto: Date.now() /1000 - 86400 };
-              //var metaURL = URLS.current + 'recon/meta/' + $scope.group_id + '/distinctmac';
-              /*var chart = $http.post(metaURL, body).then(
-                function(seenMacs){
-                  $scope.chartInfo3 = chartBuilder.buildRepeatVisitsChart(seenMacs.data); 
+              Recon.recon.setupRepeatVisits().then(
+                function(){
+                  $scope.chartInfo3 = chartBuilder.buildRepeatVisitsChart(); 
                   $scope.chartConfig3 = $scope.chartInfo3.chartConfig;
                   $scope.totalCusts = $scope.chartInfo3.totalCusts;
                   $scope.content3Loaded = true;
                 }
               );
-              */
+              
             }
           );
         }
