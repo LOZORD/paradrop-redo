@@ -1,14 +1,20 @@
 'use strict';
+/*
+This directive ensures that a slave input matches the current
+value of a master input.
 
+Main usage: password confirmation
+*/
 angular.module('paradropApp')
   .directive('compareTo', function() {
 
     function linkFunc (scope, element, attrs, ngModel) {
-      ngModel.$validators.compareTo = function (modelValue) {
-        return modelValue === scope.otherModelValue;
+
+      ngModel.$validators.compareTo = function (slaveValue) {
+        return (slaveValue === scope.masterValue);
       };
 
-      scope.$watch('otherModelValue', function () {
+      scope.$watch('masterValue', function () {
         ngModel.$validate();
       });
     }
@@ -17,7 +23,7 @@ angular.module('paradropApp')
     return {
       require:  'ngModel',
       scope:    {
-        otherModelValue: '=compareTo'
+        masterValue: '=compareTo'
       },
       link:     linkFunc
     };
