@@ -6,11 +6,10 @@ value of a master input.
 Main usage: password confirmation
 */
 angular.module('paradropApp')
-  .directive('compareTo', function() {
+  .directive('mustMatch', function() {
 
     function linkFunc (scope, element, attrs, ngModel) {
-
-      ngModel.$validators.compareTo = function (slaveValue) {
+      ngModel.$validators.mustMatch = function (slaveValue) {
         return (slaveValue === scope.masterValue);
       };
 
@@ -23,7 +22,7 @@ angular.module('paradropApp')
     return {
       require:  'ngModel',
       scope:    {
-        masterValue: '=compareTo'
+        masterValue: '=mustMatch'
       },
       link:     linkFunc
     };
