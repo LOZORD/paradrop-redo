@@ -4,9 +4,9 @@
     <h2><a ng-href='#!/blog/{{ post.ts }}'>{{ post.title }}</a></h2>
     <h5>{{ post.author }}</h5>
     <small>{{ post.ts | date: 'short' }}</h5>
-    <small><a ng-href='#!/blog/topic/{{ post.topic }}'>{{ post.topic }}</a></small>
-    <div class='post-content' ng-bind-html='post.content'>
-    </div>
+    <small>Topic: <a ng-href='#!/blog/topic/{{ post.topic }}'>{{ post.topic }}</a></small>
+    <hr>
+    <div class='post-content' ng-bind-html='post.content'></div>
   </li>
 </ul>
 <span ng-if='!posts.length'>
