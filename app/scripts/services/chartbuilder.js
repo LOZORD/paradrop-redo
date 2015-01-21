@@ -18,7 +18,8 @@ angular.module('paradropApp')
     this.engagementChart = null;
 
     charts.getBuiltCharts = function(){
-      if(!this.totalUsersChart || !this.repeatVisitsChart || !this.engagementChart){
+      if(!this.totalUsersChart || !this.engagementChart)
+      {
         return null;
       }else{
         return {
@@ -109,11 +110,11 @@ angular.module('paradropApp')
         //Series object (optional) - a list of series using normal highcharts series options.
         series: [{
           data: plot,
-          name: 'Total Users'
+          name: 'Number of Customers'
         }],
         //Title configuration (optional)
         title: {
-          text: 'Total Users on ' + date
+          text: 'Number of Customers on ' + date
         },
         //Boolean to control showng loading status on chart (optional)
         //Could be a string if you want to show specific loading text.
@@ -129,7 +130,7 @@ angular.module('paradropApp')
           }
         },
         yAxis: {
-         title: {text: 'Total Users'},
+         title: {text: 'Number of Customers'},
          floor: 0
         },
         //Whether to use HighStocks instead of HighCharts (optional). Defaults to false.

@@ -17,7 +17,6 @@ angular.module('paradropApp')
       var charts = chartBuilder.getBuiltCharts();
       if(charts){
         //skip building charts
-        //$scope.totalCusts = charts.repeatVisits.totalCusts;
         $scope.totalCusts = Recon.recon.getNumberCustomersInside();
         $scope.contentLoaded = true;
       }else{ 
@@ -31,12 +30,14 @@ angular.module('paradropApp')
           console.log('Total Users Chart Built');
           chartBuilder.buildEngagementChart(); 
           console.log('Engagement Chart Built');
+          /*
           Recon.recon.setupRepeatVisits().then(
             function(){
               var repeatChart = chartBuilder.buildRepeatVisitsChart(); 
               $scope.contentLoaded = true;
             }
           );
+          */
         });
       }
     }
