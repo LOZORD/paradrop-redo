@@ -117,6 +117,6 @@ angular.module('paradropApp', [
     notAuthorized: 'auth-not-authorized'
   })
   .constant('URLS', {
-    http: 'http://paradrop.wings.cs.wisc.edu:30333/v1/',
-    https: 'https://paradrop.wings.cs.wisc.edu:30332/v1/',
+    http:  'http://dbapi.paradrop.io/v1/',
+    https: 'https://dbapi.paradrop.io/v1/'
   });

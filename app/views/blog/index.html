@@ -1,12 +1,14 @@
 <h1>Blog</h1>
-<ul>
+<ul ng-if='posts.length'>
   <li ng-repeat='post in posts'>
-    <h3>{{ post.title }}</h3>
+    <h2><a ng-href='#!/blog/{{ post.ts }}'>{{ post.title }}</a></h2>
     <h5>{{ post.author }}</h5>
-    <small>{{ post.ts | date: 'medium' }}</h5>
-    <small>{{ post.topic }}</small>
-    <div class='post-content'>
-      {{ post.content }}
+    <small>{{ post.ts | date: 'short' }}</h5>
+    <small><a ng-href='#!/blog/topic/{{ post.topic }}'>{{ post.topic }}</a></small>
+    <div class='post-content' ng-bind-html='post.content'>
     </div>
   </li>
 </ul>
+<span ng-if='!posts.length'>
+  No blog posts available at this time.
+</span>
