@@ -45,8 +45,6 @@ angular.module('paradropApp')
               },
               //failed to restore a session
               function() {
-                //no longer pending session creation
-                ipCookie.remove('pending');
                 login(credentials);
               }
           );
@@ -66,8 +64,6 @@ angular.module('paradropApp')
                 },
                 /* FAILED LOGIN */
                 function (error) {
-                  //no longer pending session creation
-                  ipCookie.remove('pending');
                   $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
                   if(error.data === 'User is not verified!'){
                     alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');

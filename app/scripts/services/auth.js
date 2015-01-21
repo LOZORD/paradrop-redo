@@ -36,9 +36,9 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         4) They should be automatically logged in on Tab B using the new cookie & cloneSession
       */
       authService.login = function (credentials) {
-          ipCookie('pending',true);
 
           credentials.already_hashed = false;
+          credentials.keep_token = true;
 
           var loginURL = URLS.current + 'authenticate/signin';
 
@@ -49,11 +49,9 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               if (credentials.persist) {
                 ipCookie('shouldPersist', true, { expires: 7 });
                 ipCookie('sessionToken', someSession.id, { expires: 7 });
-                ipCookie.remove('pending');
               }
               else {
                 ipCookie('sessionToken', someSession.id);
-                ipCookie.remove('pending');
               }
             });
           return retData;
@@ -67,8 +65,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               this.name = "NoSessionTokenException";
             };
           }
-          ipCookie('pending',true);
           var credentials = {sessionToken: ipCookie('sessionToken')};
+          credentials.keep_token = true;
           var loginURL = URLS.current + 'authenticate/cloneSession';
           var retData = $http
             .post(loginURL, credentials)
@@ -79,11 +77,9 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
               if (shouldPersist) {
                 ipCookie('shouldPersist', true, { expires: 7 });
                 ipCookie('sessionToken', someSession.id, { expires: 7 });
-                ipCookie.remove('pending');
               }
               else {
                 ipCookie('sessionToken', someSession.id);
-                ipCookie.remove('pending');
               }
             });
           return retData;
@@ -94,7 +90,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       };
 
       authService.logout = function () {
-        var logoutURL = URLS.current + 'authenticate/signout';
+        //TODO FIX THIS HACK
+        var logoutURL = URLS.current + 'test';
         var payload = { sessionToken: ipCookie('sessionToken') };
         ipCookie.remove('sessionToken');
         ipCookie.remove('shouldPersist');
@@ -102,7 +99,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         Session.destroy();
 
         var retData = $http
-          .post(logoutURL, payload)
+          //TODO switch back to post request
+          .get(logoutURL)
           .then(function(result) {
             return result;
           });
@@ -169,6 +167,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isAdmin = null;
         this.aps = null;
         this.fullname = null;
+        this.defaultGroup = null;
       };
 
 

@@ -2,11 +2,15 @@
   <h1>Welcome, {{ currentUser.fullname }}!</h1>
 </div>
 
-<div ng-if='currentUser.isAdmin'>You're an admin<span ng-if='currentUser.isDeveloper'> and a developer</span>.</div>
+<div ng-if='currentUser.isAdmin || currentUser.isDeveloper'>You're a 
+  <span ng-if='currentUser.isAdmin'>admin</span>
+  <span ng-if="currentUser.isAdmin && currentUser.isDeveloper"> and a </span>
+  <span ng-if="currentUser.isDeveloper">developer</span>.
+</div>
 
 <hr>
 <div class="row">
-  <div ng-if='grouplessAPS.length > 0' class="col-sm-6">
+  <div ng-if='grouplessAPS.length > 0' class="col-sm-{{grouplessWidth}}">
     <h2>Access Point's</h2>
     <div class="panel-group" id="apCollapse">
       <div ng-repeat="(key, ap) in grouplessAPS" class="panel panel-default">
@@ -25,7 +29,7 @@
       </div>
     </div>
   </div>
-  <div class='col-sm-{{groupWidth}}'>
+  <div ng-if="currentUser.defaultGroup" class='col-sm-{{groupWidth}}'>
     <div class="panel-group" id="apCollapse">
       <div ng-repeat="group in groups" class="panel panel-default">
         <div class="panel-heading accordion-toggle" data-toggle="collapse" data-target="#group{{group.trim}}" ng-click="group{{group.trim}}.open =!group{{group.trim}}.open">
@@ -35,7 +39,7 @@
         </div>
         <div id="group{{group.trim}}" class="panel-collapse collapse {{uncollapse}}">
           <div class="panel-body">
-            <p><a ng-href='#!/recon/home/{{group.full}}'><h1>Recon: CustomerAnalytics</h1></a></p>
+            <p><a ng-href='#!/recon/home/{{group.full}}'><h1>Recon: Customer Analytics</h1></a></p>
             <button data-toggle="modal" data-target="#modalGroup{{group.trim}}" type="button" class="btn btn-primary">Config Options</button>
           </div>
         </div>

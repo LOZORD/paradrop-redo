@@ -101,12 +101,9 @@ angular.module('paradropApp', [
       }
     ]);
   })
-  .run(function(Session, AuthService, ipCookie, $q, $rootScope) {
+  .run(function(AuthService, ipCookie, $q, $rootScope) {
     $rootScope.restoreSession = $q.defer();
     $rootScope.$on('$routeChangeStart', function (event, next) {
-      //attempt to clone the session if they are not logged in (has an id==token)
-      //don't try to clone session if it's already pending
-      if(!AuthService.getSession().id && !ipCookie('pending')){
         //first check that they have a cookie
         var tokenCookie = ipCookie('sessionToken');
         //attempt to clone the session using the cookie data
@@ -118,8 +115,7 @@ angular.module('paradropApp', [
             },
             /* UNSUCCESSFUL CLONING */
             function() {
-              //no longer pending session creation
-              ipCookie.remove('pending');
+              AuthService.destroySession();
               $rootScope.restoreSession.resolve();
             }
           );
@@ -128,7 +124,6 @@ angular.module('paradropApp', [
         else {
           $rootScope.restoreSession.resolve();
         }
-      }
     });
   })
   .constant('AUTH_EVENTS', {
