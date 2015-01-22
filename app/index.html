@@ -39,9 +39,10 @@
                  <span class="icon-bar"></span>
                  <span class="icon-bar"></span>
               </button>
-              <span ng-cloak class="slide-btn"><div ng-if="isAuthenticated()" snap-toggle="left" class="btn btn-lg btn-default">
+              <!--<span ng-cloak class="slide-btn"><div ng-if="isAuthenticated()" snap-toggle="left" class="btn btn-lg btn-default">
                 <span class="glyphicon glyphicon-user"></span>
             </div></span>
+            -->
               <span class="nav-logo"><a class="para-text" href="#!/"><img ng-src='images/logo.png' width="40" height="40"/><span class="para-text">Paradrop</span></a></span>
             </div>
             <div class="navbar-inner">
@@ -51,7 +52,7 @@
             <div class="collapse navbar-collapse" id="paradrop-navbar-collapse">
               <ul class="nav navbar-nav navbar-right">
                 <li><a ng-if="!isAuthenticated()" ng-href="#!/login">Login</a></li>
-                <li ng-cloak ng-if="isAuthenticated()" class="dropdown">
+                <li ng-cloak ng-if="isAuthenticated() && currentUser.defaultGroup" class="dropdown">
                   <a href="" data-toggle="dropdown" class="dropdown-toggle">
                         Recon <b class="caret"></b>
                   </a>
@@ -80,7 +81,24 @@
                   </ul>
                 </li>
                 <li><a ng-if="!isAuthenticated()" ng-href="#!/">Home</a></li>
-                <li ng-cloak><a ng-if="isAuthenticated()" ng-href="#!/my_paradrop">My Paradrop</a></li>
+                <li ng-cloak ng-if="isAuthenticated()" class="dropdown">
+                  <a href="" data-toggle="dropdown" class="dropdown-toggle">
+                        My Paradrop <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a ng-href="#!/my_paradrop">
+                        Home
+                      </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                      <a ng-href="#!/" ng-click="logout()">
+                        Logout
+                      </a>
+                    </li>
+                  </ul>
+                </li>
                 <li><a ng-href="#!/about">About</a></li>
                 <li><a ng-href="#!/contact">Contact</a></li>
               </ul>
