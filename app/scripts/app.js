@@ -10,7 +10,6 @@
  */
 angular.module('paradropApp', [
     'ngAnimate',
-    'd3',
     'ngAria',
     'ngCookies',
     'ngMessages',
@@ -54,10 +53,6 @@ angular.module('paradropApp', [
       .when('/user/new', {
         templateUrl: 'views/signup_form.html',
         controller: 'NewUserCtrl'
-      })
-      .when('/dashboard/:group_id*', {
-        templateUrl: 'views/dashboard.html',
-        controller: 'DashboardCtrl'
       })
       .when('/recon/map/:group_id*', {
         templateUrl: 'views/recon/map.html',
