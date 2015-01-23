@@ -70,6 +70,10 @@ angular.module('paradropApp', [
         templateUrl: 'views/recon/dashboard.html',
         controller: 'ReconDashboardCtrl'
       })
+      .when('/calibrate', {
+        templateUrl: 'views/calibrate.html',
+        controller: 'CalibrateCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });

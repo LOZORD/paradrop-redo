@@ -52,6 +52,24 @@
             <div class="collapse navbar-collapse" id="paradrop-navbar-collapse">
               <ul class="nav navbar-nav navbar-right">
                 <li><a ng-if="!isAuthenticated()" ng-href="#!/login">Login</a></li>
+                <li ng-cloak ng-if="isAuthenticated()" class="dropdown">
+                  <a href="" data-toggle="dropdown" class="dropdown-toggle">
+                        My Paradrop <b class="caret"></b>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li>
+                      <a ng-href="#!/my_paradrop">
+                        Home
+                      </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                      <a ng-href="#!/" ng-click="logout()">
+                        Logout
+                      </a>
+                    </li>
+                  </ul>
+                </li>
                 <li ng-cloak ng-if="isAuthenticated() && currentUser.defaultGroup" class="dropdown">
                   <a href="" data-toggle="dropdown" class="dropdown-toggle">
                         Recon <b class="caret"></b>
@@ -80,25 +98,19 @@
                     </li>
                   </ul>
                 </li>
-                <li><a ng-if="!isAuthenticated()" ng-href="#!/">Home</a></li>
-                <li ng-cloak ng-if="isAuthenticated()" class="dropdown">
+                <li ng-cloak ng-if="isAuthenticated() && currentUser.isAdmin" class="dropdown">
                   <a href="" data-toggle="dropdown" class="dropdown-toggle">
-                        My Paradrop <b class="caret"></b>
+                        Admin Options <b class="caret"></b>
                   </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a ng-href="#!/my_paradrop">
-                        Home
-                      </a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                      <a ng-href="#!/" ng-click="logout()">
-                        Logout
+                      <a ng-href="#!/calibrate">
+                        Calibrate Maps
                       </a>
                     </li>
                   </ul>
                 </li>
+                <li><a ng-if="!isAuthenticated()" ng-href="#!/">Home</a></li>
                 <li><a ng-href="#!/about">About</a></li>
                 <li><a ng-href="#!/contact">Contact</a></li>
               </ul>
@@ -180,14 +192,13 @@
     <script src="scripts/controllers/mypdp.js"></script>
     <script src="scripts/controllers/contact.js"></script>
     <script src='scripts/controllers/signup.js'></script>
-    <script src="scripts/controllers/dashboard.js"></script>
-    <script src="scripts/services/d3service.js"></script>
     <script src="scripts/services/recon.js"></script>
     <script src="scripts/services/chartbuilder.js"></script>
     <script src="scripts/controllers/recon/map.js"></script>
     <script src="scripts/controllers/recon/home.js"></script>
     <script src="scripts/controllers/recon/settings.js"></script>
     <script src="scripts/controllers/recon/dashboard.js"></script>
+    <script src="scripts/controllers/calibrate.js"></script>
     <!-- endbuild -->
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
     <script src='https://maps.googleapis.com/maps/api/js'></script>

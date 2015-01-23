@@ -34,7 +34,7 @@ angular.module('paradropApp')
         }
       });
 
-      $scope.authorizePage = function ()  { 
+      $scope.authorizePage = function (shouldBeAdmin)  { 
         if (!$scope.isAuthenticated()  || !ipCookie('sessionToken')) {
           $location.url('/login');
 
@@ -44,6 +44,11 @@ angular.module('paradropApp')
             $scope.currentUser = null;
             AuthService.destroySession();
           }
+          return;
+        }
+        if(shouldBeAdmin && !$scope.currentUser.isAdmin){
+          $location.url('/my_paradrop');
+          alert("You must be an admin to view this page!");
         }
       };
 

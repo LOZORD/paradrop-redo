@@ -97,6 +97,6 @@ angular.module('paradropApp')
             }
         , function(error){$scope.mapError = true;}).then(function(){
             $scope.mapReady = true;});
-    ;
+    
       });
   }]);
