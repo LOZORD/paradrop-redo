@@ -34,12 +34,21 @@ angular.module('paradropApp', [
         templateUrl: 'views/blog/index.html',
         controller: 'BlogCtrl'
       })
+      //this mirrors the /blog path (duplicate)
+      .when('/blog/posts', {
+        templateUrl: 'views/blog/index.html',
+        controller: 'BlogCtrl'
+      })
       .when('/blog/posts/:ts', {
-        templateUrl: 'views/blog/show.html',
+        templateUrl: 'views/blog/posts/show.html',
+        controller: 'BlogCtrl'
+      })
+      .when('/blog/topics', {
+        templateUrl: 'views/blog/topics/index.html',
         controller: 'BlogCtrl'
       })
       .when('/blog/topics/:topic', {
-        templateUrl: 'views/blog/topic.html',
+        templateUrl: 'views/blog/topics/show.html',
         controller: 'BlogCtrl'
       })
       .when('/contact', {

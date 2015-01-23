@@ -1,0 +1,14 @@
+<h1>Blog Topics ({{ numTopics }} total)</h1>
+<ul ng-repeat='(topic, topicPostArr) in topicToPostMap'>
+  <li>
+    <h3><a ng-href='#!/blog/topics/{{ topic }}'>{{ topic }}</a> ({{ topicPostArr.length }} total)</h3>
+    <ul ng-repeat='post in topicPostArr'>
+      <li>
+        <h5>
+          {{ posts[post].ts | date: 'shortDate' }}
+          <a ng-href='#!/blog/posts/{{ posts[post].ts }}'>{{ posts[post].title }}</a>
+        </h5>
+      </li>
+    </ul>
+  </li>
+</ul>

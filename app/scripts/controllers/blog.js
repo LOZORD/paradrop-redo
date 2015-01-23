@@ -13,6 +13,9 @@ angular.module('paradropApp')
       var ts = null;
       //a map of post's ts => index of post in $scope.posts
       var tsToPostIndMap = {};
+      //a map of topic => Array of posts indices in $scope.posts with that topic
+      $scope.topicToPostMap = {};
+      $scope.numTopics      = 0;
       $scope.posts          = [];
       $scope.specificPost   = [];
       $scope.topicPosts     = [];
@@ -34,8 +37,19 @@ angular.module('paradropApp')
               return b.ts - a.ts;
             });
 
+            $scope.numTopics = 0;
+
+            //gather extra data on the posts
             data.forEach(function (post, index) {
               tsToPostIndMap[post.ts] = index;
+
+              if (!$scope.topicToPostMap.hasOwnProperty(post.topic)) {
+                $scope.topicToPostMap[post.topic] = [ index ];
+                $scope.numTopics++;
+              }
+              else {
+                $scope.topicToPostMap[post.topic].push(index);
+              }
             });
 
             $scope.posts = data;
@@ -52,7 +66,8 @@ angular.module('paradropApp')
         post.title    = decodeURIComponent(post.title);
         post.author   = decodeURIComponent(post.publicName);
         post.topic    = decodeURIComponent(post.topic);
-        post.content  = decodeURIComponent(post.content);
+        //post.content  = $sce.trustAsHTML(decodeURIComponent(post.content));
+        post.content  = (decodeURIComponent(post.content));
         //because JS does things in milliseconds
         post.ts = post.ts * 1000;
         return post;
