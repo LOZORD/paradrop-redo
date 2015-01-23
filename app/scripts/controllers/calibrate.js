@@ -34,7 +34,7 @@ angular.module('paradropApp')
               //nothing to do
             },
             function(error){
-              alert("There was an error make sure you started tracking.");
+              alert("There was an error you may already have started tracking.");
             }
 
           );
@@ -63,6 +63,7 @@ angular.module('paradropApp')
           mainBody.mac = $scope.mac;
           $http.post(pollURL, mainBody ).then(
             function(result) {
+              console.log(result.data);
               var time = Math.floor(Date.now() / 1000);
               tsDeltas = {};
               for(var rid in result.data){
@@ -73,6 +74,7 @@ angular.module('paradropApp')
                   $scope.showMarkers[$scope.apNameMap[rid].apid] = false;
                 }
               }
+              console.log(tsDeltas);
             },
             function(error){
               alert("There was an error make sure you started tracking.");

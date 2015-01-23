@@ -35,6 +35,7 @@ angular.module('paradropApp')
       var chartInfo = {};
       var startts;
       var stopts;
+      var granularity = 3600;//default
       var date = '';
       if(DEV_MODE){
         startts = 1419175642;
@@ -52,20 +53,26 @@ angular.module('paradropApp')
         openTime.setMinutes(0);
         openTime.setSeconds(0);
         openTime.setMilliseconds(0);
-        openTime = Math.floor(openTime.getTime() / 1000);
         if(closeTime.getHours() > 19){
           closeTime.setHours(19);
         }
-        closeTime = Math.floor(closeTime.getTime() / 1000);
-        stopts = closeTime;
-        startts = openTime;
+        stopts = Math.floor(closeTime.getTime() / 1000);
+        startts = Math.floor(openTime.getTime() / 1000);
+        var timeDiff = closeTime.getHours() - openTime.getHours();
+        if(timeDiff < 5){
+          granularity = 1800;
+        }
+        if(timeDiff < 3){
+          granularity = 900;
+        }
       }
-      var graphData = Recon.recon.getTotalGroupByTS(startts, stopts, 3600);
+      var graphData = Recon.recon.getTotalGroupByTS(startts, stopts, granularity);
       var plot = [];
       var xTimes = [];
       for(var i = 0; i < graphData.x.length; i++){ 
         var time = new Date(graphData.x[i] * 1000);
         var hours = time.getHours();
+        var minutes = time.getMinutes();
         var suffix = '';
         if(hours >= 12){
           suffix = 'PM';
@@ -78,7 +85,17 @@ angular.module('paradropApp')
             hours = 12;
           }
         }
-        xTimes.push(hours + ':0' + time.getMinutes() + suffix);
+        var endHours = (hours+1)%12;
+        if(endHours == 0){
+          endHours = 12;
+          suffix = 'PM';
+        }
+        xTimes.push(hours + (minutes==0?'':':' + minutes) +'-' 
+            + ((minutes +
+            (granularity / 60))==60?endHours.toString():hours.toString()) +
+            ((minutes +(granularity / 60))==60?'':':' + 
+            (minutes + (granularity / 60))) + suffix);
+
         plot.push({name: xTimes[i], y: graphData.y[i]});
         var step = 4;
         if(xTimes.length < 6){
@@ -95,7 +112,7 @@ angular.module('paradropApp')
           //This is the Main Highcharts chart config. Any Highchart options are valid here.
           //will be ovverriden by values specified below.
           chart: {
-            type: 'line'
+            type: 'column'
           },
           tooltip: {
             style: {
@@ -122,7 +139,7 @@ angular.module('paradropApp')
         //Configuration for the xAxis (optional). Currently only one x axis can be dynamically controlled.
         //properties currentMin and currentMax provied 2-way binding to the chart's maximimum and minimum
         xAxis: {
-          categories: xTimes,
+          categories: xTimes ,
           title: {text: 'Time'},
           labels: {
             step: step,

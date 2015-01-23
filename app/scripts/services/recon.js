@@ -27,7 +27,7 @@ angular.module('paradropApp')
       //setup opts for prefetch
       var openTime = new Date();
       var closeTime = new Date();
-      if(openTime.getHours() < 9){
+      if(openTime.getHours() < 10){
         openTime.setDate(openTime.getDate() -1);
         closeTime.setDate(closeTime.getDate() -1);
         closeTime.setHours(19);
