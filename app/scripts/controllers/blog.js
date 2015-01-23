@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('BlogCtrl', ['$scope', '$location', '$http', '$routeParams', 'URLS',
-    function ($scope, $location, $http, $routeParams, URLS) {
+  .controller('BlogCtrl', ['$scope', '$location', '$http', '$routeParams', 'URLS', '$sce',
+    function ($scope, $location, $http, $routeParams, URLS, $sce) {
       var ts = null;
       //a map of post's ts => index of post in $scope.posts
       var tsToPostIndMap = {};
@@ -66,8 +66,9 @@ angular.module('paradropApp')
         post.title    = decodeURIComponent(post.title);
         post.author   = decodeURIComponent(post.publicName);
         post.topic    = decodeURIComponent(post.topic);
-        //post.content  = $sce.trustAsHTML(decodeURIComponent(post.content));
-        post.content  = (decodeURIComponent(post.content));
+        var content   = decodeURIComponent(post.content);
+        //trust "foreign" tags like <iframe> (for youtube, etc.)
+        post.content  = $sce.trustAsHtml(content);
         //because JS does things in milliseconds
         post.ts = post.ts * 1000;
         return post;
