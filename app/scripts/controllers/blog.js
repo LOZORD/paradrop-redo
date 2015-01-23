@@ -13,12 +13,17 @@ angular.module('paradropApp')
       var ts = null;
       //a map of post's ts => index of post in $scope.posts
       var tsToPostIndMap = {};
-      $scope.posts = null;
-      $scope.specificPost = null;
+      $scope.posts          = [];
+      $scope.specificPost   = [];
+      $scope.topicPosts     = [];
 
       var blogUrl = URLS.https + 'blog/get';
       var payload = {};
 
+      /*
+        We actually download all the (most recent as defnd by API) blog posts.
+        Then we just filter according to url's and such.
+      */
       $http.post(blogUrl, payload)
         .success(
           function(data) {
@@ -35,7 +40,10 @@ angular.module('paradropApp')
 
             $scope.posts = data;
 
+            //first, check if the user wants to look at a specific post
             checkForSpecific();
+            //then, if they want to look at a specific topic
+            checkForTopic();
           }
       );
 
@@ -51,7 +59,7 @@ angular.module('paradropApp')
       }
 
       /* FOR /blog/:ts ---> SPECIFIC BLOG POST */
-      function checkForSpecific() {
+      function checkForSpecific () {
         if ($routeParams.ts) {
           payload.ts = ts = parseInt($routeParams.ts, 10);
           if (tsToPostIndMap.hasOwnProperty(ts)) {
@@ -77,10 +85,27 @@ angular.module('paradropApp')
                 },
                 /* FAILURE */
                 function (result) {
-                  console.log(result);
                   $location.url('/blog');
                 }
               );
+          }
+        }
+      }
+
+      function checkForTopic() {
+        if ($routeParams.topic) {
+          $scope.currTopic = $routeParams.topic;
+          //first filter the current blog posts by topic
+          var topicPosts = [];
+          topicPosts = $scope.posts.filter(function (somePost) {
+            return somePost.topic === $routeParams.topic;
+          });
+
+          if (topicPosts.length) {
+            $scope.topicPosts = topicPosts;
+          }
+          else {
+            // use ajax to get more posts TODO
           }
         }
       }
