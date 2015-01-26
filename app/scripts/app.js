@@ -100,6 +100,42 @@ angular.module('paradropApp', [
       }
     ]);
   })
+  .run(function($rootScope) {
+    //determine the date  and open times for recon fetching
+      var openTime = new Date();
+      var closeTime = new Date();
+      $rootScope.granularity = 3600;//default
+      $rootScope.reconDate = 'so far Today';
+      if(openTime.getHours() < 10){
+        openTime.setDate(openTime.getDate() -1);
+        $rootScope.reconDate = 'on ' + openTime.toLocaleDateString();
+        closeTime.setDate(closeTime.getDate() -1);
+        closeTime.setHours(18);
+        closeTime.setMinutes(59);
+        closeTime.setSeconds(59);
+        closeTime.setMilliseconds(0);
+      }
+      openTime.setHours(9);
+      openTime.setMinutes(0);
+      openTime.setSeconds(0);
+      openTime.setMilliseconds(0);
+      if(closeTime.getHours() > 19){
+        closeTime.setHours(18);
+        closeTime.setMinutes(59);
+        closeTime.setSeconds(59);
+        closeTime.setMilliseconds(0);
+      }
+      var timeDiff = closeTime.getHours() - openTime.getHours();
+      if(timeDiff < 5){
+        $rootScope.granularity = 1800;
+      }
+      if(timeDiff < 3){
+        $rootScope.granularity = 900;
+      }
+      $rootScope.openTime = Math.floor(openTime.getTime() / 1000);
+      $rootScope.closeTime = Math.floor(closeTime.getTime() / 1000);
+    
+  }) 
   .run(function(AuthService, ipCookie, $q, $rootScope) {
     $rootScope.restoreSession = $q.defer();
     $rootScope.$on('$routeChangeStart', function (event, next) {
@@ -134,10 +170,6 @@ angular.module('paradropApp', [
     notAuthorized: 'auth-not-authorized'
   })
   .constant('URLS', {
-    http: 'http://paradrop.wings.cs.wisc.edu:30333/v1/',
-    https: 'https://paradrop.wings.cs.wisc.edu:30332/v1/',
-    pdropvpn: 'https://10.1.0.214:30332/v1/',
-    alldayvpn: 'https://10.1.0.230:30332/v1/',
     //Change the current url to change all calls globally
     current: 'https://dbapi.paradrop.io/v1/'
   })

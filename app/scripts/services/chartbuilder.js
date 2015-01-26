@@ -35,38 +35,15 @@ angular.module('paradropApp')
       var chartInfo = {};
       var startts;
       var stopts;
-      var granularity = 3600;//default
-      var date = '';
       if(DEV_MODE){
         startts = 1419175642;
         stopts = 1419262042;
       }else{
-        var openTime = new Date();
-        var closeTime = new Date();
-        if(openTime.getHours() < 10){
-          openTime.setDate(openTime.getDate() -1);
-          closeTime.setDate(closeTime.getDate() -1);
-          closeTime.setHours(19);
-        }
-        date = openTime.toDateString();
-        openTime.setHours(9);
-        openTime.setMinutes(0);
-        openTime.setSeconds(0);
-        openTime.setMilliseconds(0);
-        if(closeTime.getHours() > 19){
-          closeTime.setHours(19);
-        }
-        stopts = Math.floor(closeTime.getTime() / 1000);
-        startts = Math.floor(openTime.getTime() / 1000);
-        var timeDiff = closeTime.getHours() - openTime.getHours();
-        if(timeDiff < 5){
-          granularity = 1800;
-        }
-        if(timeDiff < 3){
-          granularity = 900;
-        }
+        stopts = $rootScope.closeTime;
+        startts = $rootScope.openTime;
       }
-      var graphData = Recon.recon.getTotalGroupByTS(startts, stopts, granularity);
+      var graphData = Recon.recon.getTotalGroupByTS(startts, stopts,
+                        $rootScope.granularity);
       var plot = [];
       var xTimes = [];
       for(var i = 0; i < graphData.x.length; i++){ 
@@ -92,9 +69,9 @@ angular.module('paradropApp')
         }
         xTimes.push(hours + (minutes==0?'':':' + minutes) +'-' 
             + ((minutes +
-            (granularity / 60))==60?endHours.toString():hours.toString()) +
-            ((minutes +(granularity / 60))==60?'':':' + 
-            (minutes + (granularity / 60))) + suffix);
+            ($rootScope.granularity / 60))==60?endHours.toString():hours.toString()) +
+            ((minutes +($rootScope.granularity / 60))==60?'':':' + 
+            (minutes + ($rootScope.granularity / 60))) + suffix);
 
         plot.push({name: xTimes[i], y: graphData.y[i]});
         var step = 4;
@@ -131,7 +108,7 @@ angular.module('paradropApp')
         }],
         //Title configuration (optional)
         title: {
-          text: 'Number of Customers on ' + date
+          text: 'Number of Customers ' + $rootScope.reconDate
         },
         //Boolean to control showng loading status on chart (optional)
         //Could be a string if you want to show specific loading text.
