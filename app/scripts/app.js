@@ -38,6 +38,27 @@ angular.module('paradropApp', [
         templateUrl: 'views/about.html',
         controller: 'AboutCtrl'
       })
+      .when('/blog', {
+        templateUrl: 'views/blog/index.html',
+        controller: 'BlogCtrl'
+      })
+      //this mirrors the /blog path (duplicate)
+      .when('/blog/posts', {
+        templateUrl: 'views/blog/index.html',
+        controller: 'BlogCtrl'
+      })
+      .when('/blog/posts/:ts', {
+        templateUrl: 'views/blog/posts/show.html',
+        controller: 'BlogCtrl'
+      })
+      .when('/blog/topics', {
+        templateUrl: 'views/blog/topics/index.html',
+        controller: 'BlogCtrl'
+      })
+      .when('/blog/topics/:topic', {
+        templateUrl: 'views/blog/topics/show.html',
+        controller: 'BlogCtrl'
+      })
       .when('/contact', {
         templateUrl: 'views/contact.html',
         controller: 'ContactCtrl'
@@ -51,8 +72,18 @@ angular.module('paradropApp', [
         controller: 'MyParadropCtrl'
       })
       .when('/user/new', {
-        templateUrl: 'views/signup_form.html',
+        templateUrl: 'views/signup/form.html',
         controller: 'NewUserCtrl'
+      })
+      .when('/notify', {
+        templateUrl: 'views/signup/notify.html'
+      })
+      .when('/verify', {
+        redirectTo: '/'
+      })
+      .when('/verify/:verificationToken', {
+        templateUrl: 'views/signup/verify.html',
+        controller:   'NewUserCtrl'
       })
       .when('/recon/map/:group_id*', {
         templateUrl: 'views/recon/map.html',
