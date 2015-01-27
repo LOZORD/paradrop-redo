@@ -10,7 +10,7 @@
   <!-- Tab panes -->
   <div class="tab-pane">
     <h1 ng-if="mapError">Error loading map</h1>
-    <img class="img-responsive center-block" ng-show="!mapReady" ng-src='images/spinner.gif'/>
+    <img class="img-responsive center-block" ng-show="!mapReady && !mapError" ng-src='images/spinner.gif'/>
     <map ng-if="mapReady" style="height: 700px;" zoom="15" 
       center="{{mapData.centerX}}, {{mapData.centerY}}" 
         street-view-control="false" 
@@ -24,17 +24,18 @@
         </map-type>
         <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png" on-click="showInfoWindow('info{{ap.apid}}')"></marker>
         <!-- ngRepeat: pos in positions -->
-        <heatmap-layer id="foo" data="taxiData"></heatmap-layer>
+        <heatmap-layer id="foo" data="heatMapData"></heatmap-layer>
     </map>
     <div class='row'>
       <div class='col-xs-3'>
         <div class="padded-btn">
-          <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeMarkerText();">{{markerBtnText}} Paradrop Access Points</button>
+          <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeText(!showMarkers,true);">{{markerBtnText}} Paradrop Access Points</button>
         </div>
       </div>
       <div class='col-xs-3'>
         <div class="padded-btn">
-          <button class="btn btn-primary" ng-click="changeHeatText();toggleHeatmap();">{{heatBtnText}} Example Heat Map</button>
+          <button class="btn btn-primary" ng-click="hideHeatMap = !hideHeatMap;changeText(hideHeatMap, false);toggleHeatmap();">{{heatBtnText}} Example Heat Map</button>
+            
         </div>
       </div>
     </div>

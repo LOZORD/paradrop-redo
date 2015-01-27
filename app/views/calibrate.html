@@ -22,7 +22,7 @@
   </div>
 </div>
     <h1 ng-if="mapError">Error loading map</h1>
-    <img class="img-responsive center-block" ng-show="!mapReady" ng-src='images/spinner.gif'/>
+    <img class="img-responsive center-block" ng-show="!mapReady && !mapError" ng-src='images/spinner.gif'/>
     <map ng-if="mapReady" style="height: 700px;" zoom="15" 
       center="{{mapData.centerX}}, {{mapData.centerY}}" 
         street-view-control="false" 
