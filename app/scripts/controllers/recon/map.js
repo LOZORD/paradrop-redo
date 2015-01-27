@@ -16,9 +16,18 @@ angular.module('paradropApp')
       function(){
         $scope.showMarkers = true;
         $scope.markerBtnText = 'Hide';
+        $scope.heatBtnText = 'Hide';
         $scope.showInfoBox = {};
         $scope.showInfoWindow = function(apid){
                 $scope.showInfoBox[apid] = !$scope.showInfoBox[apid];
+        };
+        $scope.changeHeatText = function(){
+          $scope.hideHeatMap = !$scope.hideHeatMap;
+          if(!$scope.hideHeatMap){
+            $scope.heatBtnText = 'Hide';
+          }else{
+            $scope.heatBtnText = 'Show';
+          }
         };
         $scope.changeMarkerText = function(){
           if($scope.showMarkers){
@@ -35,6 +44,33 @@ angular.module('paradropApp')
         var postBody = { sessionToken: ipCookie('sessionToken') };
         $http.post(mapURL, postBody ).then(
             function(map){
+              var genFakeMarkers = function(cnt, noise) {
+                var markers = [];
+                var hotspots = [
+                  [-20, -40],
+                  [-20, -53],
+                  [-10, -33],
+                  [-10, -45],
+                  [-25, -45],
+                  [-28.5, -36],
+                  [-26, -49],
+                  [-20, -33]
+                ];
+                for(var i = 0; i < cnt ; i++) {
+                  // First randomly choose a hotspot
+                  var h = Math.floor(Math.random() * hotspots.length);
+                  // Now use random to add some noise to the marker coords
+                  var lat = Math.random() * noise + hotspots[h][0];
+                  var lng = Math.random() * noise + hotspots[h][1];
+                  markers.push([lat, lng]);
+                }
+                return markers;
+              }
+              $scope.taxiData = [ ];
+              var fakes = genFakeMarkers(100, 5);
+              for(var i in fakes){
+                $scope.taxiData.push(new google.maps.LatLng(fakes[i][0],fakes[i][1]));
+              }
               $scope.mapData = map.data;
               var gotMap = false;
               function getNormalizedCoord(coord, zoom) {
@@ -65,7 +101,7 @@ angular.module('paradropApp')
               $scope.onClick = function(event) {
                   var ll = event.latLng;
                   console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
-                  $scope.positions.push({lat: ll.lat(), lng: ll.lng()});
+                  //$scope.positions.push({lat: ll.lat(), lng: ll.lng()});
                   //$scope.map.markers[$scope.markers.length].setMap($scope.map);
               }
               //The PNG image itself is 2104 x 1641
@@ -94,6 +130,14 @@ angular.module('paradropApp')
               };
 
               $scope.firstFloorMapType = new google.maps.ImageMapType(firstFloorTypeOptions);
+              $scope.$on('mapInitialized', function(event, map) {
+                      $scope.heatmap = map.heatmapLayers.foo;
+                      $scope.map = map;
+                      $scope.heatmap.set('radius', 30);
+                          });
+              $scope.toggleHeatmap= function(event) {
+                $scope.heatmap.setMap($scope.heatmap.getMap() ? null : $scope.map);
+              };
             }
         , function(error){$scope.mapError = true;}).then(function(){
             $scope.mapReady = true;});
