@@ -409,7 +409,7 @@ module.exports = function (grunt) {
               {'#!/user/new': '___user_new.html'},
               {'#!/': '___.html'}
           ],*/
-          urls: ['#!/', '#!/about', '#!/contact', '#!/login', '#!/user/new']
+          urls: ['#!/', '#!/about', '#!/contact', '#!/login', '#!/user/new', '#!/blog']
         }
       }
     }
