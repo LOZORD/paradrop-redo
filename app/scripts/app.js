@@ -131,6 +131,12 @@ angular.module('paradropApp', [
       }
     ]);
   })
+  .run(function($rootScope, $window, $location){
+    var track = function() {
+      $window.ga('send', 'pageview', { page: $location.path() });
+    };
+    $rootScope.$on('$viewContentLoaded', track);
+  })
   .run(function($rootScope) {
     //determine the date  and open times for recon fetching
       var openTime = new Date();
