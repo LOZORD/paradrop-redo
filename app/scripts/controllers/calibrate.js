@@ -131,7 +131,12 @@ angular.module('paradropApp')
                 $scope.mapData = $scope.groupMaps.data;
                 var builtMap = gmapMaker.buildMap($scope.mapData);
                 $scope.firstFloorMapType = builtMap.mapType;
-                $scope.onClick = builtMap.onClick;
+                $scope.onClick = function(event) {
+                  var ll = event.latLng;
+                  console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
+                  $scope.showLocation = true;
+                  $scope.coords = { lat: ll.lat(), lng: ll.lng() };
+                }
                 $scope.heatMapData = gmapMaker.buildHeatmap();
                 $scope.mapReady = true;
               }
