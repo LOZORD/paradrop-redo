@@ -174,6 +174,9 @@ angular.module('paradropApp', [
     
   }) 
   .run(function(AuthService, ipCookie, $q, $rootScope) {
+    //setup some promises for services
+    $rootScope.chartsBuilt = $q.defer();
+    $rootScope.reconInit = $q.defer();
     $rootScope.restoreSession = $q.defer();
     $rootScope.$on('$routeChangeStart', function (event, next) {
         //first check that they have a cookie

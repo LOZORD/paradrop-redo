@@ -10,7 +10,6 @@
 angular.module('paradropApp')
   .service('Recon',[ 'Session', 'URLS', '$http', '$rootScope', '$q',function (Session, URLS, $http, $rootScope, $q) {
 
-    $rootScope.reconInit = $q.defer();
     this.recon = null;
     var self = this;
 
