@@ -61,7 +61,7 @@ angular.module('paradropApp')
           var signupURL = URLS.current + 'user/new';
           var failedQuestionResp = 'question not correct';
 
-          var sendResult = $http
+          $http
             .post(signupURL, payload)
             .then(
               /* USER SIGNUP might have been ok */
@@ -71,18 +71,18 @@ angular.module('paradropApp')
                   //redirect to verification page
                   $location.url('/notify');
                 }
-                else if (MODES.restrictedSignup
-                  && response.data.errMsg.indexOf(failedQuestionResp) !== -1) {
+                else if (MODES.restrictedSignup &&
+                  response.data.errMsg.indexOf(failedQuestionResp) !== -1) {
                   $location.url('/mode/restricted_signup');
                 }
                 else {
-                  alert('We could not complete the signup process. Please try again.');
-                  alert(response.data.errMsg.join('<br>'));
+                  window.alert('We could not complete the signup process. Please try again.');
+                  window.alert(response.data.errMsg.join('<br>'));
                 }
               },
               /* USER SIGNUP FAILED */
-              function (response) {
-                alert('There was a failure in the signup process. Please try again.');
+              function () {
+                window.alert('There was a failure in the signup process. Please try again.');
               }
           ); //end API call
         }; //end scope.create
@@ -101,17 +101,17 @@ angular.module('paradropApp')
               AuthService.cloneSession()
                 .then(
                   /* SUCCESS */
-                  function (cloneResponse) {
+                  function () {
                     $location.url('/my_paradrop');
                   },
                   /* FAILURE */
-                  function (cloneResponse) {
-                    alert('We could not set us your new account. Please try reverifying using the email we sent you.');
+                  function () {
+                    window.alert('We could not set us your new account. Please try reverifying using the email we sent you.');
                   }
                );
             },
             /* FAILURE */
-            function (response) {
+            function () {
               $location.url('/user/new');
             }
           );
