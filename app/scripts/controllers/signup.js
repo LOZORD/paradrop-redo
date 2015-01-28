@@ -8,8 +8,9 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS', '$routeParams', 'AuthService', 'ipCookie',
-    function ($scope, $location, $http, URLS, $routeParams, AuthService, ipCookie) {
+  .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS',
+    '$routeParams', 'AuthService', 'ipCookie', 'MODES',
+    function ($scope, $location, $http, URLS, $routeParams, AuthService, ipCookie, MODES) {
       /*
         first attempt to login the user b/c if they have a valid
         session, they should be required to log out if they want to
@@ -29,9 +30,14 @@ angular.module('paradropApp')
           public:       null,
           email:        null,
           contact:      null,
-          question:     null,
           isDeveloper:  false
         };
+
+        $scope.MODES = MODES;
+
+        if (MODES.restrictedSignup) {
+          $scope.signupData.question = null;
+        }
 
         $scope.create = function (data, isValid) {
           if (isValid !== true) {
@@ -45,9 +51,12 @@ angular.module('paradropApp')
             'public':     data['public'],
             email:        data.email,
             contact:      data.contact,
-            question:     data.question,
             isDeveloper:  data.isDeveloper
           };
+
+          if (MODES.restrictedSignup) {
+            payload.question = data.question;
+          }
 
           var signupURL = URLS.current + 'user/new';
           var failedQuestionResp = 'question not correct';
@@ -62,7 +71,8 @@ angular.module('paradropApp')
                   //redirect to verification page
                   $location.url('/notify');
                 }
-                else if (response.data.errMsg.indexOf(failedQuestionResp) !== -1) {
+                else if (MODES.restrictedSignup
+                  && response.data.errMsg.indexOf(failedQuestionResp) !== -1) {
                   $location.url('/mode/restricted_signup');
                 }
                 else {

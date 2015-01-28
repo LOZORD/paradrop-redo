@@ -208,4 +208,7 @@ angular.module('paradropApp', [
     //Change the current url to change all calls globally
     current: 'https://dbapi.paradrop.io/v1/'
   })
+  .constant('MODES', {
+    restrictedSignup: true
+  })
   .constant('DEV_MODE', false);
