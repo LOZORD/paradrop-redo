@@ -8,7 +8,8 @@
  * Service in the paradropApp.
  */
 angular.module('paradropApp')
-  .service('Recon',[ 'Session', 'URLS', '$http', '$rootScope', '$q',function (Session, URLS, $http, $rootScope, $q) {
+  .service('Recon',[ 'Session', 'URLS', '$http', '$rootScope', '$q', 'chartBuilder',
+      function (Session, URLS, $http, $rootScope, $q, chartBuilder) {
 
     this.recon = null;
     var self = this;
@@ -34,6 +35,16 @@ angular.module('paradropApp')
       self.recon.prefetch(opts)
       .then(function(){
         $rootScope.reconInit.resolve();
+        var stopts = $rootScope.closeTime;
+        var startts = $rootScope.openTime;
+        var graphData = self.recon.getTotalGroupByTS(startts, stopts,
+                          $rootScope.granularity);
+        chartBuilder.buildTotalUsers(graphData);
+        graphData = self.recon.getEngagementByTS([0, 300, 600, 900]);
+        chartBuilder.buildEngagementChart(graphData);
+        graphData = self.recon.getRepeatVisits();
+        chartBuilder.buildRepeatVisitsChart(graphData);
+        chartBuilder.chartsBuilt();
       });
 
     });
