@@ -48,7 +48,7 @@ angular.module('paradropApp')
           console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
           //$scope.positions.push({lat: ll.lat(), lng: ll.lng()});
           //$scope.map.markers[$scope.markers.length].setMap($scope.map);
-      }
+      };
       //The PNG image itself is 2104 x 1641
       //center of bookstore: center="[43.074675, -89.397898]" 
 
@@ -78,7 +78,7 @@ angular.module('paradropApp')
       return newMap; 
     };
 
-    gmapFuncs.buildHeatmap = function(data){
+    gmapFuncs.buildHeatmap = function(){
       var genFakeMarkers = function(cnt, noise) {
         var markers = [];
         var hotspots = [
@@ -100,7 +100,7 @@ angular.module('paradropApp')
           markers.push([lat, lng]);
         }
         return markers;
-      }
+      };
       var heatMapData = [];
       var fakes = genFakeMarkers(100, 5);
       for(var i in fakes){

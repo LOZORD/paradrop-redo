@@ -26,9 +26,9 @@ angular.module('paradropApp')
           totalUsers: this.totalUsersChart,
           repeatVisits: this.repeatVisitsChart,
           engagement: this.engagementChart
-        }
+        };
       }
-    }
+    };
 
     // Public API here
     charts.buildTotalUsers = function(){
@@ -58,16 +58,16 @@ angular.module('paradropApp')
           }
         }else{
           suffix = 'AM';
-          if(hours == 0){
+          if(hours === 0){
             hours = 12;
           }
         }
         var endHours = (hours+1)%12;
-        if(endHours == 0){
+        if(endHours === 0){
           endHours = 12;
           suffix = 'PM';
         }
-        xTimes.push(hours + (minutes==0?'':':' + minutes) +'-' 
+        xTimes.push(hours + (minutes===0?'':':' + minutes) +'-' 
             + ((minutes +
             ($rootScope.granularity / 60))==60?endHours.toString():hours.toString()) +
             ((minutes +($rootScope.granularity / 60))==60?'':':' + 

@@ -21,7 +21,7 @@ angular.module('paradropApp')
         console.log('POST to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
         var call = $http.post(URLS.current.substr(0, URLS.current.length-4) + url, args);
         return call;
-      }
+      };
 
       self.recon = new Recon( { postFunc: post} );
       //setup opts for prefetch
