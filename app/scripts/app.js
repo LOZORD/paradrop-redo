@@ -105,6 +105,9 @@ angular.module('paradropApp', [
         templateUrl: 'views/calibrate.html',
         controller: 'CalibrateCtrl'
       })
+      .when('/modes/restricted_signup', {
+        templateUrl: 'views/modes/restricted_signup.html'
+      })
       .otherwise({
         redirectTo: '/'
       });
@@ -157,6 +160,7 @@ angular.module('paradropApp', [
         closeTime.setMilliseconds(0);
       }
       var timeDiff = closeTime.getHours() - openTime.getHours();
+      //TODO refactor...
       if(timeDiff < 5){
         $rootScope.granularity = 1800;
       }

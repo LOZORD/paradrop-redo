@@ -29,6 +29,7 @@ angular.module('paradropApp')
           public:       null,
           email:        null,
           contact:      null,
+          question:     null,
           isDeveloper:  false
         };
 
@@ -44,10 +45,12 @@ angular.module('paradropApp')
             'public':     data['public'],
             email:        data.email,
             contact:      data.contact,
+            question:     data.question,
             isDeveloper:  data.isDeveloper
           };
 
           var signupURL = URLS.current + 'user/new';
+          var failedQuestionResp = 'question not correct';
 
           var sendResult = $http
             .post(signupURL, payload)
@@ -58,6 +61,9 @@ angular.module('paradropApp')
                   //yay! it worked
                   //redirect to verification page
                   $location.url('/notify');
+                }
+                else if (response.data.errMsg.indexOf(failedQuestionResp) !== -1) {
+                  $location.url('/mode/restricted_signup');
                 }
                 else {
                   alert('We could not complete the signup process. Please try again.');
