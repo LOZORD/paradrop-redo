@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MyParadropCtrl', ['AuthService', '$scope', '$location', 'ipCookie',
-    function (AuthService, $scope, $location, ipCookie) {
+  .controller('MyParadropCtrl', ['AuthService', '$scope', 
+    function (AuthService, $scope) {
       $scope.initCurrentUser.promise.then(function(){$scope.authorizePage();})
       .then(function() {
           $scope.groups = {};
@@ -19,12 +19,12 @@ angular.module('paradropApp')
             var ap = $scope.currentUser.aps[i];
             //make list of groups with aps and names with/without whitespace
             if(ap.groupname){
-              var name = {full: ap.groupname, trim: ap.groupname.replace(" ","")};
+              var name = {full: ap.groupname, trim: ap.groupname.replace(' ','')};
               if(names.indexOf(ap.groupname) === -1){
                 names.push(ap.groupname);
                 $scope.groups[name.trim] = name;
               }
-              if($scope.groups[name.trim].aps == undefined){
+              if($scope.groups[name.trim].aps === undefined){
                 $scope.groups[name.trim].aps = [ap];
               }else{
                 $scope.groups[name.trim].aps.push(ap);
@@ -45,8 +45,8 @@ angular.module('paradropApp')
           //if only one group uncollapse it
           if(Object.keys($scope.groups).length === 1){
             $scope.uncollapse = 'in';
-            $scope["group" + names[0].replace(" ","")] = {};
-            $scope["group" + names[0].replace(" ","")].open = true;
+            $scope['group' + names[0].replace(' ','')] = {};
+            $scope['group' + names[0].replace(' ','')].open = true;
           }
       }
     );

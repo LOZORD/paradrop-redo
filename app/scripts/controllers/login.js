@@ -40,7 +40,7 @@ angular.module('paradropApp')
               function() {
                 $scope.setCurrentUser();
                     //then redirect to their homepage
-                    alert("You are already logged in. Please logout if you want to log in as a different user.");
+                    alert('You are already logged in. Please logout if you want to log in as a different user.');
                     $location.url('/my_paradrop');
               },
               //failed to restore a session

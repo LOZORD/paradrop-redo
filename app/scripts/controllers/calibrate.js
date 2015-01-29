@@ -25,39 +25,39 @@ angular.module('paradropApp')
           $scope.start = function() {
             console.log('Starting...');
             if(!$scope.mac){
-              alert("Please enter a MAC.");
+              alert('Please enter a MAC.');
               return;
             }
             mainBody.sessionToken = ipCookie('sessionToken');
             mainBody.mac = $scope.mac;
             $http.post(startURL, mainBody ).then(
-              function(result) {
+              function() {
                 //nothing to do
               },
-              function(error){
-                alert("There was an error you may already have started tracking.");
+              function(){
+                alert('There was an error you may already have started tracking.');
               }
 
             );
-          }
+          };
           $scope.finish = function() {
             console.log('Finished.');
             mainBody.sessionToken = ipCookie('sessionToken');
             mainBody.mac = $scope.mac;
             $http.post(finishURL, mainBody ).then(
-              function(result) {
+              function() {
                 //nothing to do
               },
-              function(error){
-                alert("There was an error make sure you started tracking.");
+              function(){
+                alert('There was an error make sure you started tracking.');
               }
 
             );
-          }
+          };
           $scope.poll = function() {
             console.log('polling...');
             if(!$scope.mac){
-              alert("Please enter a MAC.");
+              alert('Please enter a MAC.');
               return;
             }
             mainBody.sessionToken = ipCookie('sessionToken');
@@ -77,19 +77,19 @@ angular.module('paradropApp')
                 }
                 console.log(tsDeltas);
               },
-              function(error){
-                alert("There was an error make sure you started tracking.");
+              function(){
+                alert('There was an error make sure you started tracking.');
               }
             );
-          }
+          };
           $scope.sendCoord = function() {
             console.log('sending coord...');
             if(!$scope.mac){
-              alert("Please enter a MAC.");
+              alert('Please enter a MAC.');
               return;
             }
             if(!$scope.coords){
-              alert("Please select a location to send.");
+              alert('Please select a location to send.');
               return;
             }
             coordsBody.sessionToken = ipCookie('sessionToken');
@@ -100,47 +100,47 @@ angular.module('paradropApp')
             coordsBody.extras = tsDeltas;
             tsDeltas = {};
             $http.post(coordsURL, coordsBody ).then(
-              function(result) {
+              function() {
                 //nothing to do
               },
-              function(error){
-                alert("There was an error make sure you started tracking.");
+              function(){
+                alert('There was an error make sure you started tracking.');
               }
 
             );
-          }
+          };
           $scope.clear = function() {
             $scope.showLocation = false;
             $scope.coords = {};
-          }
+          };
           //grab and build map
           var mapInitURL = URLS.current + 'recon/maps/init';
           var postBody = { sessionToken: ipCookie('sessionToken') };
           $http.post(mapInitURL, postBody ).then(
-              function(groupMaps){
-                $scope.groupMaps = groupMaps.data[0];
-                mainBody.reconid = $scope.groupMaps.reconid;
-                mainBody.groupname = $scope.groupMaps.groupname;
-                mainBody.typeid = $scope.groupMaps.data.typeid;
-                $scope.apNameMap = $scope.groupMaps.map;
-                $scope.revApNameMap = {};
-                for(var key in $scope.apNameMap){
-                  $scope.showMarkers[$scope.apNameMap[key].apid] = true;
-                  $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
-                }
-                $scope.mapData = $scope.groupMaps.data;
-                var builtMap = gmapMaker.buildMap($scope.mapData);
-                $scope.firstFloorMapType = builtMap.mapType;
-                $scope.onClick = function(event) {
-                  var ll = event.latLng;
-                  console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
-                  $scope.showLocation = true;
-                  $scope.coords = { lat: ll.lat(), lng: ll.lng() };
-                }
-                $scope.heatMapData = gmapMaker.buildHeatmap();
-                $scope.mapReady = true;
+            function(groupMaps){
+              $scope.groupMaps = groupMaps.data[0];
+              mainBody.reconid = $scope.groupMaps.reconid;
+              mainBody.groupname = $scope.groupMaps.groupname;
+              mainBody.typeid = $scope.groupMaps.data.typeid;
+              $scope.apNameMap = $scope.groupMaps.map;
+              $scope.revApNameMap = {};
+              for(var key in $scope.apNameMap){
+                $scope.showMarkers[$scope.apNameMap[key].apid] = true;
+                $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
               }
-          , function(error){$scope.mapError = true;});
+              $scope.mapData = $scope.groupMaps.data;
+              var builtMap = gmapMaker.buildMap($scope.mapData);
+              $scope.firstFloorMapType = builtMap.mapType;
+              $scope.onClick = function(event) {
+                var ll = event.latLng;
+                console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
+                $scope.showLocation = true;
+                $scope.coords = { lat: ll.lat(), lng: ll.lng() };
+              };
+              $scope.heatMapData = gmapMaker.buildHeatmap();
+              $scope.mapReady = true;
+            },
+            function(){$scope.mapError = true;});
         }
       );
   }]);

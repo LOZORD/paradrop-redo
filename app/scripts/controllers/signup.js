@@ -49,8 +49,7 @@ angular.module('paradropApp')
 
           var signupURL = URLS.current + 'user/new';
 
-          var sendResult = $http
-            .post(signupURL, payload)
+            $http.post(signupURL, payload)
             .then(
               /* USER SIGNUP might have been ok */
               function (response) {
@@ -65,7 +64,7 @@ angular.module('paradropApp')
                 }
               },
               /* USER SIGNUP FAILED */
-              function (response) {
+              function () {
                 alert('There was a failure in the signup process. Please try again.');
               }
           ); //end API call
@@ -85,17 +84,17 @@ angular.module('paradropApp')
               AuthService.cloneSession()
                 .then(
                   /* SUCCESS */
-                  function (cloneResponse) {
+                  function () {
                     $location.url('/my_paradrop');
                   },
                   /* FAILURE */
-                  function (cloneResponse) {
+                  function () {
                     alert('We could not set us your new account. Please try reverifying using the email we sent you.');
                   }
                );
             },
             /* FAILURE */
-            function (response) {
+            function () {
               $location.url('/user/new');
             }
           );

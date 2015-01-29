@@ -100,7 +100,7 @@ angular.module('paradropApp')
                   }
                 },
                 /* FAILURE */
-                function (result) {
+                function () {
                   $location.url('/blog');
                 }
               );

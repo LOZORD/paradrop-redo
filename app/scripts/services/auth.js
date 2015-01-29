@@ -57,12 +57,13 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
           return retData;
       };
 
+      
       //restore session from token
       authService.cloneSession = function () {
           if(!ipCookie('sessionToken')){
-            throw new function(){
-              this.message = "No Session Token";
-              this.name = "NoSessionTokenException";
+            throw function (){
+              this.message = 'No Session Token';
+              this.name = 'NoSessionTokenException';
             };
           }
           var credentials = {sessionToken: ipCookie('sessionToken')};
@@ -92,7 +93,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       authService.logout = function () {
         //TODO FIX THIS HACK
         var logoutURL = URLS.current + 'test';
-        var payload = { sessionToken: ipCookie('sessionToken') };
+        //var payload = { sessionToken: ipCookie('sessionToken') };
         ipCookie.remove('sessionToken');
         ipCookie.remove('shouldPersist');
 

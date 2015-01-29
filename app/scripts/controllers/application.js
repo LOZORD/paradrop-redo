@@ -25,11 +25,11 @@ angular.module('paradropApp')
         return !!ipCookie('sessionToken');
       };
 
-      $scope.setCurrentUser = function (user) {
+      $scope.setCurrentUser = function () {
         $scope.currentUser = AuthService.getSession();
       };
 
-      $scope.$on('$routeChangeStart', function(next, current){
+      $scope.$on('$routeChangeStart', function(){
         //update current user every page change
         $scope.setCurrentUser();
         //check if session still exists(for cases of multiple instances of app)
@@ -52,7 +52,7 @@ angular.module('paradropApp')
         }
         if(shouldBeAdmin && !$scope.currentUser.isAdmin){
           $location.url('/my_paradrop');
-          alert("You must be an admin to view this page!");
+          alert('You must be an admin to view this page!');
         }
       };
 
@@ -62,12 +62,12 @@ angular.module('paradropApp')
           AuthService.logout()
           .then(
               /* SUCCESSFUL LOGOUT */
-              function(result) {
+              function() {
                 $scope.currentUser = null;
                 snapRemote.close();
               },
               /* FAILURE LOGOUT */
-              function (result) {
+              function () {
                 //TODO
                 alert('-*- SIGN OUT DID NOT WORK! -*-');
               }

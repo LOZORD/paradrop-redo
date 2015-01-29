@@ -44,6 +44,7 @@ angular.module('paradropApp')
       }
       var graphData = Recon.recon.getTotalGroupByTS(startts, stopts,
                         $rootScope.granularity);
+      var step = 4;
       var plot = [];
       var xTimes = [];
       for(var i = 0; i < graphData.x.length; i++){ 
@@ -67,14 +68,13 @@ angular.module('paradropApp')
           endHours = 12;
           suffix = 'PM';
         }
-        xTimes.push(hours + (minutes===0?'':':' + minutes) +'-' 
-            + ((minutes +
-            ($rootScope.granularity / 60))==60?endHours.toString():hours.toString()) +
-            ((minutes +($rootScope.granularity / 60))==60?'':':' + 
+        xTimes.push(hours + (minutes===0?'':':' + minutes) +'-' + 
+            ((minutes +($rootScope.granularity / 60))===60?
+            endHours.toString():hours.toString()) + 
+            ((minutes +($rootScope.granularity / 60))===60?'':':' + 
             (minutes + ($rootScope.granularity / 60))) + suffix);
 
         plot.push({name: xTimes[i], y: graphData.y[i]});
-        var step = 4;
         if(xTimes.length < 6){
           step = 1;
         }else if(xTimes.length < 12){
@@ -140,12 +140,11 @@ angular.module('paradropApp')
       chartInfo.chartConfig = chartConfig;
       this.totalUsersChart = chartInfo;
       return chartInfo;
-    }
+    };
 
     charts.buildEngagementChart = function(){
       var chartInfo = {};
       var graphData = Recon.recon.getEngagementByTS([0, 300, 600, 900]);
-      var total = graphData.y.reduce(function(prev,curr){return prev + curr;}); 
 
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!
@@ -181,7 +180,7 @@ angular.module('paradropApp')
         //Series object (optional) - a list of series using normal highcharts series options.
         series: [{
           data: [['0-5 min', graphData.y[0]], ['5-10 min', graphData.y[1]],['10-15 min', graphData.y[2]],['15+ min', graphData.y[3]]],
-          name: "# of Customers",
+          name: '# of Customers',
         }],
         //Title configuration (optional)
         title: {
@@ -201,7 +200,7 @@ angular.module('paradropApp')
       chartInfo.chartConfig = chartConfig;
       this.engagementChart = chartInfo;
       return chartInfo;
-    }
+    };
 
     charts.buildRepeatVisitsChart = function(){
       var chartInfo = {};
@@ -240,7 +239,7 @@ angular.module('paradropApp')
         //Series object (optional) - a list of series using normal highcharts series options.
         series: [{
           data: [['New Customers', graphData.total - graphData.repeat], ['Repeat Customers', graphData.repeat]],
-          name: "Number of Customers",
+          name: 'Number of Customers',
         }],
         //Title configuration (optional)
         title: {
@@ -261,7 +260,7 @@ angular.module('paradropApp')
       chartInfo.totalCusts = graphData.total;
       this.repeatVisitsChart = chartInfo;
       return chartInfo;
-    }
+    };
 
     return charts;
   }]);
