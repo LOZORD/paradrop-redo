@@ -14,7 +14,7 @@ angular.module('paradropApp')
       .then(function(){ $scope.authorizePage(true);})
       .then(
         function(){
-          $scope.showMarkers = {};
+          $scope.pollResult = null;
           var startURL = URLS.current + 'recon/maps/start';
           var finishURL = URLS.current + 'recon/maps/finish';
           var pollURL = URLS.current + 'recon/maps/poll';
@@ -23,7 +23,6 @@ angular.module('paradropApp')
           var coordsBody = {};
           var tsDeltas = {};
           $scope.start = function() {
-            console.log('Starting...');
             if(!$scope.mac){
               alert('Please enter a MAC.');
               return;
@@ -41,7 +40,6 @@ angular.module('paradropApp')
             );
           };
           $scope.finish = function() {
-            console.log('Finished.');
             mainBody.sessionToken = ipCookie('sessionToken');
             mainBody.mac = $scope.mac;
             $http.post(finishURL, mainBody ).then(
@@ -55,7 +53,6 @@ angular.module('paradropApp')
             );
           };
           $scope.poll = function() {
-            console.log('polling...');
             if(!$scope.mac){
               alert('Please enter a MAC.');
               return;
@@ -64,18 +61,52 @@ angular.module('paradropApp')
             mainBody.mac = $scope.mac;
             $http.post(pollURL, mainBody ).then(
               function(result) {
-                console.log(result.data);
                 var time = Math.floor(Date.now() / 1000);
                 tsDeltas = {};
-                for(var rid in result.data){
-                  if(result.data[rid]){
-                    $scope.showMarkers[$scope.apNameMap[rid].apid] = true;
-                    tsDeltas[rid] = time - result.data[rid].ts;
-                  }else{
-                    $scope.showMarkers[$scope.apNameMap[rid].apid] = false;
+                if(!$scope.pollResult){
+                  $scope.pollResult = {};
+                  for(var key in $scope.map.markers){
+                    $scope.map.markers[key].setIcon('images/green-wifi.png');
                   }
                 }
-                console.log(tsDeltas);
+                for(var rid in result.data){
+                  if(result.data[rid]){
+                    if($scope.pollResult[rid]){
+                      if($scope.pollResult[rid].ts === result.data[rid].ts){
+                        //signify already seen
+                        if($scope.map.markers[$scope.apNameMap[rid].apid]){
+                          $scope.map.markers[$scope.apNameMap[rid].apid]
+                            .setIcon('images/red-wifi.png');
+                        }
+                      }else{
+                        //signify new entry
+                        if($scope.map.markers[$scope.apNameMap[rid].apid]){
+                          $scope.map.markers[$scope.apNameMap[rid].apid]
+                            .setIcon('images/green-wifi.png');
+                        }
+                      }
+                    }
+                    if($scope.map.markers[$scope.apNameMap[rid].apid]){
+                      $scope.map.markers[$scope.apNameMap[rid].apid].setMap($scope.map);
+                    }
+                    tsDeltas[rid] = time - result.data[rid].ts;
+                  }else{
+                    if($scope.map.markers[$scope.apNameMap[rid].apid]){
+                      $scope.map.markers[$scope.apNameMap[rid].apid].setMap(null);
+                    }
+                  }
+                }
+                $scope.pollResult = result.data;
+                console.log($scope.pollResult);
+                var successString = 'Success<br>';
+                for(var key in $scope.pollResult){
+                  if($scope.pollResult[key]){
+                    successString += key + ': {rssi: ' + $scope.pollResult[key].rssi;
+                    successString += ', ts: ' + $scope.pollResult[key].ts + ' }<br>';
+                  }
+                }
+                $scope.map.infoWindows.info.setContent(successString);
+                $scope.map.infoWindows.info.open($scope.map, $scope.map.markers.info);
               },
               function(){
                 alert('There was an error make sure you started tracking.');
@@ -83,7 +114,6 @@ angular.module('paradropApp')
             );
           };
           $scope.sendCoord = function() {
-            console.log('sending coord...');
             if(!$scope.mac){
               alert('Please enter a MAC.');
               return;
@@ -110,6 +140,9 @@ angular.module('paradropApp')
             );
           };
           $scope.clear = function() {
+            for(var key in $scope.map.markers){
+              $scope.map.markers[key].setMap(null);
+            }
             $scope.showLocation = false;
             $scope.coords = {};
           };
@@ -125,7 +158,6 @@ angular.module('paradropApp')
               $scope.apNameMap = $scope.groupMaps.map;
               $scope.revApNameMap = {};
               for(var key in $scope.apNameMap){
-                $scope.showMarkers[$scope.apNameMap[key].apid] = true;
                 $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
               }
               $scope.mapData = $scope.groupMaps.data;
@@ -137,10 +169,14 @@ angular.module('paradropApp')
                 $scope.showLocation = true;
                 $scope.coords = { lat: ll.lat(), lng: ll.lng() };
               };
-              $scope.heatMapData = gmapMaker.buildHeatmap();
+              $scope.$on('mapInitialized', function(event, map) {
+                $scope.map = map;
+                console.log($scope.map.infoWindows.info)//.infoWindow.close();
+              });
               $scope.mapReady = true;
             },
-            function(){$scope.mapError = true;});
+            function(){$scope.mapError = true;
+            });
         }
       );
   }]);

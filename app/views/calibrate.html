@@ -5,7 +5,7 @@
   <div class='col-sm-1 form-group'>
     MAC:
   </div>
-  <div class='col-sm-4 form-group'>
+  <div class='col-sm-3 form-group'>
     <input type='text' id='MAC' class='form-control' ng-model='mac'>
   </div>
   <div class="col-sm-1 form-group">
@@ -19,6 +19,9 @@
   </div>
   <div class="col-sm-2 form-group">
     <button class="btn btn-primary" ng-click="sendCoord()">Send Coord</button>
+  </div>
+  <div class="col-sm-1 form-group">
+    <button class="btn btn-primary" ng-click="clear()">Clear</button>
   </div>
 </div>
     <h1 ng-if="mapError">Error loading map</h1>
@@ -34,8 +37,12 @@
         >
         <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
         </map-type>
-        <marker ng-repeat="ap in mapData.aps" ng-if="showMarkers[ap.apid]" position="{{ap.lat}},{{ap.lng}}" title="{{revApNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
+        <marker ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{revApNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
         <marker ng-if="showLocation" position="{{coords.lat}},{{coords.lng}}" title="My Location" id="currentLocation" icon="images/here.png"></marker>
+        <marker position="-21.493963,-41.022949" visible='false' title="info" id="infoMarker"></marker>
+        <info-window id="info" max-width="200" visible-on-marker="infoMarker">
+        <div ng-non-bindable="">
+        </div>
+      </info-window>
         <!-- ngRepeat: pos in positions -->
     </map>
-    <button class="btn btn-primary" ng-click="clear()">Clear</button>

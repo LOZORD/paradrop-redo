@@ -51,10 +51,10 @@ angular.module('paradropApp')
                 $scope.onClick = builtMap.onClick;
                 $scope.heatMapData = gmapMaker.buildHeatmap();
                 $scope.$on('mapInitialized', function(event, map) {
-                        $scope.heatmap = map.heatmapLayers.foo;
-                        $scope.map = map;
-                        $scope.heatmap.set('radius', 30);
-                            });
+                  $scope.heatmap = map.heatmapLayers.foo;
+                  $scope.map = map;
+                  $scope.heatmap.set('radius', 30);
+                });
                 $scope.toggleHeatmap= function(event) {
                   $scope.heatmap.setMap($scope.heatmap.getMap() ? null : $scope.map);
                 };
