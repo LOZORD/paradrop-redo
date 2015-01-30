@@ -70,7 +70,7 @@ angular.module('paradropApp')
             .then(
               /* USER SIGNUP might have been ok */
               function (response) {
-                if (response.data.result === true) {
+                if (response.data = '') {
                   //yay! it worked
                   //redirect to verification page
                   $location.url('/notify');
