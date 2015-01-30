@@ -55,11 +55,15 @@ angular.module('paradropApp')
           };
 
           if (MODES.restrictedSignup) {
-            payload.question = data.question;
+            payload['reg_code'] = data.question;
           }
 
           var signupURL = URLS.current + 'user/new';
-          var failedQuestionResp = 'question not correct';
+          var failedQuestionResp = 'wrong signup code';
+
+          var msgContainsFailedQuestionResp = function (msg) {
+            return msg.toLowerCase().indexOf(failedQuestionResp) !== -1;
+          };
 
           $http
             .post(signupURL, payload)
@@ -71,18 +75,23 @@ angular.module('paradropApp')
                   //redirect to verification page
                   $location.url('/notify');
                 }
-                else if (MODES.restrictedSignup &&
-                  response.data.errMsg.indexOf(failedQuestionResp) !== -1) {
-                  $location.url('/mode/restricted_signup');
-                }
                 else {
                   window.alert('We could not complete the signup process. Please try again.');
-                  window.alert(response.data.errMsg.join('<br>'));
+                  window.alert(response.data);
                 }
               },
               /* USER SIGNUP FAILED */
-              function () {
-                window.alert('There was a failure in the signup process. Please try again.');
+              function (response) {
+                if (MODES.restrictedSignup &&
+                  msgContainsFailedQuestionResp(response.data)) {
+                  $location.url('/modes/restricted_signup');
+                }
+                else {
+                  window.alert('There was a failure in the signup process. Please try again.');
+                  if (response.data) {
+                    window.alert(response.data);
+                  }
+                }
               }
           ); //end API call
         }; //end scope.create
