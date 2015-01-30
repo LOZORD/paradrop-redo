@@ -51,8 +51,8 @@
             </div>
             <div class="collapse navbar-collapse" id="paradrop-navbar-collapse">
               <ul class="nav navbar-nav navbar-right">
-                <li ng-if="!isAuthenticated()"><a ng-href="#!/user/new">Signup</a></li>
-                <li ng-if="!isAuthenticated()"><a ng-href="#!/login">Login</a></li>
+                <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="#!/user/new">Signup</a></li>
+                <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="#!/login">Login</a></li>
                 <li ng-cloak ng-if="isAuthenticated()" class="dropdown">
                   <a href="" data-toggle="dropdown" class="dropdown-toggle">
                         My Paradrop <b class="caret"></b>
@@ -71,35 +71,35 @@
                     </li>
                   </ul>
                 </li>
-                <li ng-cloak ng-if="isAuthenticated() && currentUser.defaultGroup" class="dropdown">
+                <li ng-cloak ng-if="isAuthenticated() && currentUser().defaultGroup" class="dropdown">
                   <a href="" data-toggle="dropdown" class="dropdown-toggle">
                         Recon <b class="caret"></b>
                   </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a href="#!/recon/home/{{currentUser.defaultGroup}}">
+                      <a href="#!/recon/home/{{currentUser().defaultGroup}}">
                         Overview
                       </a>
                     </li>
                     <li>
-                      <a href="#!/recon/dashboard/{{currentUser.defaultGroup}}">
+                      <a href="#!/recon/dashboard/{{currentUser().defaultGroup}}">
                         Dashboard
                       </a>
                     </li>
                     <li>
-                      <a href="#!/recon/map/{{currentUser.defaultGroup}}">
+                      <a href="#!/recon/map/{{currentUser().defaultGroup}}">
                         Location Tracking
                       </a>
                     </li>
                     <li class="divider"></li>
                     <li>
-                    <a href="#!/recon/settings/{{currentUser.defaultGroup}}">
+                    <a href="#!/recon/settings/{{currentUser().defaultGroup}}">
                         Advanced Settings
                       </a>
                     </li>
                   </ul>
                 </li>
-                <li ng-cloak ng-if="isAuthenticated() && currentUser.isAdmin" class="dropdown">
+                <li ng-cloak ng-if="isAuthenticated() && currentUser().isAdmin" class="dropdown">
                   <a href="" data-toggle="dropdown" class="dropdown-toggle">
                         Admin Options <b class="caret"></b>
                   </a>

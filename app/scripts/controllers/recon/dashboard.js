@@ -11,10 +11,10 @@ angular.module('paradropApp')
   .controller('ReconDashboardCtrl',['$rootScope', '$scope', '$sce', '$routeParams', 'chartBuilder',
     function ($rootScope, $scope, $sce, $routeParams, chartBuilder) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
-      $scope.initCurrentUser.promise
-      .then(function(){ $scope.authorizePage();})
-      .then(
-        function(){
+      $scope.restoreSession.promise
+      .then($scope.authorizePage)
+      .then(function(authorized){
+        if(authorized){
           $rootScope.chartsBuilt.promise.then(function(){
             var charts = chartBuilder.getBuiltCharts();
             //chart 1
@@ -33,5 +33,6 @@ angular.module('paradropApp')
             $scope.content3Loaded = true;
             */
           });
-        });
+        }
+      });
   }]);

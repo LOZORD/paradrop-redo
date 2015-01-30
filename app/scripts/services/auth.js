@@ -1,12 +1,32 @@
 'use strict';
 
 angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
-  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope', '$q',
-    function($http, Session, ipCookie, URLS, $rootScope, $q) {
+  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope', '$route', '$location',
+    function($http, Session, ipCookie, URLS, $rootScope, $route, $location) {
       var authService = {};
-      //create session promise
-      $rootScope.sessionBuilt = $q.defer();
 
+      authService.getToken = function () {
+        return ipCookie('sessionToken');
+      };
+
+      authService.persist = function () {
+        return ipCookie('shouldPersist');
+      };
+
+      authService.deleteToken = function () {
+        ipCookie.remove('sessionToken');
+        ipCookie.remove('shouldPersist');
+      };
+
+      authService.saveToken = function (token, persist) {
+        if (persist) {
+          ipCookie('shouldPersist', true, { expires: 7 });
+          ipCookie('sessionToken', token, { expires: 7 });
+        }
+        else {
+          ipCookie('sessionToken', token);
+        }
+      };
       //this function is used by login and cloneSession
       function buildSession (result) {
         var theUser = null;
@@ -46,41 +66,28 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
             .post(loginURL, credentials)
             .then(buildSession)
             .then(function (someSession) {
-              if (credentials.persist) {
-                ipCookie('shouldPersist', true, { expires: 7 });
-                ipCookie('sessionToken', someSession.id, { expires: 7 });
-              }
-              else {
-                ipCookie('sessionToken', someSession.id);
-              }
+              authService.saveToken(someSession.id, credentials.persist);
             });
           return retData;
       };
 
+      
       //restore session from token
       authService.cloneSession = function () {
-          if(!ipCookie('sessionToken')){
-            throw new function(){
-              this.message = "No Session Token";
-              this.name = "NoSessionTokenException";
+          if(!authService.getToken()){
+            throw function (){
+              this.message = 'No Session Token';
+              this.name = 'NoSessionTokenException';
             };
           }
-          var credentials = {sessionToken: ipCookie('sessionToken')};
+          var credentials = {sessionToken: authService.getToken()};
           credentials.keep_token = true;
           var loginURL = URLS.current + 'authenticate/cloneSession';
           var retData = $http
             .post(loginURL, credentials)
             .then(buildSession)
             .then(function (someSession) {
-              var shouldPersist = ipCookie('shouldPersist');
-
-              if (shouldPersist) {
-                ipCookie('shouldPersist', true, { expires: 7 });
-                ipCookie('sessionToken', someSession.id, { expires: 7 });
-              }
-              else {
-                ipCookie('sessionToken', someSession.id);
-              }
+              authService.saveToken(someSession.id, authService.persist());
             });
           return retData;
       };
@@ -89,14 +96,17 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         return !!Session.id;
       };
 
+      authService.destroySession = function () {
+        authService.deleteToken();
+        Session.destroy();
+      };
+
       authService.logout = function () {
         //TODO FIX THIS HACK
         var logoutURL = URLS.current + 'test';
-        var payload = { sessionToken: ipCookie('sessionToken') };
-        ipCookie.remove('sessionToken');
-        ipCookie.remove('shouldPersist');
+        //var payload = { sessionToken: authService.getToken() };
 
-        Session.destroy();
+        authService.destroySession();
 
         var retData = $http
           //TODO switch back to post request
@@ -109,12 +119,35 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       };
 
       authService.getSession = function () {
-        return Session.getSession();
+        return Session;
       };
 
-      authService.destroySession = function () {
-        Session.destroy();
+      authService.authorizePage = function ()  { 
+        if ($route.current.auths.session && (!authService.isAuthenticated()  || !authService.getToken())) {
+          //if the token exists for the client, but it is invalid by the server
+          //or by previous (other tab) logout
+          if (authService.isAuthenticated()) {
+            authService.destroySession();
+          }
+          $location.url('/login');
+          return false;
+        }
+        if($route.current.auths.noSession && Session){
+          $location.url('/my_paradrop');
+          return false;
+        }
+        if($route.current.auths.group && !Session.defaultGroup){
+          $location.url('/my_paradrop');
+          return false;
+        }
+        if($route.current.auths.admin && !Session.isAdmin){
+          $location.url('/my_paradrop');
+          alert('You must be an admin to view this page!');
+          return false;
+        }
+        return true;
       };
+
 
       return authService;
     }
@@ -128,18 +161,6 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       this.aps = null;
       this.fullname = null;
       this.defaultGroup = null;
-
-      this.getSession = function () {
-        return {
-          username: this.username,
-          id: this.id,
-          isDeveloper: this.isDeveloper,
-          isAdmin: this.isAdmin,
-          aps: this.aps,
-          fullname: this.fullname,
-          defaultGroup: this.defaultGroup
-        };
-      };
 
       this.create = function (username, sessionId, isDeveloper, isAdmin, aps, fullname) {
         this.username = username;
@@ -173,18 +194,4 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
       return this;
     }
-  )
-  .factory('AuthInterceptor', function ($rootScope, $q, AUTH_EVENTS) {
-    return  {
-      responseError: function (response) {
-        $rootScope.$broadcast({
-          401: AUTH_EVENTS.notAuthenticated,
-          403: AUTH_EVENTS.notAuthorized,
-          419: AUTH_EVENTS.sessionTimeout,
-          440: AUTH_EVENTS.sessionTimeout,
-        }[response.status], response);
-
-        return $q.reject(response);
-      }
-    };
-  });
+  );

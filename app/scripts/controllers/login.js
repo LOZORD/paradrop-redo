@@ -8,10 +8,10 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('LoginCtrl', ['ipCookie', '$scope', '$rootScope', 'AUTH_EVENTS', 'AuthService', '$location', 'URLS',
-    function (ipCookie, $scope, $rootScope, AUTH_EVENTS, AuthService, $location, URLS) {
+  .controller('LoginCtrl', ['$scope', '$rootScope', 'AuthService', '$location', 'URLS',
+    function ($scope, $rootScope, AuthService, $location, URLS) {
 
-      if ($scope.currentUser && $scope.isAuthenticated()) {
+      if ($scope.currentUser() && $scope.isAuthenticated()) {
         $location.url('/my_paradrop');
       }
       else {
@@ -38,10 +38,9 @@ angular.module('paradropApp')
           AuthService.cloneSession().then(
               //Successful session restore
               function() {
-                $scope.setCurrentUser();
-                    //then redirect to their homepage
-                    alert("You are already logged in. Please logout if you want to log in as a different user.");
-                    $location.url('/my_paradrop');
+                //redirect to their homepage
+                alert('You are already logged in. Please logout if you want to log in as a different user.');
+                $location.url('/my_paradrop');
               },
               //failed to restore a session
               function() {
@@ -55,16 +54,12 @@ angular.module('paradropApp')
             function login(credentials){
               AuthService.login(credentials).then(
                 /* SUCCESSFUL LOGIN */
-                function (user) {
-                  $rootScope.$broadcast(AUTH_EVENTS.loginSuccess);
-                  //set the currentUser as this user in the ApplicationCtrl scope
-                  $scope.setCurrentUser(user);
-                  //then redirect to their homepage
+                function () {
+                  //redirect to their homepage
                   $location.url('/my_paradrop');
                 },
                 /* FAILED LOGIN */
                 function (error) {
-                  $rootScope.$broadcast(AUTH_EVENTS.loginFailed);
                   if(error.data === 'User is not verified!'){
                     alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
                   }else if(error.data === 'User is disabled!'){
