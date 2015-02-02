@@ -71,9 +71,13 @@ angular.module('paradropApp', [
         templateUrl: 'views/mypdp/index.html',
         controller: 'MyParadropCtrl'
       })
-      .when('/my_paradrop/config', {
-        templateUrl: 'views/mypdp/config/index.html',
-        controller: 'MyParadropCtrl'
+      .when('/my_paradrop/configs', {
+        templateUrl: 'views/mypdp/configs/index.html',
+        controller: 'ConfigCtrl'
+      })
+      .when('my_paradrop/configs/:cDeviceID/update', {
+        templateUrl: 'views/mypdp/configs/update.html',
+        controller: 'ConfigCtrl'
       })
       .when('/user/new', {
         templateUrl: 'views/signup/form.html',
