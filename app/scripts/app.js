@@ -68,7 +68,11 @@ angular.module('paradropApp', [
         controller: 'LoginCtrl'
       })
       .when('/my_paradrop', {
-        templateUrl: 'views/mypdp.html',
+        templateUrl: 'views/mypdp/index.html',
+        controller: 'MyParadropCtrl'
+      })
+      .when('/my_paradrop/config', {
+        templateUrl: 'views/mypdp/config/index.html',
         controller: 'MyParadropCtrl'
       })
       .when('/user/new', {
