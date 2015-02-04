@@ -75,7 +75,7 @@ angular.module('paradropApp', [
         templateUrl: 'views/mypdp/configs/index.html',
         controller: 'ConfigCtrl'
       })
-      .when('my_paradrop/configs/:cDeviceID/update', {
+      .when('/my_paradrop/configs/:cDeviceID/update', {
         templateUrl: 'views/mypdp/configs/update.html',
         controller: 'ConfigCtrl'
       })

@@ -3,7 +3,7 @@
   <div ng-if='configurableDevices'>
     <ul>
       <li ng-repeat='cDevice in configurableDevices'>
-        <a ng-href='#!/my_paradrop/configs/{{ cDevice.id }}/update'>{{ cDevice.name }}</a>
+        <a ng-href='#!/my_paradrop/configs/{{ cDevice.guid }}/update'><h4>{{ cDevice.name }}</h4></a>
       </li>
     </ul>
   </div>
