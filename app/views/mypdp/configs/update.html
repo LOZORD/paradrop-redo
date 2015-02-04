@@ -11,27 +11,20 @@
 
       <div class='form-group'>
         <strong>Operating Mode</strong>
-        <div>
-        <label class='radio-inline'>
-          <input type='radio' name='optradio'>
-          Automatic
-        </label>
-        <label class='radio-inline'>
-          <input type='radio' name='optradio'>
-          Manual
-        </label>
+        <input type='radio' ng-model='mode' value='auto'> Automatic
+        <input type='radio' ng-model='mode' value='manl'> Manual
       </div>
 
-      <!-- channel number -->
       <div class='form-group'>
         <label for='channelSelect'>
           Channel Select
         </label>
-        <select name='channelSelect'>
-          <option ng-repeat='channelNumber in CHANNELS'>
-            {{ channelNumber }}
-          </option>
+        <select name='channelSelect' ng-model='channel'
+          ng-options='channelNumber for channelNumber in CHANNELS | orderBy:channelNumber'>
         </select>
+        <div class='error-container bg-danger' ng-show='configUpdateForm.channelSelect.$dirty'>
+          <small class='error' ng-show='usingSlowChannel(configUpdateForm.channelSelect.$viewValue)'>Slow channel</small>
+        </div>
       </div>
       <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid'>Submit Update</button>
       <button type='button' class='btn btn-warning btn-block'>Revert</button>
