@@ -77,5 +77,12 @@ angular.module('paradropApp')
 
       $scope.isLoginPage = ($location.path().indexOf('/login') !== -1);
 
+      //to attach url changes to buttons
+      $scope.go = function (path) {
+        console.log(path);
+        //$location.url(path);
+        //$location.path(path);
+      };
+
     }
   ]);

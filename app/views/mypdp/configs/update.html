@@ -1,3 +1,41 @@
 <div ng-controller='MyParadropCtrl'>
-  TODO
+  <div ng-controller='ConfigCtrl'>
+    <h1><strong>{{ deviceToUpdate.name }}</strong>: Configuration Update</h1>
+
+    <form name='configUpdateForm'
+          method='post'
+          novalidate
+          ng-controller='ConfigCtrl'
+          ng-submit='create(configUpdateData, configUpdateForm.$valid)'
+          novalidate form-autofill-fix>
+
+      <div class='form-group'>
+        <strong>Operating Mode</strong>
+        <div>
+        <label class='radio-inline'>
+          <input type='radio' name='optradio'>
+          Automatic
+        </label>
+        <label class='radio-inline'>
+          <input type='radio' name='optradio'>
+          Manual
+        </label>
+      </div>
+
+      <!-- channel number -->
+      <div class='form-group'>
+        <label for='channelSelect'>
+          Channel Select
+        </label>
+        <select name='channelSelect'>
+          <option ng-repeat='channelNumber in CHANNELS'>
+            {{ channelNumber }}
+          </option>
+        </select>
+      </div>
+      <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid'>Submit Update</button>
+      <button type='button' class='btn btn-warning btn-block'>Revert</button>
+      <button type='button' class='btn btn-danger  btn-block' ng-click='go("/#!/my_paradrop/configs/")'>Cancel FIXME</button>
+    </form>
+  </div>
 </div>

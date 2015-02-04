@@ -1,13 +1,15 @@
 <div ng-controller='MyParadropCtrl'>
-  <h1>Configurable Devices</h1>
-  <div ng-if='configurableDevices'>
-    <ul>
-      <li ng-repeat='cDevice in configurableDevices'>
-        <a ng-href='#!/my_paradrop/configs/{{ cDevice.guid }}/update'><h4>{{ cDevice.name }}</h4></a>
-      </li>
-    </ul>
-  </div>
-  <div ng-if='!configurableDevices'>
-    You have no configurable devices.
+  <div ng-controller='ConfigCtrl'>
+    <h1>Configurable Devices</h1>
+    <div ng-if='configurableDevices'>
+      <ul>
+        <li ng-repeat='cDevice in configurableDevices'>
+          <h4><a ng-href='#!/my_paradrop/configs/{{ cDevice.guid }}/update'>{{ cDevice.name }}</a></h4>
+        </li>
+      </ul>
+    </div>
+    <div ng-if='!configurableDevices'>
+      You have no configurable devices.
+    </div>
   </div>
 </div>
