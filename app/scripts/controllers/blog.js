@@ -91,7 +91,8 @@ angular.module('paradropApp')
                   if (result.length === 0) {
                     $location.url('/blog');
                   }
-                  else if (!result.data[0] || $.isEmptyObject(result.data[0])) {
+                  //check if the result has valid and nonempty
+                  else if (!result.data[0] || angular.equals(result.data[0], {})) {
                     $location.url('/blog');
                   }
                   else {

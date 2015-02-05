@@ -10,5 +10,4 @@
 angular.module('paradropApp')
   .controller('MainCtrl', [ function () {
     //Nothing
-    //$scope.testing_works = 'yes!';
   }]);

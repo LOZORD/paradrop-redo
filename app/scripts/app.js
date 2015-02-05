@@ -113,6 +113,9 @@ angular.module('paradropApp', [
         controller: 'CalibrateCtrl',
         auths: {admin: true, session: true}
       })
+      .when('/modes/restricted_signup', {
+        templateUrl: 'views/modes/restricted_signup.html'
+      })
       .otherwise({
         redirectTo: '/'
       });
@@ -167,6 +170,7 @@ angular.module('paradropApp', [
         closeTime.setMilliseconds(0);
       }
       var timeDiff = closeTime.getHours() - openTime.getHours();
+      //TODO refactor...
       if(timeDiff < 5){
         $rootScope.granularity = 1800;
       }
@@ -209,5 +213,8 @@ angular.module('paradropApp', [
   .constant('URLS', {
     //Change the current url to change all calls globally
     current: 'https://dbapi.paradrop.io/v1/'
+  })
+  .constant('MODES', {
+    restrictedSignup: true
   })
   .constant('DEV_MODE', false);

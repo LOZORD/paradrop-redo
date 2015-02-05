@@ -167,7 +167,7 @@
               name='contact'
               class='form-control'
               required
-              ng-trime
+              ng-trim
               ng-maxlength=50
               ng-model='signupData.contact'>
       <div  class='error-container bg-danger'
@@ -177,6 +177,25 @@
         </small>
         <small class='error' ng-show='signupForm.contact.$error.maxlength'>
           Contacts must be less than 51 characters!
+        </small>
+      </div>
+    </div>
+
+    <div class='form-group' ng-if='MODES.restrictedSignup'>
+      <label for='question'>
+        What is the signup phrase?
+      </label>
+      <input  type='text'
+              id='question'
+              name='question'
+              class='form-control'
+              required
+              ng-trim
+              ng-model='signupData.question'>
+      <div  class='error-container bg-danger'
+            ng-show='signupForm.question.$dirty && signupForm.question.$invalid'>
+        <small class='error' ng-show='signupForm.question.$error.required'>
+          Please enter the correct signup phrase.
         </small>
       </div>
     </div>
