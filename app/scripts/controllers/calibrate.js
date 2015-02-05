@@ -66,7 +66,9 @@ angular.module('paradropApp')
                 if(!$scope.pollResult){
                   $scope.pollResult = {};
                   for(var key in $scope.map.markers){
-                    $scope.map.markers[key].setIcon('images/green-wifi.png');
+                    if(key != 'currentLocation'){
+                      $scope.map.markers[key].setIcon('images/green-wifi.png');
+                    }
                   }
                 }
                 for(var rid in result.data){
@@ -171,7 +173,6 @@ angular.module('paradropApp')
               };
               $scope.$on('mapInitialized', function(event, map) {
                 $scope.map = map;
-                console.log($scope.map.infoWindows.info)//.infoWindow.close();
               });
               $scope.mapReady = true;
             },
