@@ -1,11 +1,11 @@
-<div ng-if='currentUser'>
-  <h1>Welcome, {{ currentUser.fullname }}!</h1>
+<div ng-if='currentUser()'>
+  <h1>Welcome, {{ currentUser().fullname }}!</h1>
 </div>
 
-<div ng-if='currentUser.isAdmin || currentUser.isDeveloper'>You're a 
-  <span ng-if='currentUser.isAdmin'>admin</span>
-  <span ng-if="currentUser.isAdmin && currentUser.isDeveloper"> and a </span>
-  <span ng-if="currentUser.isDeveloper">developer</span>.
+<div ng-if='currentUser().isAdmin || currentUser().isDeveloper'>You're a 
+  <span ng-if='currentUser().isAdmin'>admin</span>
+  <span ng-if="currentUser().isAdmin && currentUser().isDeveloper"> and a </span>
+  <span ng-if="currentUser().isDeveloper">developer</span>.
 </div>
 
 <hr>
@@ -29,7 +29,7 @@
       </div>
     </div>
   </div>
-  <div ng-if="currentUser.defaultGroup" class='col-sm-{{groupWidth}}'>
+  <div ng-if="currentUser().defaultGroup" class='col-sm-{{groupWidth}}'>
     <div class="panel-group" id="apCollapse">
       <div ng-repeat="group in groups" class="panel panel-default">
         <div class="panel-heading accordion-toggle" data-toggle="collapse" data-target="#group{{group.trim}}" ng-click="group{{group.trim}}.open =!group{{group.trim}}.open">
@@ -49,7 +49,7 @@
 </div>
 
 <!-- Modals -->
-<div ng-repeat="(key, ap) in currentUser.aps" class="modal fade" id="modal{{key}}" tabindex="-1" role="dialog" aria-labelledby="ap{{key}}" aria-hidden="true">
+<div ng-repeat="(key, ap) in currentUser().aps" class="modal fade" id="modal{{key}}" tabindex="-1" role="dialog" aria-labelledby="ap{{key}}" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">

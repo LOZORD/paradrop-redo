@@ -65,15 +65,18 @@ angular.module('paradropApp', [
       })
       .when('/login', {
         templateUrl: 'views/login_form.html',
-        controller: 'LoginCtrl'
+        controller: 'LoginCtrl',
+        auths: {noSession: true}
       })
       .when('/my_paradrop', {
         templateUrl: 'views/mypdp.html',
-        controller: 'MyParadropCtrl'
+        controller: 'MyParadropCtrl',
+        auths: {session: true}
       })
       .when('/user/new', {
         templateUrl: 'views/signup/form.html',
-        controller: 'NewUserCtrl'
+        controller: 'NewUserCtrl',
+        auths: {noSession: true}
       })
       .when('/notify', {
         templateUrl: 'views/signup/notify.html'
@@ -87,23 +90,28 @@ angular.module('paradropApp', [
       })
       .when('/recon/map/:group_id*', {
         templateUrl: 'views/recon/map.html',
-        controller: 'ReconMapCtrl'
+        controller: 'ReconMapCtrl',
+        auths: {group: true, session: true}
       })
       .when('/recon/home/:group_id*', {
         templateUrl: 'views/recon/home.html',
-        controller: 'ReconHomeCtrl'
+        controller: 'ReconHomeCtrl',
+        auths: {group: true, session: true}
       })
       .when('/recon/settings/:group_id*', {
         templateUrl: 'views/recon/settings.html',
-        controller: 'ReconSettingsCtrl'
+        controller: 'ReconSettingsCtrl',
+        auths: {group: true, session: true}
       })
       .when('/recon/dashboard/:group_id*', {
         templateUrl: 'views/recon/dashboard.html',
-        controller: 'ReconDashboardCtrl'
+        controller: 'ReconDashboardCtrl',
+        auths: {group: true, session: true}
       })
       .when('/calibrate', {
         templateUrl: 'views/calibrate.html',
-        controller: 'CalibrateCtrl'
+        controller: 'CalibrateCtrl',
+        auths: {admin: true, session: true}
       })
       .otherwise({
         redirectTo: '/'
@@ -122,22 +130,18 @@ angular.module('paradropApp', [
     {
       $httpProvider.defaults.headers[verb] = contentType;
     }
-
-    //check page authorizations first
-    $httpProvider.interceptors.push([
-      '$injector',
-      function ($injector) {
-        return $injector.get('AuthInterceptor');
-      }
-    ]);
   })
-  .run(function($rootScope, $window, $location){
+  .run(function($rootScope, $window, $location, $q){
+    //create session promise
+    $rootScope.sessionBuilt = $q.defer();
     var track = function() {
       $window.ga('send', 'pageview', { page: $location.path() });
     };
     $rootScope.$on('$viewContentLoaded', track);
   })
-  .run(function($rootScope) {
+  .run(function($rootScope, Recon) {
+    //hack to avoid jshint complaint
+    Recon.nothing();
     //determine the date  and open times for recon fetching
       var openTime = new Date();
       var closeTime = new Date();
@@ -173,11 +177,14 @@ angular.module('paradropApp', [
       $rootScope.closeTime = Math.floor(closeTime.getTime() / 1000);
     
   }) 
-  .run(function(AuthService, ipCookie, $q, $rootScope) {
+  .run(function(AuthService, $q, $rootScope) {
+    //setup some promises for services
+    $rootScope.chartsBuilt = $q.defer();
+    $rootScope.reconInit = $q.defer();
     $rootScope.restoreSession = $q.defer();
     $rootScope.$on('$routeChangeStart', function () {
         //first check that they have a cookie
-        var tokenCookie = ipCookie('sessionToken');
+        var tokenCookie = AuthService.getToken();
         //attempt to clone the session using the cookie data
         if (tokenCookie) {
           AuthService.cloneSession().then(
@@ -194,17 +201,10 @@ angular.module('paradropApp', [
         }
         //otherwise, just resolve the promise w/o using the cookie
         else {
+          AuthService.destroySession();
           $rootScope.restoreSession.resolve();
         }
     });
-  })
-  .constant('AUTH_EVENTS', {
-    loginSuccess: 'auth-login-success',
-    loginFailed: 'auth-login-failed',
-    logoutSuccess: 'auth-logout-success',
-    sessionTimeout: 'auth-session-timeout',
-    notAuthenticated: 'auth-not-authenticated',
-    notAuthorized: 'auth-not-authorized'
   })
   .constant('URLS', {
     //Change the current url to change all calls globally

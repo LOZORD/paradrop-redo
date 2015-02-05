@@ -8,13 +8,13 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ReconMapCtrl',['$scope', 'ipCookie', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker',
-    function ($scope, ipCookie, URLS, $http, $sce, $routeParams, gmapMaker) {
+  .controller('ReconMapCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker',
+    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
-      $scope.initCurrentUser.promise
-      .then(function(){ $scope.authorizePage();})
-      .then(
-        function(){
+      $scope.restoreSession.promise
+      .then($scope.authorizePage)
+      .then(function(authorized){
+        if(authorized){
           //default values
           $scope.showMarkers = true;
           $scope.markerBtnText = 'Hide';
@@ -37,12 +37,12 @@ angular.module('paradropApp')
           };
           //create a mapping
           $scope.apNameMap = {};
-          for(var ap in $scope.currentUser.aps){
-            $scope.apNameMap[$scope.currentUser.aps[ap].guid] = $scope.currentUser.aps[ap].name;
+          for(var ap in $scope.currentUser().aps){
+            $scope.apNameMap[$scope.currentUser().aps[ap].guid] = $scope.currentUser().aps[ap].name;
           }
           //grab map and build!
           var mapURL = URLS.current + 'recon/meta/' + $scope.group_id+ '/maps';
-          var postBody = { sessionToken: ipCookie('sessionToken') };
+          var postBody = { sessionToken: $scope.sessionToken() };
           $http.post(mapURL, postBody ).then(
               function(map){
                 $scope.mapData = map.data;
@@ -61,6 +61,6 @@ angular.module('paradropApp')
                 $scope.mapReady = true;
               }
           , function(error){$scope.mapError = true;});
-    
+        } 
       });
   }]);

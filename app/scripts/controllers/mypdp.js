@@ -10,13 +10,14 @@
 angular.module('paradropApp')
   .controller('MyParadropCtrl', ['AuthService', '$scope', 
     function (AuthService, $scope) {
-      $scope.initCurrentUser.promise.then(function(){$scope.authorizePage();})
-      .then(function() {
+      $scope.restoreSession.promise.then($scope.authorizePage)
+      .then(function(authorized) {
+        if(authorized){
           $scope.groups = {};
           $scope.grouplessAPS = [];
           var names = [];
-          for (var i =0; i < $scope.currentUser.aps.length; i++){
-            var ap = $scope.currentUser.aps[i];
+          for (var i =0; i < $scope.currentUser().aps.length; i++){
+            var ap = $scope.currentUser().aps[i];
             //make list of groups with aps and names with/without whitespace
             if(ap.groupname){
               var name = {full: ap.groupname, trim: ap.groupname.replace(' ','')};
@@ -39,7 +40,7 @@ angular.module('paradropApp')
           if($scope.grouplessAPS.length === 0){
             $scope.groupWidth = 12;
           }
-          if(!$scope.currentUser.defaultGroup){
+          if(!$scope.currentUser().defaultGroup){
             $scope.grouplessWidth = 12;
           }
           //if only one group uncollapse it
@@ -48,6 +49,7 @@ angular.module('paradropApp')
             $scope['group' + names[0].replace(' ','')] = {};
             $scope['group' + names[0].replace(' ','')].open = true;
           }
+        }
       }
     );
   }]);

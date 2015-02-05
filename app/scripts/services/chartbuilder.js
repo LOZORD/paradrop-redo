@@ -8,45 +8,26 @@
  * Factory in the paradropApp.
  */
 angular.module('paradropApp')
-  .factory('chartBuilder',['Recon', '$rootScope', 'DEV_MODE', function (Recon, $rootScope, DEV_MODE) {
+  .factory('chartBuilder',['$rootScope', function ($rootScope) {
     // Service logic
     // ...
 
     var charts = {};
-    this.totalUsersChart = null;
-    this.repeatVisitsChart = null;
-    this.engagementChart = null;
 
     charts.getBuiltCharts = function(){
-      if(!this.totalUsersChart || !this.engagementChart)
-      {
-        return null;
-      }else{
-        return {
-          totalUsers: this.totalUsersChart,
-          repeatVisits: this.repeatVisitsChart,
-          engagement: this.engagementChart
-        };
-      }
+      return this.builtCharts;
+    };
+
+    charts.chartsBuilt = function(){
+      $rootScope.chartsBuilt.resolve();
     };
 
     // Public API here
-    charts.buildTotalUsers = function(){
+    charts.buildTotalUsers = function(graphData){
       var chartInfo = {};
-      var startts;
-      var stopts;
-      if(DEV_MODE){
-        startts = 1419175642;
-        stopts = 1419262042;
-      }else{
-        stopts = $rootScope.closeTime;
-        startts = $rootScope.openTime;
-      }
-      var graphData = Recon.recon.getTotalGroupByTS(startts, stopts,
-                        $rootScope.granularity);
-      var step = 4;
       var plot = [];
       var xTimes = [];
+      var step = 4;
       for(var i = 0; i < graphData.x.length; i++){ 
         var time = new Date(graphData.x[i] * 1000);
         var hours = time.getHours();
@@ -138,13 +119,15 @@ angular.module('paradropApp')
 
       };
       chartInfo.chartConfig = chartConfig;
-      this.totalUsersChart = chartInfo;
+      if(!this.builtCharts){
+        this.builtCharts = {};
+      }
+      this.builtCharts.totalUsers = chartInfo;
       return chartInfo;
     };
 
-    charts.buildEngagementChart = function(){
+    charts.buildEngagementChart = function(graphData){
       var chartInfo = {};
-      var graphData = Recon.recon.getEngagementByTS([0, 300, 600, 900]);
 
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!
@@ -198,13 +181,15 @@ angular.module('paradropApp')
 
       };
       chartInfo.chartConfig = chartConfig;
-      this.engagementChart = chartInfo;
+      if(!this.builtCharts){
+        this.builtCharts = {};
+      }
+      this.builtCharts.engagement = chartInfo;
       return chartInfo;
     };
 
-    charts.buildRepeatVisitsChart = function(){
+    charts.buildRepeatVisitsChart = function(graphData){
       var chartInfo = {};
-      var graphData = Recon.recon.getRepeatVisits();
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!
         options: {
@@ -258,7 +243,10 @@ angular.module('paradropApp')
       };
       chartInfo.chartConfig = chartConfig;
       chartInfo.totalCusts = graphData.total;
-      this.repeatVisitsChart = chartInfo;
+      if(!this.builtCharts){
+        this.builtCharts = {};
+      }
+      this.builtCharts.repeatVisits = chartInfo;
       return chartInfo;
     };
 
