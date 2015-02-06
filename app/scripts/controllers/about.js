@@ -8,6 +8,6 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('AboutCtrl', [ function () {
-    //Nothing
+  .controller('AboutCtrl', ['$scope', function ($scope) {
+    $scope.authorizePage()
   }]);

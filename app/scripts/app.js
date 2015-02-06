@@ -32,36 +32,44 @@ angular.module('paradropApp', [
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
+        controller: 'MainCtrl',
+        auths: {}
       })
       .when('/about', {
         templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
+        controller: 'AboutCtrl',
+        auths: {}
       })
       .when('/blog', {
         templateUrl: 'views/blog/index.html',
-        controller: 'BlogCtrl'
+        controller: 'BlogCtrl',
+        auths: {}
       })
       //this mirrors the /blog path (duplicate)
       .when('/blog/posts', {
         templateUrl: 'views/blog/index.html',
-        controller: 'BlogCtrl'
+        controller: 'BlogCtrl',
+        auths: {}
       })
       .when('/blog/posts/:ts', {
         templateUrl: 'views/blog/posts/show.html',
-        controller: 'BlogCtrl'
+        controller: 'BlogCtrl',
+        auths: {}
       })
       .when('/blog/topics', {
         templateUrl: 'views/blog/topics/index.html',
-        controller: 'BlogCtrl'
+        controller: 'BlogCtrl',
+        auths: {}
       })
       .when('/blog/topics/:topic', {
         templateUrl: 'views/blog/topics/show.html',
-        controller: 'BlogCtrl'
+        controller: 'BlogCtrl',
+        auths: {}
       })
       .when('/contact', {
         templateUrl: 'views/contact.html',
-        controller: 'ContactCtrl'
+        controller: 'ContactCtrl',
+        auths: {}
       })
       .when('/login', {
         templateUrl: 'views/login_form.html',
@@ -79,14 +87,16 @@ angular.module('paradropApp', [
         auths: {noSession: true}
       })
       .when('/notify', {
-        templateUrl: 'views/signup/notify.html'
+        templateUrl: 'views/signup/notify.html',
+        auths: {}
       })
       .when('/verify', {
         redirectTo: '/'
       })
       .when('/verify/:verificationToken', {
         templateUrl: 'views/signup/verify.html',
-        controller:   'NewUserCtrl'
+        controller:   'NewUserCtrl',
+        auths: {}
       })
       .when('/recon/map/:group_id*', {
         templateUrl: 'views/recon/map.html',
@@ -114,7 +124,8 @@ angular.module('paradropApp', [
         auths: {admin: true, session: true}
       })
       .when('/modes/restricted_signup', {
-        templateUrl: 'views/modes/restricted_signup.html'
+        templateUrl: 'views/modes/restricted_signup.html',
+        auths: {}
       })
       .otherwise({
         redirectTo: '/'
@@ -185,30 +196,6 @@ angular.module('paradropApp', [
     //setup some promises for services
     $rootScope.chartsBuilt = $q.defer();
     $rootScope.reconInit = $q.defer();
-    $rootScope.restoreSession = $q.defer();
-    $rootScope.$on('$routeChangeStart', function () {
-        //first check that they have a cookie
-        var tokenCookie = AuthService.getToken();
-        //attempt to clone the session using the cookie data
-        if (tokenCookie) {
-          AuthService.cloneSession().then(
-            /* SUCCESSFUL CLONING */
-            function() {
-              $rootScope.restoreSession.resolve();
-            },
-            /* UNSUCCESSFUL CLONING */
-            function() {
-              AuthService.destroySession();
-              $rootScope.restoreSession.resolve();
-            }
-          );
-        }
-        //otherwise, just resolve the promise w/o using the cookie
-        else {
-          AuthService.destroySession();
-          $rootScope.restoreSession.resolve();
-        }
-    });
   })
   .constant('URLS', {
     //Change the current url to change all calls globally

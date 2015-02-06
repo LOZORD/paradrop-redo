@@ -10,8 +10,7 @@
 angular.module('paradropApp')
   .controller('ReconSettingsCtrl',['$scope', '$sce', '$routeParams', function ($scope, $sce, $routeParams) {
     $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
-    $scope.restoreSession.promise
-    .then($scope.authorizePage)
+    $scope.authorizePage()
     .then(
       function(authorized){
         if(authorized){

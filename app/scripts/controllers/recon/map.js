@@ -11,8 +11,7 @@ angular.module('paradropApp')
   .controller('ReconMapCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker',
     function ($scope, URLS, $http, $sce, $routeParams, gmapMaker) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
-      $scope.restoreSession.promise
-      .then($scope.authorizePage)
+      $scope.authorizePage()
       .then(function(authorized){
         if(authorized){
           //default values

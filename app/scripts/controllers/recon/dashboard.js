@@ -11,8 +11,7 @@ angular.module('paradropApp')
   .controller('ReconDashboardCtrl',['$rootScope', '$scope', '$sce', '$routeParams', 'chartBuilder',
     function ($rootScope, $scope, $sce, $routeParams, chartBuilder) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
-      $scope.restoreSession.promise
-      .then($scope.authorizePage)
+      $scope.authorizePage()
       .then(function(authorized){
         if(authorized){
           $rootScope.chartsBuilt.promise.then(function(){

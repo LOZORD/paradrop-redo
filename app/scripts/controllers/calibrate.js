@@ -10,8 +10,7 @@
 angular.module('paradropApp')
   .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker',
     function ($scope, URLS, $http, gmapMaker) {
-      $scope.restoreSession.promise
-      .then($scope.authorizePage)
+      $scope.authorizePage()
       .then(
         function(authorized){
           if(authorized){

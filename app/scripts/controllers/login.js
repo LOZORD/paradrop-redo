@@ -11,7 +11,7 @@ angular.module('paradropApp')
   .controller('LoginCtrl', ['$scope', '$rootScope', 'AuthService', '$location', 'URLS',
     function ($scope, $rootScope, AuthService, $location, URLS) {
 
-      if ($scope.currentUser() && $scope.isAuthenticated()) {
+      if (AuthService.getToken()) {
         $location.url('/my_paradrop');
       }
       else {
@@ -51,29 +51,29 @@ angular.module('paradropApp')
           login(credentials);
         }
       };
-            function login(credentials){
-              AuthService.login(credentials).then(
-                /* SUCCESSFUL LOGIN */
-                function () {
-                  //redirect to their homepage
-                  $location.url('/my_paradrop');
-                },
-                /* FAILED LOGIN */
-                function (error) {
-                  if(error.data === 'User is not verified!'){
-                    alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
-                  }else if(error.data === 'User is disabled!'){
-                    alert('Your account has been disabled. Please contact us at admin@paradrop.io if you think there has been an error.');
-                  }else if(error.data === 'Threshold Met!'){
-                    alert('Your account has been temporarily frozen due to too many failed attempts to login. If you think there has been an error contact admin@paradrop.io');
-                  }else if(error.data){
-                    alert(error.data);
-                  }else{
-                    alert('Login Failed! This site is currently in development if you are seeing this error please visit ' + URLS.current +' and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
-                  }
-                }
-              );
+      function login(credentials){
+        AuthService.login(credentials).then(
+          /* SUCCESSFUL LOGIN */
+          function () {
+            //redirect to their homepage
+            $location.url('/my_paradrop');
+          },
+          /* FAILED LOGIN */
+          function (error) {
+            if(error.data === 'User is not verified!'){
+              alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
+            }else if(error.data === 'User is disabled!'){
+              alert('Your account has been disabled. Please contact us at admin@paradrop.io if you think there has been an error.');
+            }else if(error.data === 'Threshold Met!'){
+              alert('Your account has been temporarily frozen due to too many failed attempts to login. If you think there has been an error contact admin@paradrop.io');
+            }else if(error.data){
+              alert(error.data);
+            }else{
+              alert('Login Failed! This site is currently in development if you are seeing this error please visit ' + URLS.current +' and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
             }
+          }
+        );
+      }
     }
   ]
 );

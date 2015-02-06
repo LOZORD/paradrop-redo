@@ -10,7 +10,7 @@
 angular.module('paradropApp')
   .controller('MyParadropCtrl', ['AuthService', '$scope', 
     function (AuthService, $scope) {
-      $scope.restoreSession.promise.then($scope.authorizePage)
+      $scope.authorizePage()
       .then(function(authorized) {
         if(authorized){
           $scope.groups = {};

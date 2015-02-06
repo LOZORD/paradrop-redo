@@ -10,6 +10,7 @@
 angular.module('paradropApp')
   .controller('BlogCtrl', ['$scope', '$location', '$http', '$routeParams', 'URLS', '$sce',
     function ($scope, $location, $http, $routeParams, URLS, $sce) {
+      $scope.authorizePage();
       var ts = null;
       //a map of post's ts => index of post in $scope.posts
       var tsToPostIndMap = {};

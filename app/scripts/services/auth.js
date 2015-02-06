@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
-  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope', '$route', '$location',
-    function($http, Session, ipCookie, URLS, $rootScope, $route, $location) {
+  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope', '$route', '$location', '$q',
+    function($http, Session, ipCookie, URLS, $rootScope, $route, $location, $q) {
       var authService = {};
 
       authService.getToken = function () {
@@ -122,30 +122,64 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         return Session;
       };
 
-      authService.authorizePage = function ()  { 
+      function runPageValidations(){
+        //if valid session but no token in cookie it means
+        //that user logged out in another tab so lets kill
+        //the session
+        if (authService.isAuthenticated() && !authService.getToken()) {
+          authService.destroySession();
+        }
+
+        //validate that user is logged in and if the page requires
         if ($route.current.auths.session && (!authService.isAuthenticated()  || !authService.getToken())) {
-          //if the token exists for the client, but it is invalid by the server
-          //or by previous (other tab) logout
-          if (authService.isAuthenticated()) {
-            authService.destroySession();
-          }
           $location.url('/login');
           return false;
         }
+        
+        //pages where user can't be logged in 
         if($route.current.auths.noSession && Session){
           $location.url('/my_paradrop');
           return false;
         }
+
+        //pages that require user to have a group of aps
         if($route.current.auths.group && !Session.defaultGroup){
           $location.url('/my_paradrop');
           return false;
         }
+        
+        //admin pages
         if($route.current.auths.admin && !Session.isAdmin){
           $location.url('/my_paradrop');
           alert('You must be an admin to view this page!');
           return false;
         }
+
+        //all checks passed authorize page
         return true;
+      }
+
+      authService.authorizePage = function ()  { 
+        var authPage = $q.defer();
+        //clone session if possible
+        if(!Session.id && authService.getToken()){
+          authService.cloneSession().then(
+            /* SUCCESSFUL CLONING */
+            function() {
+              authPage.resolve(runPageValidations());
+            },
+            /* UNSUCCESSFUL CLONING */
+            function() {
+              authService.destroySession();
+              authPage.resolve(runPageValidations());
+            }
+          );
+
+        }else{
+          authPage.resolve(runPageValidations());
+        }
+
+        return authPage.promise;
       };
 
 
