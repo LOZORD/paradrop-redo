@@ -9,5 +9,5 @@
  */
 angular.module('paradropApp')
   .controller('AboutCtrl', ['$scope', function ($scope) {
-    $scope.authorizePage()
+    $scope.authorizePage();
   }]);

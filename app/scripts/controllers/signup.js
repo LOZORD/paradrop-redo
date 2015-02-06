@@ -33,7 +33,7 @@ angular.module('paradropApp')
         }
 
         if (MODES.restrictedSignup) {
-          payload['reg_code'] = data.question;
+          payload.reg_code = data.question;
         }
 
         var signupURL = URLS.current + 'user/new';
@@ -48,7 +48,7 @@ angular.module('paradropApp')
           .then(
             /* USER SIGNUP might have been ok */
             function (response) {
-              if (response.data = '') {
+              if (response.data === '') {
                 //yay! it worked
                 //redirect to verification page
                 $location.url('/notify');
