@@ -9,34 +9,40 @@
           ng-submit='submitUpdate(configUpdateData, configUpdateForm.$valid)'
           novalidate form-autofill-fix>
 
-      <div class='form-group'>
-        <strong>Operating Mode</strong>
-        <input type='radio' ng-model='configUpdateData.isauto' ng-value='true'> Automatic
-        <input type='radio' ng-model='configUpdateData.isauto' ng-value='false'> Manual
-      </div>
-
-      <div class='form-group'>
-        <label for='channelSelect'>
-          Channel Select
-        </label>
-        <select name='channelSelect' ng-model='configUpdateData.channel'
-          ng-options='channelNumber for channelNumber in CHANNELS | orderBy:channelNumber'>
-        </select>
-        <div class='error-container bg-danger' ng-show='configUpdateForm.channelSelect.$dirty'>
-          <small class='error' ng-show='usingSlowChannel(configUpdateForm.channelSelect.$viewValue)'>
-            You are choosing a channel that is not optimal for performance!
-          </small>
+      <div class='row'>
+        <div class='form-group col-md-6'>
+          <strong>Operating Mode</strong>
+          <input type='radio' ng-model='configUpdateData.isauto' ng-value='true'> Automatic
+          <input type='radio' ng-model='configUpdateData.isauto' ng-value='false'> Manual
         </div>
+
+        <div class='form-group col-md-6' ng-show='!configUpdateData.isauto'>
+          <label for='channelSelect'>
+            Channel Select
+          </label>
+          <select name='channelSelect' ng-model='configUpdateData.channel'
+            ng-options='channelNumber for channelNumber in CHANNELS | orderBy:channelNumber'
+            ng-disabled='configUpdateData.isauto'>
+          </select>
+          <div class='error-container bg-danger' ng-show='configUpdateForm.channelSelect.$dirty'>
+            <small class='error' ng-show='usingSlowChannel(configUpdateForm.channelSelect.$viewValue)'>
+              You are choosing a channel that is not optimal for performance!
+            </small>
+          </div>
+        </div>
+        <small ng-show='configUpdateData.isauto'>
+          Channel selection is disabled when in Automatic mode.
+        </small>
       </div>
       <br>
       <div class='row container-fluid'>
         <div class='col-md-4'>
-          <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid'>
+          <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid || !configUpdateForm.$dirty'>
             Submit Update
           </button>
         </div>
         <div class='col-md-4'>
-          <button type='button' class='btn btn-warning btn-block' ng-disabled='!configUpdateForm.$dirty'>
+          <button type='button' class='btn btn-warning btn-block' ng-disabled='!configUpdateForm.$dirty' ng-click='revertConfig()'>
             Revert
           </button>
         </div>

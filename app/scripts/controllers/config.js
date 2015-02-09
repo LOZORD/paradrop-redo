@@ -35,7 +35,6 @@ angular.module('paradropApp')
           for (var i = 0, len = $scope.configurableDevices.length; i < len; i++) {
             if ($scope.configurableDevices[i].guid === $routeParams.cDeviceID) {
               $scope.deviceToUpdate = $scope.configurableDevices[i];
-              console.log($scope.deviceToUpdate);
               break;
             }
           }
@@ -46,6 +45,11 @@ angular.module('paradropApp')
             }
 
             //TODO
+          };
+
+          $scope.revertConfig = function () {
+            $scope.configUpdateData = angular.copy($scope.origConfigData);
+            $scope.configUpdateForm.$setPristine(true);
           };
 
           $scope.usingSlowChannel = function (val) {
