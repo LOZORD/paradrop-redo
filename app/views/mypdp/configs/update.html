@@ -6,29 +6,45 @@
           method='post'
           novalidate
           ng-controller='ConfigCtrl'
-          ng-submit='create(configUpdateData, configUpdateForm.$valid)'
+          ng-submit='submitUpdate(configUpdateData, configUpdateForm.$valid)'
           novalidate form-autofill-fix>
 
       <div class='form-group'>
         <strong>Operating Mode</strong>
-        <input type='radio' ng-model='mode' value='auto'> Automatic
-        <input type='radio' ng-model='mode' value='manl'> Manual
+        <input type='radio' ng-model='configUpdateData.isauto' ng-value='true'> Automatic
+        <input type='radio' ng-model='configUpdateData.isauto' ng-value='false'> Manual
       </div>
 
       <div class='form-group'>
         <label for='channelSelect'>
           Channel Select
         </label>
-        <select name='channelSelect' ng-model='channel'
+        <select name='channelSelect' ng-model='configUpdateData.channel'
           ng-options='channelNumber for channelNumber in CHANNELS | orderBy:channelNumber'>
         </select>
         <div class='error-container bg-danger' ng-show='configUpdateForm.channelSelect.$dirty'>
-          <small class='error' ng-show='usingSlowChannel(configUpdateForm.channelSelect.$viewValue)'>Slow channel</small>
+          <small class='error' ng-show='usingSlowChannel(configUpdateForm.channelSelect.$viewValue)'>
+            You are choosing a channel that is not optimal for performance!
+          </small>
         </div>
       </div>
-      <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid'>Submit Update</button>
-      <button type='button' class='btn btn-warning btn-block'>Revert</button>
-      <button type='button' class='btn btn-danger  btn-block' ng-click='go("/#!/my_paradrop/configs/")'>Cancel FIXME</button>
+      <br>
+      <div class='row container-fluid'>
+        <div class='col-md-4'>
+          <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid'>
+            Submit Update
+          </button>
+        </div>
+        <div class='col-md-4'>
+          <button type='button' class='btn btn-warning btn-block' ng-disabled='!configUpdateForm.$dirty'>
+            Revert
+          </button>
+        </div>
+        <div class='col-md-4'>
+          <a class='btn btn-danger btn-block' ng-href='#!/my_paradrop/configs' role='button'>Cancel</a>
+        </div>
+      </div>
     </form>
+    <br>
   </div>
 </div>

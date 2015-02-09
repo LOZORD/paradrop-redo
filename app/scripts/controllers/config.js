@@ -16,22 +16,26 @@ angular.module('paradropApp')
         $scope.configurableDevices = $scope.currentUser.aps.filter(function (device) {
           return device.type.toLowerCase() === 'owner';
         });
+
+        /* UPDATING */
         //if we were routed here for updating a config
         if ($routeParams.cDeviceID) {
-
           $scope.deviceToUpdate = null;
-
           $scope.CHANNELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 149, 153, 157, 161, 165];
-
           //TODO, use http to get default values
           $scope.configUpdateData = {
-            mode: 'auto',
+            //mode: 'auto',
+            isauto : true,
             channel: 1
           };
+
+          //used for reverting
+          $scope.origConfigData = angular.copy($scope.configUpdateData);
 
           for (var i = 0, len = $scope.configurableDevices.length; i < len; i++) {
             if ($scope.configurableDevices[i].guid === $routeParams.cDeviceID) {
               $scope.deviceToUpdate = $scope.configurableDevices[i];
+              console.log($scope.deviceToUpdate);
               break;
             }
           }
@@ -40,20 +44,12 @@ angular.module('paradropApp')
             if (!isValid) {
               return;
             }
+
+            //TODO
           };
 
           $scope.usingSlowChannel = function (val) {
-            console.log(val);
-            var contains =  $scope.CHANNELS.filter(function (i) {
-                              return i <= 11;
-                            }).indexOf(val) !== -1;
-
-            if (contains) {
-              return [1, 6, 11].indexOf(val) === -1;
-            }
-            else {
-              return false;
-            }
+            return (val < 11) && ([1, 6, 11].indexOf(val) === -1);
           };
         }
       });
