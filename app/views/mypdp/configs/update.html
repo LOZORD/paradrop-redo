@@ -35,7 +35,7 @@
         </small>
       </div>
       <br>
-      <div class='row container-fluid'>
+      <div class='row container-fluid btn-toolbar'>
         <div class='col-md-4'>
           <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid || !configUpdateForm.$dirty'>
             Submit Update
@@ -47,7 +47,9 @@
           </button>
         </div>
         <div class='col-md-4'>
-          <a class='btn btn-danger btn-block' ng-href='#!/my_paradrop/configs' role='button'>Cancel</a>
+          <a class='btn btn-danger btn-block' ng-href='#!/my_paradrop/configs' role='button' style='font-family: sans-serif;'>
+            Cancel
+          </a>
         </div>
       </div>
     </form>

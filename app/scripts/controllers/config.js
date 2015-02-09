@@ -8,8 +8,8 @@
  * Controller of the paradropApp, nested inside of MyParadropCtrl
  */
 angular.module('paradropApp')
-  .controller('ConfigCtrl', ['AuthService', '$scope', '$location', 'ipCookie', '$routeParams',
-    function (AuthService, $scope, $location, ipCookie, $routeParams) {
+  .controller('ConfigCtrl', ['AuthService', '$scope', '$location', 'ipCookie', '$routeParams', 'URLS', '$http',
+    function (AuthService, $scope, $location, ipCookie, $routeParams, URLS, $http) {
       $scope.initCurrentUser.promise.then(function(){$scope.authorizePage();})
       .then(function() {
         //get the aps that this user owns
@@ -44,7 +44,36 @@ angular.module('paradropApp')
               return;
             }
 
-            //TODO
+            if (data.isauto) {
+              data.channel = 1;
+            }
+
+            data.radioid = -1; //TODO do something with radioid
+
+            console.log($scope.currentUser);
+            console.log($scope.deviceToUpdate);
+
+            var dataPackage = {
+              sessionToken: $scope.currentUser.id,
+              apid:         $scope.deviceToUpdate.guid,
+              payload:      data
+            };
+
+            var updateURL = URLS.current + '/ap/vnet/radioChangeRequest';
+
+            $http.post(updateURL, dataPackage).then(
+              function (result) {
+                if (result.data === '') {
+                  $location.path('/mypdp/configs');
+                }
+                else {
+                  window.alert(result.data);
+                }
+              },
+              function () {
+                window.alert('Could not update config');
+              }
+            );
           };
 
           $scope.revertConfig = function () {
