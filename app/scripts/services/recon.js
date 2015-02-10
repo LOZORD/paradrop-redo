@@ -58,7 +58,7 @@ angular.module('paradropApp')
             self.next = self.recon;
             self.recon = self.prev;
             self.prev = new Recon( {postFunc: post} );
-            $rootScope.reconDate = 'on ' + (new Date(self.recon.myOpts.start*1000)).toLocaleDateString();
+            $rootScope.reconDate = 'on ' + (new Date(self.recon.myOpts.start*1000)).toDateString();
             var graphData = self.recon
                             .getTotalGroupByTS(self.recon.myOpts.start, 
                               self.recon.myOpts.stop, 3600);
@@ -86,7 +86,7 @@ angular.module('paradropApp')
             self.prev = self.recon;
             self.recon = self.next;
             self.next = new Recon( {postFunc: post} );
-            $rootScope.reconDate = 'on ' + (new Date(self.recon.myOpts.start*1000)).toLocaleDateString();
+            $rootScope.reconDate = 'on ' + (new Date(self.recon.myOpts.start*1000)).toDateString();
             var graphData = self.recon.getTotalGroupByTS(self.recon.myOpts.start,
                               self.recon.myOpts.stop, 3600);
             chartBuilder.buildTotalUsers(graphData, 3600);
@@ -106,7 +106,7 @@ angular.module('paradropApp')
             self.prev = self.recon;
             self.recon = self.next;
             self.next = null;
-            $rootScope.reconDate = 'on ' + (new Date($rootScope.openTime*1000)).toLocaleDateString();
+            $rootScope.reconDate = 'on ' + (new Date($rootScope.openTime*1000)).toDateString();
             var stopts = $rootScope.closeTime;
             var startts = $rootScope.openTime;
             var graphData = self.recon.getTotalGroupByTS(startts,
