@@ -23,6 +23,7 @@ angular.module('paradropApp')
           return call;
         };
 
+
         self.recon = new Recon( { postFunc: post} );
         //setup prev and next day recon objects
         self.prev = new Recon( {postFunc: post} );
@@ -51,7 +52,8 @@ angular.module('paradropApp')
         };
 
         var currDay = 1;
-        self.prevDay = function (enableButtons) {
+        self.prevDay = function () {
+          $rootScope.enable = false;
           if(currDay < 8){
             self.next = self.recon;
             self.recon = self.prev;
@@ -77,7 +79,8 @@ angular.module('paradropApp')
           return {};
         };
 
-        self.nextDay = function (enableButtons) {
+        self.nextDay = function () {
+          $rootScope.enable = false;
           if(currDay > 2){
             currDay--;
             self.prev = self.recon;
@@ -135,11 +138,18 @@ angular.module('paradropApp')
           chartBuilder.buildEngagementChart(graphData);
           graphData = self.recon.getRepeatVisits();
           chartBuilder.buildRepeatVisitsChart(graphData);
-          self.prev.myOpts = self.prevOpts(currDay); 
-          self.prev.prefetch(self.prevOpts(currDay)).then(chartBuilder.chartsBuilt);
+          chartBuilder.chartsBuilt();
         });
 
+        self.prev.myOpts = self.prevOpts(currDay); 
+        self.prev.prefetch(self.prevOpts(currDay)).then(enableButtons);
 
+
+
+      }
+
+      function enableButtons(){
+        $rootScope.enable = true;
       }
     });
     return this.recon;

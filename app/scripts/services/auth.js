@@ -14,17 +14,17 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       };
 
       authService.deleteToken = function () {
-        ipCookie.remove('sessionToken');
-        ipCookie.remove('shouldPersist');
+        ipCookie.remove('sessionToken', {path: '/'});
+        ipCookie.remove('shouldPersist', {path: '/'});
       };
 
       authService.saveToken = function (token, persist) {
         if (persist) {
-          ipCookie('shouldPersist', true, { expires: 7 });
-          ipCookie('sessionToken', token, { expires: 7 });
+          ipCookie('shouldPersist', true, { expires: 7, path: '/' });
+          ipCookie('sessionToken', token, { expires: 7, path: '/' });
         }
         else {
-          ipCookie('sessionToken', token);
+          ipCookie('sessionToken', token, {path: '/'});
         }
       };
       //this function is used by login and cloneSession

@@ -14,7 +14,6 @@ angular.module('paradropApp')
       $scope.authorizePage()
       .then(function(authorized){
         if(authorized){
-          $rootScope.chartsBuilt.promise.then(enableButtons);
           $scope.date = function(){
             if($rootScope.reconDate.indexOf('Today') !== -1){
               return 'Today';
@@ -27,22 +26,17 @@ angular.module('paradropApp')
           $scope.prevDay = function(){
             $scope.contentLoaded = false;
             $rootScope.chartsBuilt = $q.defer()
-            $scope.enable = false;
-            Recon.prevDay(enableButtons);
+            Recon.prevDay();
             $rootScope.chartsBuilt.promise.then(updateTotal);
           }
 
           $scope.nextDay = function(){
             $scope.contentLoaded = false;
             $rootScope.chartsBuilt = $q.defer()
-            $scope.enable = false;
-            Recon.nextDay(enableButtons);
+            $rootScope.enable = false;
+            Recon.nextDay();
             $rootScope.chartsBuilt.promise.then(updateTotal);
           }
-        }
-
-        function enableButtons(){
-          $scope.enable = true;
         }
 
         function updateTotal(){
