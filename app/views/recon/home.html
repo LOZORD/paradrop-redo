@@ -1,4 +1,17 @@
 <h1>Recon: {{group_id}}</h1>
+<div class='row'>
+  <div class='text-center center-block'>
+    <h2>
+      <button class='btn btn-primary' ng-disabled='!enable' ng-click='prevDay()'>
+        <span class='glyphicon glyphicon-chevron-left'></span>
+      </button>
+      {{date()}}
+      <button class='btn btn-primary' ng-disabled='!enable' ng-click='nextDay()'>
+        <span class='glyphicon glyphicon-chevron-right'></span>
+      </button>
+    </h2>
+  </div>
+</div>
 <div>
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">

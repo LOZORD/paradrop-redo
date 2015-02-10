@@ -23,7 +23,7 @@ angular.module('paradropApp')
     };
 
     // Public API here
-    charts.buildTotalUsers = function(graphData){
+    charts.buildTotalUsers = function(graphData, granularity){
       var chartInfo = {};
       var plot = [];
       var xTimes = [];
@@ -50,10 +50,10 @@ angular.module('paradropApp')
           suffix = 'PM';
         }
         xTimes.push(hours + (minutes===0?'':':' + minutes) +'-' + 
-            ((minutes +($rootScope.granularity / 60))===60?
+            ((minutes +(granularity / 60))===60?
             endHours.toString():hours.toString()) + 
-            ((minutes +($rootScope.granularity / 60))===60?'':':' + 
-            (minutes + ($rootScope.granularity / 60))) + suffix);
+            ((minutes +(granularity / 60))===60?'':':' + 
+            (minutes + (granularity / 60))) + suffix);
 
         plot.push({name: xTimes[i], y: graphData.y[i]});
         if(xTimes.length < 6){
@@ -85,7 +85,8 @@ angular.module('paradropApp')
         //Series object (optional) - a list of series using normal highcharts series options.
         series: [{
           data: plot,
-          name: 'Number of Customers'
+          name: 'Number of Customers',
+          color: '#7cb5ec'
         }],
         //Title configuration (optional)
         title: {
