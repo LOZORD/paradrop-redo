@@ -25,9 +25,8 @@ angular.module('paradropApp')
 
 
         self.recon = new Recon( { postFunc: post} );
-        //setup prev and next day recon objects
-        self.prev = new Recon( {postFunc: post} );
-        self.next = null;
+        //setup prev day recon dictionary
+        self.storedData = {0: self.recon, 1: null , 2: null, 3: null, 4: null, 5: null, 6: null, 7: null };
         //setup opts for prefetch
 
         var opts = {
@@ -51,14 +50,17 @@ angular.module('paradropApp')
           };
         };
 
-        var currDay = 1;
-        self.prevDay = function () {
-          $rootScope.enable = false;
-          if(currDay < 8){
-            self.next = self.recon;
-            self.recon = self.prev;
-            self.prev = new Recon( {postFunc: post} );
-            $rootScope.reconDate = 'on ' + (new Date(self.recon.myOpts.start*1000)).toDateString();
+        var currDay = 0;
+        self.prevDay = function (buildCharts) {
+          if(currDay < 7){
+            currDay++;
+            if(!self.storedData[currDay+1]){
+              $rootScope.enable = false;
+            }else if(!self.storedData[currDay+1].data){
+              $rootScope.enable = false;
+            }
+            self.recon = self.storedData[currDay];
+            $rootScope.reconDate = self.recon.dateString;
             var graphData = self.recon
                             .getTotalGroupByTS(self.recon.myOpts.start, 
                               self.recon.myOpts.stop, 3600);
@@ -67,26 +69,29 @@ angular.module('paradropApp')
             chartBuilder.buildEngagementChart(graphData);
             graphData = self.recon.getRepeatVisits();
             chartBuilder.buildRepeatVisitsChart(graphData);
-            chartBuilder.chartsBuilt();
-            currDay++;
-            self.prev.myOpts = self.prevOpts(currDay); 
-            self.prev.prefetch(self.prevOpts(currDay)).then(enableButtons);
+            buildCharts();
+            if(!self.storedData[currDay+1] && currDay !== 7){
+              self.storedData[currDay+1] = new Recon({postFunc: post});
+              self.storedData[currDay+1].myOpts = self.prevOpts(currDay+1); 
+              self.storedData[currDay+1].dateString = 'on ' + 
+                (new Date(self.storedData[currDay+1].myOpts.start*1000))
+                .toDateString();
+              self.storedData[currDay+1].prefetch(self.prevOpts(currDay+1))
+                .then(enableButtons)
+            }else if(currDay ===7){
+              enableButtons();
+            }
           }else{
             alert("You can only look at the last 7 days of data.");
-            chartBuilder.chartsBuilt();
-            enableButtons();
           }
           return {};
         };
 
-        self.nextDay = function () {
-          $rootScope.enable = false;
-          if(currDay > 2){
+        self.nextDay = function (buildCharts) {
+          if(currDay > 0){
             currDay--;
-            self.prev = self.recon;
-            self.recon = self.next;
-            self.next = new Recon( {postFunc: post} );
-            $rootScope.reconDate = 'on ' + (new Date(self.recon.myOpts.start*1000)).toDateString();
+            self.recon = self.storedData[currDay];
+            $rootScope.reconDate = self.recon.dateString;
             var graphData = self.recon.getTotalGroupByTS(self.recon.myOpts.start,
                               self.recon.myOpts.stop, 3600);
             chartBuilder.buildTotalUsers(graphData, 3600);
@@ -94,38 +99,16 @@ angular.module('paradropApp')
             chartBuilder.buildEngagementChart(graphData);
             graphData = self.recon.getRepeatVisits();
             chartBuilder.buildRepeatVisitsChart(graphData);
-            chartBuilder.chartsBuilt();
-            if(currDay-1 == 1){
-              self.next.prefetch(opts).then(enableButtons);
-            }else{
-              self.next.myOpts = self.prevOpts(currDay-2);
-              self.next.prefetch(self.prevOpts(currDay-2)).then(enableButtons);
-            }
-          }else if(currDay == 2){
-            currDay--;
-            self.prev = self.recon;
-            self.recon = self.next;
-            self.next = null;
-            $rootScope.reconDate = 'on ' + (new Date($rootScope.openTime*1000)).toDateString();
-            var stopts = $rootScope.closeTime;
-            var startts = $rootScope.openTime;
-            var graphData = self.recon.getTotalGroupByTS(startts,
-                              stopts, $rootScope.granularity);
-            chartBuilder.buildTotalUsers(graphData, $rootScope.granularity);
-            graphData = self.recon.getEngagementByTS([0, 300, 600, 900]);
-            chartBuilder.buildEngagementChart(graphData);
-            graphData = self.recon.getRepeatVisits();
-            chartBuilder.buildRepeatVisitsChart(graphData);
-            chartBuilder.chartsBuilt();
+            buildCharts();
             enableButtons();
           }else{
             alert("Today is the most recent day you can view data for.");
-            chartBuilder.chartsBuilt();
-            enableButtons();
           }
           return {};
         };
 
+        self.recon.myOpts = opts;
+        self.recon.dateString = 'so far Today';
         self.recon.prefetch(opts)
         .then(function(){
           $rootScope.reconInit.resolve();
@@ -141,10 +124,13 @@ angular.module('paradropApp')
           chartBuilder.chartsBuilt();
         });
 
-        self.prev.myOpts = self.prevOpts(currDay); 
-        self.prev.prefetch(self.prevOpts(currDay)).then(enableButtons);
-
-
+        self.storedData[currDay+1] = new Recon( { postFunc: post } );
+        self.storedData[currDay+1].myOpts = self.prevOpts(currDay+1); 
+        self.storedData[currDay+1].dateString = 'on ' + 
+          (new Date(self.storedData[currDay+1].myOpts.start*1000))
+          .toDateString();
+        self.storedData[currDay+1].prefetch(self.prevOpts(currDay+1))
+          .then(enableButtons)
 
       }
 

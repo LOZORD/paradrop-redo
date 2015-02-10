@@ -24,15 +24,11 @@ angular.module('paradropApp')
           }
 
           $scope.prevDay = function(){
-            $rootScope.chartsBuilt = $q.defer()
-            Recon.prevDay();
-            $rootScope.chartsBuilt.promise.then(buildCharts);
+            Recon.prevDay(buildCharts);
           }
 
           $scope.nextDay = function(){
-            $rootScope.chartsBuilt = $q.defer()
-            Recon.nextDay();
-            $rootScope.chartsBuilt.promise.then(buildCharts);
+            Recon.nextDay(buildCharts);
           }
         }
 
