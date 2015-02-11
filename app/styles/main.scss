@@ -177,3 +177,14 @@ body {
 .slide-btn {
   padding-left: 10px;
 }
+
+//fix zooming on forms in mobile
+@media screen and (-webkit-min-device-pixel-ratio:0) { 
+  select:focus,
+  textarea:focus,
+  input:focus,
+  input:hover {
+    font-size: 16px;
+    background: #eee;
+  }
+}

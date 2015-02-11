@@ -33,8 +33,7 @@
     <!-- Add your site or application content here -->
           <nav class="navbar navbar-default" role="navigation">
             <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" 
-                 data-target="#paradrop-navbar-collapse">
+              <button type="button" class="navbar-toggle" ng-init="isCollapsed = true" ng-click="isCollapsed = !isCollapsed">
                  <span class="icon-bar"></span>
                  <span class="icon-bar"></span>
                  <span class="icon-bar"></span>
@@ -49,7 +48,7 @@
               <div class="navbar-center">
               </div>
             </div>
-            <div class="collapse navbar-collapse" id="paradrop-navbar-collapse">
+            <div class="navbar-collapse" ng-class="{collapse: isCollapsed}">
               <ul class="nav navbar-nav navbar-right">
                 <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="#!/user/new">Signup</a></li>
                 <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="#!/login">Login</a></li>

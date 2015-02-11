@@ -15,6 +15,12 @@ angular.module('paradropApp')
       $scope.URL = URLS.current;
       $scope.currentUser = AuthService.getSession;
 
+      //collapse dropdown on page changes
+      $scope.$on('$routeChangeStart',
+        function(){
+          $scope.isCollapsed = true;
+        }
+      );
       $scope.isAuthenticated = AuthService.isAuthenticated;
 
       $scope.hasSessionCookie = function() {
