@@ -107,6 +107,7 @@ angular.module('paradropApp')
             buildCharts();
             enableButtons();
           }else{
+            buildCharts();
             alert('Today is the most recent day you can view data for.');
           }
           return {};
