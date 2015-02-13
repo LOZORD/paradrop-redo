@@ -68,7 +68,7 @@ angular.module('paradropApp')
               },
               /* FAILURE LOGOUT */
               function (result) {
-                //TODO
+                //FIXME THIS IS NOT WORKING SOMETIMES!!!
                 alert('-*- SIGN OUT DID NOT WORK! -*-');
               }
           );
