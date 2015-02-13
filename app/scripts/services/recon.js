@@ -9,6 +9,11 @@
  */
 angular.module('paradropApp')
   .service('Recon',[ 'Session', 'URLS', '$http', '$rootScope', '$q', 'chartBuilder', function (Session, URLS, $http, $rootScope, $q, chartBuilder) {
+
+    function enableButtons(){
+      $rootScope.enable = true;
+    }
+
     this.recon = null;
     this.nothing = function(){};
     var self = this;
@@ -77,12 +82,12 @@ angular.module('paradropApp')
                 (new Date(self.storedData[currDay+1].myOpts.start*1000))
                 .toDateString();
               self.storedData[currDay+1].prefetch(self.prevOpts(currDay+1))
-                .then(enableButtons)
+                .then(enableButtons);
             }else if(currDay ===7){
               enableButtons();
             }
           }else{
-            alert("You can only look at the last 7 days of data.");
+            alert('You can only look at the last 7 days of data.');
           }
           return {};
         };
@@ -102,7 +107,7 @@ angular.module('paradropApp')
             buildCharts();
             enableButtons();
           }else{
-            alert("Today is the most recent day you can view data for.");
+            alert('Today is the most recent day you can view data for.');
           }
           return {};
         };
@@ -130,13 +135,10 @@ angular.module('paradropApp')
           (new Date(self.storedData[currDay+1].myOpts.start*1000))
           .toDateString();
         self.storedData[currDay+1].prefetch(self.prevOpts(currDay+1))
-          .then(enableButtons)
+          .then(enableButtons);
 
       }
 
-      function enableButtons(){
-        $rootScope.enable = true;
-      }
     });
     return this.recon;
   }]);
