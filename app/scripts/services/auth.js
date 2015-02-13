@@ -103,19 +103,22 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
 
       authService.logout = function () {
         //TODO FIX THIS HACK
-        var logoutURL = URLS.current + 'test';
+        // var logoutURL = URLS.current + 'test';
         //var payload = { sessionToken: authService.getToken() };
+        var retData = $q.defer();
+        retData.resolve();
 
         authService.destroySession();
 
-        var retData = $http
+        /*var retData = $http
           //TODO switch back to post request
           .get(logoutURL)
           .then(function(result) {
             return result;
           });
+        */
 
-        return retData;
+        return retData.promise;
       };
 
       authService.getSession = function () {
