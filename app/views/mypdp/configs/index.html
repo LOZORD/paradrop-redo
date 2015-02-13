@@ -1,0 +1,18 @@
+<div ng-controller='MyParadropCtrl'>
+  <div ng-controller='ConfigCtrl'>
+    <h1>Configurable Devices</h1>
+    <div ng-if='configurableDevices'>
+      <ul>
+        <li ng-repeat='cDevice in configurableDevices | orderBy:"name"'>
+          <h4>
+            <a ng-if='!cDevice.ispending' ng-href='#!/my_paradrop/configs/{{ cDevice.guid }}/update'>{{ cDevice.name }}</a>
+            <span ng-if='cDevice.ispending' style='color: grey;'>{{ cDevice.name }} - updates pending</span>
+          </h4>
+        </li>
+      </ul>
+    </div>
+    <div ng-if='!configurableDevices'>
+      You have no configurable devices.
+    </div>
+  </div>
+</div>

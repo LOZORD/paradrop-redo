@@ -34,6 +34,5 @@ angular.module('paradropApp')
       $scope.logout = AuthService.logout;
 
       $scope.isLoginPage = ($location.path().indexOf('/login') !== -1);
-
     }
   ]);

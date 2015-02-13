@@ -29,7 +29,7 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-  ` <div class="main-content" snap-content> 
+    <div class="main-content" snap-content>
     <!-- Add your site or application content here -->
           <nav class="navbar navbar-default" role="navigation">
             <div class="navbar-header">
@@ -60,6 +60,12 @@
                     <li>
                       <a ng-href="#!/my_paradrop">
                         Home
+                      </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                      <a ng-href="#!/my_paradrop/configs">
+                        Configurations
                       </a>
                     </li>
                     <li class="divider"></li>
@@ -118,14 +124,13 @@
             </div>
           </nav>
       <div class="container">
-        <div class="header">
-        </div>
+        <div class="header"></div>
 
         <div ng-view=""></div>
 
         <div ng-cloak class="footer">
           <!--<p><span class="glyphicon glyphicon-heart"></span> from the Yeoman team</p>-->
-          <p><span class='glyphicon glyphicon-copyright-mark'></span>&nbsp;Paradrop 2014. All rights reserved.</p>
+          <p><span class='glyphicon glyphicon-copyright-mark'></span>&nbsp;Paradrop 2015. All rights reserved.</p>
           <p ng-if='DEV_MODE'><b>DEVELOPMENT MODE: Currently using {{URL}} as base URL.</b></p>
         </div>
       </div>
@@ -190,6 +195,7 @@
     <script src="scripts/controllers/login.js"></script>
     <script src="scripts/controllers/application.js"></script>
     <script src="scripts/controllers/mypdp.js"></script>
+    <script src="scripts/controllers/config.js"></script>
     <script src="scripts/controllers/contact.js"></script>
     <script src='scripts/controllers/signup.js'></script>
     <script src="scripts/services/recon.js"></script>

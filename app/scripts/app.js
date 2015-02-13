@@ -77,9 +77,19 @@ angular.module('paradropApp', [
         auths: {noSession: true}
       })
       .when('/my_paradrop', {
-        templateUrl: 'views/mypdp.html',
         controller: 'MyParadropCtrl',
+        templateUrl: 'views/mypdp/index.html',
         auths: {session: true}
+      })
+      .when('/my_paradrop/configs', {
+        templateUrl: 'views/mypdp/configs/index.html',
+        controller: 'ConfigCtrl',
+        auths: { session: true }
+      })
+      .when('/my_paradrop/configs/:cDeviceID/update', {
+        templateUrl: 'views/mypdp/configs/update.html',
+        controller: 'ConfigCtrl',
+        auths: { session: true }
       })
       .when('/user/new', {
         templateUrl: 'views/signup/form.html',
@@ -91,7 +101,8 @@ angular.module('paradropApp', [
         auths: {}
       })
       .when('/verify', {
-        redirectTo: '/'
+        redirectTo: '/',
+        auths: {}
       })
       .when('/verify/:verificationToken', {
         templateUrl: 'views/signup/verify.html',
@@ -128,7 +139,8 @@ angular.module('paradropApp', [
         auths: {}
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/',
+        auths: {}
       });
   })
   .config(function($locationProvider) {
