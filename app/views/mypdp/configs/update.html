@@ -12,8 +12,8 @@
         <div class='row'>
           <div class='form-group col-md-6'>
             <strong>Operating Mode</strong>
-            <input type='radio' ng-model='configUpdateData.isauto' ng-value='true'> Automatic
-            <input type='radio' ng-model='configUpdateData.isauto' ng-value='false'> Manual
+            <input type='radio' ng-model='configUpdateData.isauto' ng-value='1'> Automatic
+            <input type='radio' ng-model='configUpdateData.isauto' ng-value='0'> Manual
           </div>
 
           <div ng-if='!configUpdateData.isauto'>
@@ -27,9 +27,9 @@
               </select>
             </div>
             <div class='form-group col-md-3'>
-              <div class='error-container bg-danger' ng-show='configUpdateForm.channelSelect.$dirty && !configUpdateData.isauto'>
-                <small class='error' ng-show='usingSlowChannel(configUpdateForm.channelSelect.$viewValue)'>
-                  You are choosing a channel that is not optimal for performance!
+              <div class='error-container bg-danger' ng-show='configUpdateForm.channelSelect.$dirty && !configUpdateData.isauto || isUsingSlowChannel'>
+                <small class='error' ng-show='usingSlowChannel(configUpdateData.channel)'>
+                  You are choosing a channel that is not optimal for performance! Try using Channel 1, 6, or 11.
                 </small>
               </div>
             </div>
@@ -43,12 +43,14 @@
         <br>
         <div class='row btn-set'>
           <div class='col-md-4'>
-            <button type='submit' class='btn btn-primary btn-block' ng-disabled='configUpdateForm.$invalid || !configUpdateForm.$dirty'>
+            <button type='submit' class='btn btn-primary btn-block'
+              ng-disabled='configUpdateForm.$invalid || !configUpdateForm.$dirty || equalsOrig(configUpdateData)'>
               Submit Update
             </button>
           </div>
           <div class='col-md-4'>
-            <button type='button' class='btn btn-warning btn-block' ng-disabled='!configUpdateForm.$dirty' ng-click='revertConfig()'>
+            <button type='button' class='btn btn-warning btn-block'
+              ng-disabled='!configUpdateForm.$dirty || equalsOrig(configUpdateData)' ng-click='revertConfig()'>
               Revert
             </button>
           </div>
