@@ -92,6 +92,11 @@ angular.module('paradropApp', [
         controller: 'ConfigCtrl',
         auths: { session: true }
       })
+      .when('/my_paradrop/chutes/', {
+        templateUrl: 'views/mypdp/chutes/index.html',
+        controller: 'ChuteCtrl',
+        auths: { session: true }
+      })
       .when('/user/new', {
         templateUrl: 'views/signup/form.html',
         controller: 'NewUserCtrl',
