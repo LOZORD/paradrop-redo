@@ -21,7 +21,9 @@
         </div>
         <div id="collapse{{key}}" class="panel-collapse collapse">
           <div class="panel-body">
-            <a data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>
+            <!--<a data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>-->
+            <a ng-if='ap.type === "owner"' ng-href='/#!/my_paradrop/configs/{{ap.guid}}/update'>Config this Access Point</a>
+            <a ng-if='ap.type !== "owner"' data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>
             <p>Location: {{ap.devinfo.location}}</p>
             <p>List apps here!</p>
           </div>

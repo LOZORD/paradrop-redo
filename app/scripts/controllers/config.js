@@ -118,10 +118,13 @@ angular.module('paradropApp')
                 payload:      data
               };
 
-              var updateURL = URLS.current + '/ap/vnet/radioChangeRequest';
+              console.log('Sending: ', dataPackage);
 
-              $http.post(updateURL, dataPackage).then(
+              var updateURL = URLS.current + 'ap/vnet/radioChangeRequest';
+
+              $http.put(updateURL, dataPackage).then(
                 function (result) {
+                  console.log('Got result: ', result);
                   if (result.data === '') {
                     $location.path('/mypdp/configs');
                   }
