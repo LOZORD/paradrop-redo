@@ -138,6 +138,11 @@ angular.module('paradropApp', [
         templateUrl: 'views/modes/restricted_signup.html',
         auths: {}
       })
+      .when('/localization', {
+        templateUrl: 'views/localization.html',
+        controller: 'LocalizationCtrl',
+        auths: {admin: true, session: true}
+      })
       .otherwise({
         redirectTo: '/',
         auths: {}
