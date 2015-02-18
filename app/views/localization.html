@@ -14,18 +14,13 @@
         >
         <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
         </map-type>
-        <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png" on-click="showInfoWindow('info{{ap.apid}}')"></marker>
+        <marker  ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{revApNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/yellow-signal.png" visible='false'></marker>
         <!-- ngRepeat: pos in positions -->
         <marker position="{{real.lat}},{{real.lng}}" title="Actual Location" id="actualLocation" icon="images/here.png"></marker>
-        <marker position="{{pred.lat}},{{pred.lng}}" title="Predicted Location" id="predictedLocation" icon="images/red-wifi.png"></marker>
+        <marker position="{{pred.lat}},{{pred.lng}}" title="Predicted Location" id="predictedLocation" icon="images/down.png"></marker>
         <heatmap-layer id="foo" data="heatMapData"></heatmap-layer>
     </map>
     <div class='row'>
-      <div class='col-md-3'>
-        <div class="padded-btn">
-          <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeText(!showMarkers,true);">{{markerBtnText}} Paradrop Access Points</button>
-        </div>
-      </div>
       <div class='col-md-3'>
         <div class="padded-btn">
           <button class="btn btn-primary" ng-click="prevPoint()">Previous Localization Prediction</button>
