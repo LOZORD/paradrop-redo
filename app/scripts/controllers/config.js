@@ -18,26 +18,20 @@ angular.module('paradropApp')
             return device.type.toLowerCase() === 'owner';
           });
 
-          //console.log($scope.configurableDevices);
-
           //XXX update later
           var pendingURL = 'http://paradrop.wings.cs.wisc.edu:30330/v1/ap/pendingOperations';
           //'https://dbapi.paradrop.io:30333/v1' + 'ap/pendingOperations';
 
           pendingURL = URLS.current + 'ap/pendingOperations';
 
-          //console.log($scope.currentUser().id);
           $http.post(pendingURL, { sessionToken: $scope.currentUser().id})
             .then(
               function(pendingDevices) {
-                //console.log(pendingDevices);
                 $scope.configurableDevices.forEach(function (device) {
                   device.ispending = pendingDevices.hasOwnProperty(device.guid);
-                  //console.log(device.name, ' is pending?: ', device.ispending);
                 });
               },
               function () {
-                //console.log('could not get pending devices');
                 //do nothing
               });
 
@@ -92,12 +86,6 @@ angular.module('paradropApp')
               return angular.equals(data, $scope.origConfigData);
             };
 
-            //$scope.origConfigData = angular.copy($scope.configUpdateData);
-
-            //console.log($scope.configUpdateData);
-            //console.log('xxx');
-            //console.log($scope.origConfigData);
-
             $scope.submitUpdate = function (data, isValid) {
               if (!isValid) {
                 return;
@@ -109,31 +97,26 @@ angular.module('paradropApp')
 
               //XXX I'm not doing anything with radioid
 
-              //console.log($scope.currentUser());
-              //console.log($scope.deviceToUpdate);
-
               var dataPackage = {
                 sessionToken: $scope.currentUser().id,
                 apid:         $scope.deviceToUpdate.guid,
                 payload:      data
               };
 
-              console.log('Sending: ', dataPackage);
-
               var updateURL = URLS.current + 'ap/vnet/radioChangeRequest';
 
-              $http.put(updateURL, dataPackage).then(
+              $http.post(updateURL, dataPackage).then(
                 function (result) {
-                  console.log('Got result: ', result);
                   if (result.data === '') {
-                    $location.path('/mypdp/configs');
+                    $location.path('/my_paradrop/configs');
                   }
                   else {
                     window.alert(result.data);
                   }
                 },
-                function () {
+                function (err) {
                   window.alert('Could not update config');
+                  console.log(err);
                 }
               );
             };
