@@ -129,7 +129,7 @@ angular.module('paradropApp', [
         controller: 'ReconDashboardCtrl',
         auths: {group: true, session: true}
       })
-      .when('/calibrate', {
+      .when('/calibrate/:group_id*', {
         templateUrl: 'views/calibrate.html',
         controller: 'CalibrateCtrl',
         auths: {admin: true, session: true}
@@ -138,7 +138,7 @@ angular.module('paradropApp', [
         templateUrl: 'views/modes/restricted_signup.html',
         auths: {}
       })
-      .when('/localization', {
+      .when('/localization/:group_id*', {
         templateUrl: 'views/localization.html',
         controller: 'LocalizationCtrl',
         auths: {admin: true, session: true}

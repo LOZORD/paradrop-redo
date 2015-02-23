@@ -10,7 +10,7 @@
 angular.module('paradropApp')
   .controller('LocalizationCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker',
     function ($scope, URLS, $http, $sce, $routeParams, gmapMaker) {
-      $scope.group_id = 'State Street';
+      $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.authorizePage()
       .then(function(authorized){
         if(authorized){
@@ -28,7 +28,13 @@ angular.module('paradropApp')
             var postBody = { sessionToken: $scope.sessionToken() };
             $http.post(mapInitURL, postBody ).then(
                 function(groupMaps){
-                  $scope.groupMaps = groupMaps.data[0];
+                  $scope.mapsArray = groupMaps.data;
+                  for(var i in $scope.mapsArray){
+                    if($scope.mapsArray[i].groupname == $scope.group_id){
+                      $scope.groupMaps = $scope.mapsArray[i];
+                      break;
+                    }
+                  }
                   $scope.mapData = $scope.groupMaps.data;
                   var builtMap = gmapMaker.buildMap($scope.mapData);
                   $scope.apNameMap = $scope.groupMaps.map;

@@ -8,12 +8,13 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker',
-    function ($scope, URLS, $http, gmapMaker) {
+  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$sce', '$routeParams',
+    function ($scope, URLS, $http, gmapMaker, $sce, $routeParams) {
       $scope.authorizePage()
       .then(
         function(authorized){
           if(authorized){
+            $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
             $scope.pollResult = null;
             var startURL = URLS.current + 'recon/maps/start';
             var finishURL = URLS.current + 'recon/maps/finish';
@@ -156,18 +157,13 @@ angular.module('paradropApp')
             var postBody = { sessionToken: $scope.sessionToken() };
             $http.post(mapInitURL, postBody ).then(
               function(groupMaps){
-                $scope.groupMaps = groupMaps.data[0];
-                mainBody.reconid = $scope.groupMaps.reconid;
-                mainBody.groupname = $scope.groupMaps.groupname;
-                mainBody.typeid = $scope.groupMaps.data.typeid;
-                $scope.apNameMap = $scope.groupMaps.map;
-                $scope.revApNameMap = {};
-                for(var key in $scope.apNameMap){
-                  $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
+                $scope.mapsArray = groupMaps.data;
+                for(var i in $scope.mapsArray){
+                  if($scope.mapsArray[i].groupname == $scope.group_id){
+                    $scope.switchMap($scope.mapsArray[i]);
+                    break;
+                  }
                 }
-                $scope.mapData = $scope.groupMaps.data;
-                var builtMap = gmapMaker.buildMap($scope.mapData);
-                $scope.firstFloorMapType = builtMap.mapType;
                 $scope.onClick = function(event) {
                   var ll = event.latLng;
                   console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
@@ -179,9 +175,23 @@ angular.module('paradropApp')
                 });
                 $scope.mapReady = true;
               },
-              function(){$scope.mapError = true;
-              });
+              function(){$scope.mapError = true;});
           }
+          var i = 0;
+          $scope.switchMap = function(map){
+            $scope.groupMaps = map;
+            mainBody.reconid = $scope.groupMaps.reconid;
+            mainBody.groupname = $scope.groupMaps.groupname;
+            mainBody.typeid = $scope.groupMaps.data.typeid;
+            $scope.apNameMap = $scope.groupMaps.map;
+            $scope.revApNameMap = {};
+            for(var key in $scope.apNameMap){
+              $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
+            }
+            $scope.mapData = $scope.groupMaps.data;
+            var builtMap = gmapMaker.buildMap($scope.mapData);
+            $scope.firstFloorMapType = builtMap.mapType;
+          };
         }
       );
   }]);
