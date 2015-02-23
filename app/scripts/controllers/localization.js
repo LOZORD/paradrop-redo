@@ -48,7 +48,7 @@ angular.module('paradropApp')
                     $scope.heatmap = map.heatmapLayers.foo;
                     $scope.map = map;
                     $scope.heatmap.set('radius', 40);
-                    setTimeout(function(){$scope.changeMarkers();}, 1000);
+                    setTimeout(function(){$scope.changeMarkers();}, 0);
                   });
                   $scope.mapReady = true;
                 }

@@ -172,6 +172,7 @@ angular.module('paradropApp')
                 };
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.map = map;
+                  setTimeout(function(){$scope.map.markers.infoMarker.setVisible(false);},0);
                 });
                 $scope.mapReady = true;
               },
