@@ -40,9 +40,20 @@ angular.module('paradropApp')
                   $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
                 }
                 $scope.firstFloorMapType = builtMap.mapType;
-                $scope.onClick = builtMap.onClick;
+                $scope.onClick = function(event) {
+                  var ll = event.latLng;
+                  console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
+                  $scope.showLocation = true;
+                  $scope.coords = { lat: ll.lat(), lng: ll.lng() };
+                  $scope.infobox.open($scope.map, $scope.map.markers.info);
+                  $scope.infobox.setPosition($scope.coords);
+                  $scope.infobox
+                    .setContent('<div>Lat: '+$scope.coords.lat+'</div>'
+                        + '<div>Lng: '+$scope.coords.lng+'</div>');
+                };
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.map = map;
+                  $scope.infobox = map.infoWindows.info;
                 });
                 $scope.mapReady = true;
               }

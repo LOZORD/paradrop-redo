@@ -33,6 +33,11 @@
         <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
         </map-type>
         <marker  ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{revApNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png" draggable='true' ></marker>
+        <marker position="-12.493963,-32.022949" visible='false' title="info" id="infoMarker"></marker>
+        <info-window id="info" max-width="200" visible-on-marker="infoMarker">
+        <div ng-non-bindable="">
+        </div>
+        </info-window>
     </map>
   </div>
 </div>
