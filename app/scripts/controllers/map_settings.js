@@ -54,6 +54,7 @@ angular.module('paradropApp')
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.map = map;
                   $scope.infobox = map.infoWindows.info;
+                  setTimeout(function(){$scope.map.markers.infoMarker.setVisible(false);},0);
                 });
                 $scope.mapReady = true;
               }
