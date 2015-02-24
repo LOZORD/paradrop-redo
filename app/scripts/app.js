@@ -16,6 +16,7 @@ angular.module('paradropApp', [
     'ngResource',
     'ngRoute',
     'ngSanitize',
+    'ngStorage',
     'ngTouch',
     'highcharts-ng',
     'paradropServices',
@@ -141,6 +142,11 @@ angular.module('paradropApp', [
       .when('/localization/:group_id*', {
         templateUrl: 'views/localization.html',
         controller: 'LocalizationCtrl',
+        auths: {admin: true, session: true}
+      })
+      .when('/map_settings/:group_id*', {
+        templateUrl: 'views/map_settings.html',
+        controller: 'MapSettingsCtrl',
         auths: {admin: true, session: true}
       })
       .otherwise({
