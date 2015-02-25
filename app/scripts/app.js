@@ -92,18 +92,18 @@ angular.module('paradropApp', [
         controller: 'ConfigCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:apid/chutes/', {
-        templateUrl: 'views/mypdp/chutes/index.html',
+      .when('/my_paradrop/configs/:apid/chutes', {
+        templateUrl: 'views/mypdp/configs/chutes/index.html',
         controller: 'ChuteCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:apid/chutes/:chuteid/', {
-        templateUrl: 'views/mypdp/chutes/show.html',
+      .when('/my_paradrop/configs/:apid/chutes/vnets/:chuteid', {
+        templateUrl: 'views/mypdp/configs/chutes/vnets/show.html',
         controller: 'ChuteCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/chutes/:apid/chutes/:chuteid/update', {
-        templateUrl: 'views/mypdp/chutes/update.html',
+      .when('/my_paradrop/configs/:apid/chutes/vnets/:chuteid/update', {
+        templateUrl: 'views/mypdp/configs/chutes/vnets/update.html',
         controller: 'ChuteCtrl',
         auths: { session: true }
       })

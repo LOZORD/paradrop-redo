@@ -75,7 +75,25 @@ angular.module('paradropApp')
                 }
               }
             ];
-          });
+          }
+        );
+
+        $scope.chuteURLType = function (type) {
+          if (type === 'virtnet') {
+            return  'vnets';
+          }
+          else if (type === 'app') {
+            return 'apps';
+          }
+          else if (type === 'lxc') {
+            return 'lxcs';
+          }
+          else {
+            //UNKNOWN TYPE!!!
+            return '';
+          }
+        }
+
       }
       else {
         //TODO
