@@ -1,1 +1,16 @@
-TODO - chutes index
+<h1>Chutes</h1>
+<div ng-if='chutes && chutes.length'>
+  <ul>
+    <li ng-repeat='chute in chutes'>
+      <h4>
+        <a ng-href='#!/my_paradrop/configs/{{apid}}/chutes/{{chute.chuteid}}/'>
+          {{chute.name}}
+        </a>
+        | {{chute.type}}
+      </h4>
+    </li>
+  </ul>
+</div>
+<div ng-if='!(chutes && chutes.length)'>
+  You have no chutes available.
+</div>
