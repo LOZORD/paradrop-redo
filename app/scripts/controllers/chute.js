@@ -41,11 +41,20 @@ angular.module('paradropApp')
               for (var chuteInd in $scope.chutes) {
                 //console.log('ack',$scope.chutes[chuteInd]);
                 if ($scope.chutes[chuteInd].chuteid === $routeParams.chuteid) {
+                  //console.log($scope.chutes[chuteInd]);
                   $scope.specificChute = $scope.chutes[chuteInd];
                 }
               }
 
-              //console.log('sp',$scope.specificChute);
+              console.log('sp',$scope.specificChute);
+
+              //config is a string, let's decode and parse it
+
+              var decodedConfig = decodeURIComponent($scope.specificChute.config);
+              console.log(decodedConfig);
+              var configObj = JSON.parse(decodedConfig);
+              console.log(configObj);
+              $scope.specificChute.config = configObj;
 
               //if no specific chute is found...
               if (!$scope.specificChute) {

@@ -1,6 +1,11 @@
 <div ng-if="!!specificChute">
-  {{ specificChute | json }}
+  <h1><strong>Virtual Network</strong>: {{specificChute.name}}</h1>
+  <ul>
+    <li ng-repeat='(key,val) in specificChute.config'>
+      <strong>{{ key }}</strong>: {{ val }}
+    </li>
+  </ul>
 </div>
 <div ng-if="!specificChute">
-
+  You do not have access to this virtual network.
 </div>
