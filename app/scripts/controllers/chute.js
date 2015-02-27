@@ -8,14 +8,14 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ChuteCtrl', ['$scope', '$http', 'URLS', '$routeParams',
-    function ($scope, $http, URLS, $routeParams) {
+  .controller('ChuteCtrl', ['$scope', '$http', 'URLS', '$routeParams', '$location',
+    function ($scope, $http, URLS, $routeParams, $location) {
     $scope.authorizePage()
     .then(function(isAuthorized) {
       if (isAuthorized) {
         //first get the chutes for this user
 
-        var chuteListURL = /*'https://dbapi.paradrop.io/v1/'*/ URLS.current + 'ap/chute/list/';
+        var chuteListURL = /*'https://dbapi.paradrop.io/v1/'*/ URLS.current + 'ap/chute/list';
 
         $scope.apid = $routeParams.apid;
         var chuteListPayload = {
@@ -24,16 +24,38 @@ angular.module('paradropApp')
         };
 
         $scope.chutes = null;
+        $scope.specificChute = null;
 
-        console.log(chuteListPayload);
+        //console.log(chuteListPayload);
 
-        $http.get(chuteListURL, chuteListPayload)
+        $http.post(chuteListURL, chuteListPayload)
         .then(
           function(chuteList) {
-            console.log(chuteList);
+            //console.log('cl',chuteList);
+            $scope.chutes = chuteList.data;
+            if ($routeParams.chuteid) {
+              var ind;
+
+              //console.log('blarg',$routeParams.chuteid);
+
+              for (var chuteInd in $scope.chutes) {
+                //console.log('ack',$scope.chutes[chuteInd]);
+                if ($scope.chutes[chuteInd].chuteid === $routeParams.chuteid) {
+                  $scope.specificChute = $scope.chutes[chuteInd];
+                }
+              }
+
+              //console.log('sp',$scope.specificChute);
+
+              //if no specific chute is found...
+              if (!$scope.specificChute) {
+                $location.path('/');
+              }
+            }
           },
           function () {
             //hard code data for now
+            /*
             $scope.chutes = [
               {
                 type: 'app',
@@ -75,8 +97,11 @@ angular.module('paradropApp')
                 }
               }
             ];
+            */
           }
         );
+
+        //console.log('rp', $routeParams, $routeParams.chuteid);
 
         $scope.chuteURLType = function (type) {
           if (type === 'virtnet') {
@@ -92,7 +117,7 @@ angular.module('paradropApp')
             //UNKNOWN TYPE!!!
             return '';
           }
-        }
+        };
 
       }
       else {
