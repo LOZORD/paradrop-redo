@@ -23,8 +23,9 @@ angular.module('paradropApp')
           apid: $scope.apid
         };
 
-        $scope.chutes = null;
-        $scope.specificChute = null;
+        $scope.chutes         = null;
+        $scope.specificChute  = null;
+        $scope.chuteid        = null;
 
         //console.log(chuteListPayload);
 
@@ -46,6 +47,12 @@ angular.module('paradropApp')
                 }
               }
 
+              if (!$scope.specificChute) {
+                $location.path('/');
+              }
+
+              $scope.chuteid = $scope.specificChute.chuteid;
+
               console.log('sp',$scope.specificChute);
 
               //config is a string, let's decode and parse it
@@ -57,9 +64,6 @@ angular.module('paradropApp')
               $scope.specificChute.config = configObj;
 
               //if no specific chute is found...
-              if (!$scope.specificChute) {
-                $location.path('/');
-              }
             }
           },
           function () {

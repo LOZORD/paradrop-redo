@@ -1,5 +1,10 @@
 <div ng-if="!!specificChute">
-  <h1><strong>Virtual Network</strong>: {{specificChute.name}}</h1>
+  <h1>
+    <strong>Virtual Network</strong>: {{specificChute.name}}
+    <a ng-href='#!/my_paradrop/configs/{{apid}}/chutes/vnets/{{chuteid}}/update'>
+      <span class='glyphicon glyphicon-edit' aria-hidden='true'></span>
+    </a>
+  </h1>
   <ul>
     <li ng-repeat='(key,val) in specificChute.config'>
       <strong>{{ key }}</strong>: {{ val }}
