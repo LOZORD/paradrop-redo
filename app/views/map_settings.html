@@ -11,18 +11,15 @@
         <li ng-repeat="map in mapsArray"><a href="#!/map_settings/{{map.groupname}}" >{{map.groupname}}</a></li>
       </ul>
     </div>
-    <button class="btn btn-primary" data-toggle="modal" data-target="#settings">Map Settings</button>
-    <button class="btn btn-primary" ng-click="revertMarkers()">Revert Markers</button>
-    <button class="btn btn-primary" ng-click="submitChanges()">Submit Changes</button>
-    <button class="btn btn-primary" ng-click="destroyCookie()">Reload Old Settings</button>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode">Map Settings</button>
+    <button class="btn btn-primary" ng-click="destroyCookie()" ng-disabled="isDeleteMode || isZoneMode">Reload Old Settings</button>
   </div>
 </div>
   <!-- Tab panes -->
   <div class="tab-pane">
     <h1 ng-if="mapError">Error loading map</h1>
-    <img class="img-responsive center-block" ng-show="!mapReady && !mapError" ng-src='images/spinner.gif'/>
-    <map ng-if="mapReady" style="height: 700px;" 
-      center="{{mapData.centerX}}, {{mapData.centerY}}" 
+    <img class="img-responsive center-block" ng-show="!(mapData || mapError)" ng-src='images/spinner.gif'/>
+    <map ng-if="mapData" style="height: 700px;" 
         street-view-control="false" 
         zoom-control="false" 
         pan-control="false" 
@@ -32,13 +29,75 @@
         >
         <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
         </map-type>
-        <marker  ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{revApNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png" draggable='true' ></marker>
-        <marker position="-12.493963,-32.022949" visible='false' title="info" id="infoMarker"></marker>
+        <marker position="-12.493963,-32.022949" title="info" id="infoMarker"></marker>
         <info-window id="info" max-width="200" visible-on-marker="infoMarker">
         <div ng-non-bindable="">
         </div>
         </info-window>
     </map>
+  </div>
+</div>
+<br>
+<div class="row">
+  <div class='col-md-12 form-group'>
+    <button class="btn btn-primary" ng-click="submitChanges()" ng-disabled="isDeleteMode">Preview Changes</button>
+    <button class="btn btn-primary" ng-click="addZone()" ng-if="!isZoneMode" ng-disabled="isDeleteMode">Add Zone</button>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-if="isZoneMode">Confirm Zone</button>
+    <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
+    <button class="btn btn-primary" ng-click="addZoneBoundary()" ng-if="isZoneMode">Add Zone Boundary</button>
+    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode">Add Boundary</button>
+    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete AP's/Boundaries"}}</button>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-click="toggleMarkers()" ng-disabled="isZoneMode"> Hide Markers
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="zones" tabindex="-1" role="dialog" aria-labelledby="zones" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Cancel</span>
+        </button>
+        <h4 class="modal-title" id="zoneLabel">Zone Info</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert" ng-show='numZoneMarkers() < 3'>
+          You must have a least three boundaries to make a zone.
+        </div>
+        <form name="zoneForm">
+          <div class="form-group">
+            <label for=="zoneName">Name:</label> 
+            <input type="text" class="form-control" id="zoneName" name="name" ng-model="zone.name" required pattern="\s*\w*\s*"/>
+            <div  class='error-container bg-danger'
+                  ng-show='zoneForm.name.$dirty && zoneForm.name.$invalid'>
+              <small class='error' ng-show='zoneForm.name.$error.required'>
+                A name is required.
+              </small>
+              <small class='error' ng-show='zoneForm.name.$error.pattern'>
+                The name can only contain letters, numbers, and underscores with no spaces.
+              </small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for=="zoneColor">Color:</label> 
+             <select ng-model="zone.color" class="form-control" id="zoneColor" name="color" ng-options="color.code as color.name for color in colors"></select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Cancel
+        </button>
+        <button ng-click="confirmZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() < 3">
+          Submit Zone
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -50,10 +109,10 @@
           <span aria-hidden="true">&times;</span>
           <span class="sr-only">Cancel</span>
         </button>
-        <h4 class="modal-title" id="myModalLabel">Map Settings</h4>
+        <h4 class="modal-title" id="settingsLabel">Map Settings</h4>
       </div>
       <div class="modal-body">
-        <ng-include src="'partials/map_settings_form.html'"></ng-include>
+        <ng-include src="'views/partials/map_settings_form.html'"></ng-include>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">

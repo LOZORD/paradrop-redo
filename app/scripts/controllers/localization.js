@@ -45,12 +45,11 @@ angular.module('paradropApp')
                   $scope.firstFloorMapType = builtMap.mapType;
                   $scope.onClick = builtMap.onClick;
                   $scope.$on('mapInitialized', function(event, map) {
-                    $scope.heatmap = map.heatmapLayers.foo;
+                    $scope.heatmap = map.heatmapLayers.heatmap;
                     $scope.map = map;
                     $scope.heatmap.set('radius', 40);
                     setTimeout(function(){$scope.changeMarkers();}, 0);
                   });
-                  $scope.mapReady = true;
                 }
             , function(error){$scope.mapError = true;});
           });
