@@ -43,12 +43,17 @@ angular.module('paradropApp')
           var mapURL = URLS.current + 'recon/meta/' + $scope.group_id+ '/maps';
           var postBody = { sessionToken: $scope.sessionToken() };
           $http.post(mapURL, postBody ).then(
-              function(map){
-                $scope.mapData = map.data;
-                var builtMap = gmapMaker.buildMap($scope.mapData);
-                $scope.firstFloorMapType = builtMap.mapType;
-                $scope.onClick = builtMap.onClick;
-                $scope.heatMapData = gmapMaker.buildHeatmap();
+              function(maps){
+                $scope.mapsArray = maps.data;
+                $scope.switchMap($scope.mapsArray[0]);
+                /*
+                for(var i in $scope.mapsArray){
+                  if($scope.mapsArray[i].name == $scope.mapName){
+                    $scope.switchMap($scope.mapsArray[i]);
+                    break;
+                  }
+                }
+                */
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.heatmap = map.heatmapLayers.foo;
                   $scope.map = map;
@@ -62,4 +67,13 @@ angular.module('paradropApp')
           , function(error){$scope.mapError = true;});
         } 
       });
+
+      $scope.switchMap = function(map){
+        console.log(map);
+        $scope.mapData = map;
+        var builtMap = gmapMaker.buildMap($scope.mapData);
+        $scope.firstFloorMapType = builtMap.mapType;
+        $scope.onClick = builtMap.onClick;
+        $scope.heatMapData = gmapMaker.buildHeatmap();
+      };
   }]);
