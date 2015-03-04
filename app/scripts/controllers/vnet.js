@@ -18,20 +18,21 @@ angular.module('paradropApp')
 
         //FIXME in the view
         $scope.ENCRYPTION_TYPES = [
-          'None',
+          'NONE',
           'PSK',
           'PSK2'
         ];
 
-        $scope.vnetUpdateData = {
-          ssid:       null,
-          password:   null,
-          encryption: null,
-          subnet:     null,
-          radioid:    null,
-          isprimary:  null,
-          qosup:      null,
-          qosdn:      null
+        $scope.pristineVNet = $scope.vnetUpdateData = {
+          ssid:         null,
+          password:     null,
+          confirmation: null,
+          encryption:   null,
+          subnet:       null,
+          radioid:      null,
+          isprimary:    null,
+          qosup:        null,
+          qosdn:        null
         };
 
         var vnetFetchDataPayload = {
@@ -41,13 +42,29 @@ angular.module('paradropApp')
 
         var vnetFetchDataURL = URLS.current + 'ap/chute/network';
 
-        console.log('fetching vnet data',vnetFetchDataPayload);
+        //console.log('fetching vnet data',vnetFetchDataPayload);
 
         $http.post(vnetFetchDataURL, vnetFetchDataPayload)
         .then(
           function (result) {
-            console.log('got result!');
-            console.log(result);
+            //console.log('got result!');
+            //console.log(result);
+            var vnetConfig = JSON.parse(decodeURIComponent(result.data.config));
+            //console.log(vnetConfig);
+            $scope.pristineVNet = $scope.vnetUpdateData = {
+              ssid:           vnetConfig.ssid,
+              password:       vnetConfig.passwd || '',
+              confirmation:   vnetConfig.passwd || '',
+              encryption:     vnetConfig.encryption.toUpperCase() || 'NONE',
+              subnet:         vnetConfig.subnet,
+              radioid:        result.data.radioid,
+              isprimary:      result.data.isprimary,
+              qosup:          vnetConfig.qosup,
+              qosdn:          vnetConfig.qosdown
+            };
+
+            //console.log('GOT DATA', $scope.vnetUpdateData);
+
           },
           function (result) {
             console.log(result);
