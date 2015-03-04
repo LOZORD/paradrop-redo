@@ -160,7 +160,7 @@ angular.module('paradropApp')
                 $scope.mapsArray = groupMaps.data;
                 for(var i in $scope.mapsArray){
                   if($scope.mapsArray[i].groupname == $scope.group_id){
-                    $scope.switchMap($scope.mapsArray[i]);
+                    $scope.setMap($scope.mapsArray[i]);
                     break;
                   }
                 }
@@ -172,14 +172,13 @@ angular.module('paradropApp')
                 };
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.map = map;
-                  setTimeout(function(){$scope.map.markers.infoMarker.setVisible(false);},0);
+                  $scope.map.markers.infoMarker.setVisible(false);
                 });
-                $scope.mapReady = true;
               },
               function(){$scope.mapError = true;});
           }
           var i = 0;
-          $scope.switchMap = function(map){
+          $scope.setMap = function(map){
             $scope.groupMaps = map;
             mainBody.reconid = $scope.groupMaps.reconid;
             mainBody.groupname = $scope.groupMaps.groupname;

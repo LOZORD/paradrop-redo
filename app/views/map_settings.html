@@ -1,0 +1,148 @@
+<h1>Admin Map Settings</h1>
+<div class="row">
+  <div class='col-md-12 form-group'>
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary" ng-click=''>{{group_id}}</button>
+      <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+        <li ng-repeat="map in mapsArray"><a href="#!/map_settings/{{map.groupname}}" >{{map.groupname}}</a></li>
+      </ul>
+    </div>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode">Map Settings</button>
+    <button class="btn btn-primary" ng-click="destroyCookie()" ng-disabled="isDeleteMode || isZoneMode">Reload Old Settings</button>
+  </div>
+</div>
+  <!-- Tab panes -->
+  <div class="tab-pane">
+    <h1 ng-if="mapError">Error loading map</h1>
+    <img class="img-responsive center-block" ng-show="!(mapData || mapError)" ng-src='images/spinner.gif'/>
+    <map ng-if="mapData" style="height: 700px;" 
+        street-view-control="false" 
+        zoom-control="false" 
+        pan-control="false" 
+        map-type-id="{{mapData.typeid}}" 
+        map-type-control-options="{mapTypeIds: ['{{mapData.typeid}}']}"
+        on-click="onClick()" 
+        >
+        <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
+        </map-type>
+    </map>
+  </div>
+</div>
+<br>
+<div class="row">
+  <div class='col-md-12 form-group'>
+    <button class="btn btn-primary" ng-click="submitChanges()" ng-disabled="isDeleteMode || isZoneMode">Save Changes</button>
+    <button class="btn btn-primary" ng-click="addZone()" ng-if="!isZoneMode" ng-disabled="isDeleteMode">Add Zone</button>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-if="isZoneMode">Confirm Zone</button>
+    <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
+    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode">Add Boundary</button>
+    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete AP's/Boundaries"}}</button>
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-click="toggleMarkers()" ng-disabled="isZoneMode"> Hide Markers
+      </label>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="zones" tabindex="-1" role="dialog" aria-labelledby="zones" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Cancel</span>
+        </button>
+        <h4 class="modal-title" id="zoneLabel">Zone Info</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert" ng-show='numZoneMarkers() < 3'>
+          You must have a least three boundaries to make a zone.
+        </div>
+        <form name="zoneForm">
+          <div class="form-group">
+            <label for=="zoneName">Name:</label> 
+            <input type="text" class="form-control" id="zoneName" name="name" ng-model="zone.name" required pattern="\s*\w*\s*"/>
+            <div  class='error-container bg-danger'
+                  ng-show='zoneForm.name.$dirty && zoneForm.name.$invalid'>
+              <small class='error' ng-show='zoneForm.name.$error.required'>
+                A name is required.
+              </small>
+              <small class='error' ng-show='zoneForm.name.$error.pattern'>
+                The name can only contain letters, numbers, and underscores with no spaces.
+              </small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for=="zoneColor">Color:</label> 
+             <select ng-model="zone.color" class="form-control" id="zoneColor" name="color" ng-options="color.code as color.name for color in colors"></select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Cancel
+        </button>
+        <button data-dismiss="modal" ng-click="confirmZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() < 3">
+          Submit Zone
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-labelledby="Settings" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Cancel</span>
+        </button>
+        <h4 class="modal-title" id="settingsLabel">Map Settings</h4>
+      </div>
+      <div class="modal-body">
+        <ng-include src="'views/partials/map_settings_form.html'"></ng-include>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Cancel
+        </button>
+        <button data-dismiss="modal" ng-click="submitChanges()" class="btn btn-primary">
+          Submit changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-if="map.polygons" ng-repeat="zone in map.polygons" class="modal fade" id="deleteZone{{zone.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteZone" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Cancel</span>
+        </button>
+        <h4 class="modal-title" id="deleteLabel">Are You Sure You Want To Delete {{zone.title}}?</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert">
+          <strong>You Are About To Delete {{zone.title}}! Please Confirm!</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">
+          Cancel
+        </button>
+        <button ng-click="deleteZone(zone)" class="btn btn-danger" data-dismiss="modal">
+          Delete Zone
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

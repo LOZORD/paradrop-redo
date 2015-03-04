@@ -62,7 +62,6 @@ angular.module('paradropApp')
                 $scope.toggleHeatmap= function(event) {
                   $scope.heatmap.setMap($scope.heatmap.getMap() ? null : $scope.map);
                 };
-                $scope.mapReady = true;
               }
           , function(error){$scope.mapError = true;});
         } 

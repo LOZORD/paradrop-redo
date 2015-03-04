@@ -119,6 +119,12 @@
                         Localization Demo
                       </a>
                     </li>
+                    <li class="divider"></li>
+                    <li>
+                      <a ng-href="#!/map_settings/State Street">
+                        Admin Map Settings
+                      </a>
+                    </li>
                   </ul>
                 </li>
                 <li ng-if="!isAuthenticated()"><a ng-href="#!/">Home</a></li>
@@ -189,6 +195,7 @@
     <script src="bower_components/angular-snap/angular-snap.js"></script>
     <script src="bower_components/highcharts-ng/dist/highcharts-ng.js"></script>
     <script src="bower_components/ngmap/build/scripts/ng-map.js"></script>
+    <script src="bower_components/ngstorage/ngStorage.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -214,6 +221,7 @@
     <script src='scripts/directives/mustMatch.js'></script>
     <script src="scripts/services/gmapmaker.js"></script>
     <script src="scripts/controllers/localization.js"></script>
+    <script src="scripts/controllers/map_settings.js"></script>
     <!-- endbuild -->
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
