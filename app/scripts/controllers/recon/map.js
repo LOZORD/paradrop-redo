@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ReconMapCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker) {
+  .controller('ReconMapCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route',
+    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.authorizePage()
       .then(function(authorized){
@@ -45,15 +45,7 @@ angular.module('paradropApp')
           $http.post(mapURL, postBody ).then(
               function(maps){
                 $scope.mapsArray = maps.data;
-                $scope.switchMap($scope.mapsArray[0]);
-                /*
-                for(var i in $scope.mapsArray){
-                  if($scope.mapsArray[i].name == $scope.mapName){
-                    $scope.switchMap($scope.mapsArray[i]);
-                    break;
-                  }
-                }
-                */
+                $scope.setMap($scope.mapsArray[gmapMaker.getIndex('recon')]);
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.heatmap = map.heatmapLayers.foo;
                   $scope.map = map;
@@ -67,7 +59,13 @@ angular.module('paradropApp')
         } 
       });
 
-      $scope.switchMap = function(map){
+      $scope.switchMap = function(index){
+        console.log(index);
+        gmapMaker.setIndex(index, 'recon');
+        $route.reload();
+      };
+
+      $scope.setMap = function(map){
         console.log(map);
         $scope.mapData = map;
         var builtMap = gmapMaker.buildMap($scope.mapData);

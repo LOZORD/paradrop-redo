@@ -109,5 +109,14 @@ angular.module('paradropApp')
       return heatMapData; 
     };
 
+    var storedIndex = { calibrate: 0, localization: 0, recon: 0, settings: 0};
+    gmapFuncs.setIndex = function(index, page){
+        storedIndex[page] = index;
+    };
+
+    gmapFuncs.getIndex = function(page){
+      return storedIndex[page];
+    };
+
     return gmapFuncs;
   });
