@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$localStorage', '$route',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $localStorage, $route) {
+  .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route',
+    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route) {
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
           {name:'YELLOW', code:'#FFFF00'},
@@ -19,6 +19,22 @@ angular.module('paradropApp')
           {name:'ORANGE', code:'#FFA500'},
           {name:'LIME', code:'#00FF00'},
           {name:'BLACK', code:'#000000'},
+      ];
+      $scope.colorName = {
+          BLUE: { code:'#0000FF'},
+          YELLOW: { code:'#FFFF00'},
+          RED: { code:'#FF0000'},
+          GREEN: { code:'#008000'},
+          PURPLE: { code:'#800080'},
+          ORANGE: { code:'#FFA500'},
+          LIME: { code:'#00FF00'},
+          BLACK: { code:'#000000'},
+      };
+      $scope.types = [
+          {name:'Customer'},
+          {name:'Employee'},
+          {name:'Outside'},
+          {name:'Impossible'}
       ];
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       var group = $scope.group_id.toString();
@@ -40,12 +56,7 @@ angular.module('paradropApp')
                     break;
                   }
                 }
-                if($localStorage.mapSettings && $localStorage.mapSettings[group]){
-                  $scope.mapData = $localStorage.mapSettings[group];
-                  console.log($scope.mapData);
-                }else{
-                  $scope.mapData = $scope.groupMaps.data;
-                }
+                $scope.mapData = $scope.groupMaps.data;
                 $scope.settingsJSON = angular.copy($scope.mapData);
                 var builtMap = gmapMaker.buildMap($scope.mapData);
                 $scope.apNameMap = $scope.groupMaps.map;
@@ -61,6 +72,7 @@ angular.module('paradropApp')
                   $scope.map = map;
                   $scope.infobox = new google.maps.InfoWindow();
                   $scope.map.setCenter(new google.maps.LatLng($scope.mapData.centerX, $scope.mapData.centerY));
+                  $scope.boundPoly = $scope.newPoly('#FF0000');
                   for(var boundary in $scope.mapData.boundary){
                     $scope.addBoundary($scope.mapData.boundary[boundary]);
                   }
@@ -122,7 +134,7 @@ angular.module('paradropApp')
       $scope.confirmZone = function(){
         if(!$scope.isIntersecting()){
           var polygon = $scope.createPolygon();
-          $scope.updateZones();
+          setTimeout(function(){$scope.updateZones();}, 0);
         }else{
           alert('You can\'t overlap Zones!');
         }
@@ -135,18 +147,27 @@ angular.module('paradropApp')
           if(!$scope.map.polygons){
             $scope.map.polygons = {};
           }
+          var colorName = '';
           var color = '';
           var name = '';
+          var type = '';
           if(opts){
             $scope.resetPoly();
             for(var i in opts.bounds){
               $scope.poly.getPath().push(new google.maps.LatLng(opts.bounds[i][0], opts.bounds[i][1]));
             };
-            color = opts.color;
+            colorName = opts.color;
+            console.log(colorName);
+            color = $scope.colorName[opts.color].code;
             name = opts.name;
+            type = opts.type;
           }else{
-            color = $scope.zone.color;
+            colorName = $scope.zone.color.name;
+            console.log($scope.colorName);
+            console.log($scope.zone.color);
+            color = $scope.colorName[$scope.zone.color.name].code;
             name = $scope.zone.name;
+            type = $scope.zone.type;
           }
           var paths = $scope.poly.getPath();
           console.log(paths);
@@ -159,6 +180,8 @@ angular.module('paradropApp')
             fillColor: color,
             fillOpacity: 0.35,
             clickable: true,
+            type: type,
+            colorName: colorName,
             title: name,
             id: polyID,
             infoWindow: new google.maps.InfoWindow()
@@ -176,18 +199,27 @@ angular.module('paradropApp')
       $scope.updateZones = function(){
         delete $scope.settingsJSON.zones;
         if($scope.map.polygons){
-          $scope.settingsJSON.zones = [];
+          $scope.settingsJSON.zones = {};
           for(var zone in $scope.map.polygons){
             zone = $scope.map.polygons[zone];
+            var color = '';
             var boundaries = [];
             var arr = zone.getPath().j;
             for(var i in arr){
               boundaries.push([arr[i].k, arr[i].D]);
             }
-            $scope.settingsJSON.zones.push({ id: zone.id ,name: zone.title, color: zone.fillColor, bounds: boundaries});
+            $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type.name};
           };
         }
         console.log($scope.settingsJSON.zones);
+      };
+
+      $scope.nameTaken = function(){
+        if($scope.settingsJSON && $scope.settingsJSON.zones){
+          return !!$scope.settingsJSON.zones[$scope.zone.name];
+        }else{
+          return false;
+        }
       };
 
 
@@ -270,22 +302,31 @@ angular.module('paradropApp')
         };
       }();
 
+      $scope.newPoly = function(color){
+        if(!color){
+          color = '#00CCFF';
+        }
+        var polyOptions = {
+          strokeColor: color,
+          strokeOpacity: 1.0,
+          strokeWeight: 3
+        };
+
+        var poly = new google.maps.Polyline(polyOptions);
+        return poly;
+      }
+
       $scope.addBoundPoint = function(event){
         var ll = event.latLng;
         $scope.poly.getPath().push(ll);
       };
 
       $scope.resetPoly = function(){
-        var polyOptions = {
-          strokeColor: '#00CCFF',
-          strokeOpacity: 1.0,
-          strokeWeight: 3
-        };
         if($scope.poly){
           $scope.poly.setMap(null);
           delete $scope.poly;
         }
-        $scope.poly = new google.maps.Polyline(polyOptions);
+        $scope.poly = $scope.newPoly();
         $scope.poly.setMap($scope.map);
       };
 
@@ -294,6 +335,24 @@ angular.module('paradropApp')
         for(var i in $scope.map.markers){
           if(i.indexOf('zone') > -1){
             $scope.poly.getPath().push($scope.map.markers[i].position);
+          }
+        }
+      };
+
+      $scope.resetBoundPoly = function(){
+        if($scope.boundPoly){
+          $scope.boundPoly.setMap(null);
+          delete $scope.boundPoly;
+        }
+        $scope.boundPoly = $scope.newPoly('#FF0000');
+        $scope.boundPoly.setMap($scope.map);
+      };
+
+      $scope.updateBoundPoly = function(){
+        $scope.resetBoundPoly();
+        for(var i in $scope.map.markers){
+          if(i.indexOf('boundary') > -1){
+            $scope.boundPoly.getPath().push($scope.map.markers[i].position);
           }
         }
       };
@@ -327,7 +386,7 @@ angular.module('paradropApp')
             lng = coords[1];
           }
           var myLatlng = new google.maps.LatLng(lat,lng);
-          $scope.map.markers['boundary'+ boundID] = new google.maps.Marker(
+          var marker = new google.maps.Marker(
           {
             position: myLatlng,
             map: $scope.map,
@@ -336,7 +395,12 @@ angular.module('paradropApp')
             icon: 'images/boundary.png',
             id: 'boundary' + boundID
           });
+          $scope.map.markers['boundary'+ boundID] = marker;
+          $scope.boundPoly.getPath().push($scope.map.markers['boundary' + boundID].position);
+          google.maps.event.addListener(marker, 'drag', $scope.updateBoundPoly);
+          google.maps.event.addListener(marker, 'dragend', $scope.updateBoundPoly);
           $scope.updateMarkers();
+          $scope.updateBoundPoly();
           boundID++;
         }
       }();
@@ -358,6 +422,7 @@ angular.module('paradropApp')
                   marker.setMap(null);
                   delete $scope.map.markers[marker.id];
                   $scope.updateMarkers();
+                  $scope.updateBoundPoly();
                   console.log($scope.settingsJSON);
                 }
               };
@@ -396,28 +461,26 @@ angular.module('paradropApp')
         }
         //console.log("Validation successful ready to send JSON");
         //console.log($scope.settingsJSON);
-        if(!$localStorage.mapSettings){
-          $localStorage.mapSettings = {};
-        }
-        $localStorage.mapSettings[group] = $scope.settingsJSON
-        console.log($localStorage.mapSettings);
+        var body = {
+          sessionToken: $scope.sessionToken(),
+          reconid: $scope.groupMaps.reconid,
+          typeid: $scope.groupMaps.data.typeid,
+          newdata: $scope.settingsJSON
+        };
+        var url = URLS.current + 'recon/maps/update';
+        $http.post(url, body).then(
+            //success
+            function(success){
+              console.log(success);
+            },
+            //error
+            function(error){
+              console.log(error);
+              alert('Error saving changes to database.');
+            }
+        );
+        console.log(body);
         $route.reload();
-      };
-
-      $scope.destroyCookie = function(){
-        if($localStorage.mapSettings){
-          delete $localStorage.mapSettings[group];
-          var i = 0;
-          for(var key in $localStorage.mapSettings){
-            i++;
-          }
-          if(i === 0){
-            delete $localStorage.mapSettings;
-          }
-          //console.log($localStorage.mapSettings);
-          $route.reload();
-        }
-        //console.log($localStorage.mapSettings);
       };
 
       $scope.isIntersecting = function(){
