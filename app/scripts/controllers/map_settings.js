@@ -167,7 +167,7 @@ angular.module('paradropApp')
             console.log($scope.zone.color);
             color = $scope.colorName[$scope.zone.color.name].code;
             name = $scope.zone.name;
-            type = $scope.zone.type;
+            type = $scope.zone.type.name;
           }
           var paths = $scope.poly.getPath();
           console.log(paths);
@@ -208,7 +208,7 @@ angular.module('paradropApp')
             for(var i in arr){
               boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
             }
-            $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type.name};
+            $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type};
           };
         }
         console.log($scope.settingsJSON.zones);
@@ -240,7 +240,7 @@ angular.module('paradropApp')
       $scope.polyInfo = function(poly){
         return function(event){
           var ll = event.latLng;
-          var contentString = '<b>' + poly.title + '</b><br><a data-toggle="modal" data-target="#deleteZone'+ poly.id +'">Delete This Zone</a><br>';
+          var contentString = '<b>' + poly.title + '</b><br>Type: '+  poly.type + '<br><a data-toggle="modal" data-target="#deleteZone'+ poly.id +'">Delete This Zone</a><br>';
           poly.infoWindow.setContent(contentString);
           poly.infoWindow.setPosition(ll);
           poly.infoWindow.open($scope.map);

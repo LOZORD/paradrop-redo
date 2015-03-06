@@ -7,7 +7,7 @@
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="map in mapsArray"><a href="#!/calibrate/{{map.groupname}}" >{{map.groupname}}-{{map.data.name}}</a></li>
+        <li ng-repeat="map in mapsArray"><a ng-click="switchMap(mapsArray.indexOf(map))">{{map.groupname}}-{{map.data.name}}</a></li>
       </ul>
     </div>
   </div>
@@ -32,12 +32,13 @@
     <button class="btn btn-primary" ng-click="sendCoord()">Send Coord</button>
   </div>
   <div class="col-sm-1 form-group">
-    <button class="btn btn-primary" ng-click="clear()">Clear</button>
+    <button class="btn btn-primary" ng-click="clear()" ng-disabled="mapData.invalid">Clear</button>
   </div>
 </div>
     <h1 ng-if="mapError">Error loading map</h1>
     <img class="img-responsive center-block" ng-show="!mapData && !mapError" ng-src='images/spinner.gif'/>
-    <map ng-if="mapData" style="height: 700px;" zoom="15" 
+    <div ng-if="mapData && mapData.invalid"> <h1> Invalid Map for {{mapData.name}}. </h1><div ng-bind-html="successString"></div> </div>
+    <map ng-if="mapData && !mapData.invalid" style="height: 700px;" zoom="15" 
       center="{{mapData.centerX}}, {{mapData.centerY}}" 
         street-view-control="false" 
         zoom-control="false" 

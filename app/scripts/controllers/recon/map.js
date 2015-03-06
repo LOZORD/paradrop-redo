@@ -60,7 +60,6 @@ angular.module('paradropApp')
       });
 
       $scope.switchMap = function(index){
-        console.log(index);
         gmapMaker.setIndex(index, 'recon');
         $route.reload();
       };

@@ -130,7 +130,7 @@ angular.module('paradropApp', [
         controller: 'ReconDashboardCtrl',
         auths: {group: true, session: true}
       })
-      .when('/calibrate/:group_id*', {
+      .when('/calibrate', {
         templateUrl: 'views/calibrate.html',
         controller: 'CalibrateCtrl',
         auths: {admin: true, session: true}
