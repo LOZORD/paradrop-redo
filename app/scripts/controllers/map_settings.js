@@ -251,7 +251,7 @@ angular.module('paradropApp')
         //clean up markers
         setTimeout(function(){
           for(var marker in $scope.map.markers){
-            if(marker.indexOf('zone') > -1){
+            if(marker.indexOf('zone') > -1 || marker.indexOf('holder') > -1){
              $scope.map.markers[marker].setMap(null); 
              delete $scope.map.markers[marker];
             }
@@ -280,8 +280,10 @@ angular.module('paradropApp')
         var zoneID = 0;
         return function(ll, noPoly){
           var image = 'images/here.png';
+          var id = 'zone' + zoneID;
           if(noPoly){
             image = 'images/down.png';
+            id = 'holder' + zoneID; 
           }
           var marker = new google.maps.Marker({
             position: ll,
@@ -289,11 +291,11 @@ angular.module('paradropApp')
             title: 'Zone Boundary',
             draggable: !noPoly,
             icon: image,
-            id: 'zone' + zoneID
+            id: id
           });
-          $scope.map.markers['zone'+ zoneID] = marker;
+          $scope.map.markers[id] = marker;
           if(!noPoly){
-            $scope.poly.getPath().push($scope.map.markers['zone' + zoneID].position);
+            $scope.poly.getPath().push($scope.map.markers[id].position);
             google.maps.event.addListener(marker, 'drag', $scope.updatePoly);
             google.maps.event.addListener(marker, 'dragend', $scope.updatePoly);
           }
