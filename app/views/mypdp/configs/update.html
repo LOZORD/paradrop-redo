@@ -44,13 +44,13 @@
         <div class='row btn-set'>
           <div class='col-md-4'>
             <button type='submit' class='btn btn-primary btn-block'
-              ng-disabled='configUpdateForm.$invalid || !configUpdateForm.$dirty || equalsOrig(configUpdateData)'>
+              ng-disabled='configUpdateForm.$invalid || configUpdateForm.$pristine || equalsOrig(configUpdateData)'>
               Submit Update
             </button>
           </div>
           <div class='col-md-4'>
             <button type='button' class='btn btn-warning btn-block'
-              ng-disabled='!configUpdateForm.$dirty || equalsOrig(configUpdateData)' ng-click='revertConfig()'>
+              ng-disabled='configUpdateForm.$pristine || equalsOrig(configUpdateData)' ng-click='revertConfig()'>
               Revert
             </button>
           </div>

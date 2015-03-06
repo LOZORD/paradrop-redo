@@ -86,7 +86,7 @@
               </label>
             </div>
             <div class='col-sm-6'>
-              <input type='text' name='subnet' required>
+              <input type='text' name='subnet' required ng-model='vnetUpdateData.subnet'>
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@
               </label>
             </div>
             <div class='col-sm-6'>
-              <input type='number' name='radioid'>
+              <input type='number' name='radioid' ng-model='vnetUpdateData.radioid'>
             </div>
           </div>
           <div class='form-group col-md-6 row'>
@@ -109,12 +109,15 @@
               <strong>Primary Virtual Network?</strong>
             </div>
             <div class='btn-group col-sm-6' data-toggle='buttons'>
+              TODO -- preset with DB value
               <label class='btn btn-success btn-md'>
-                <input type='radio' name='isprimary' id='isprimary-yes' autocomplete='off'>
+                <input type='radio' name='isprimary' id='isprimary-yes' autocomplete='off'
+                  ng-model='vnetUpdateData.isprimary' ng-value='1'>
                 Yes
               </label>
               <label class='btn btn-danger btn-md'>
-                <input type='radio' name='isprimary' id='isprimary-no' autocomplete='off'>
+                <input type='radio' name='isprimary' id='isprimary-no' autocomplete='off'
+                  ng-model='vnetUpdateData.isprimary' ng-value='0'>
                 No
               </label>
             </div>
@@ -131,7 +134,7 @@
               </label>
             </div>
             <div class='col-sm-6'>
-              <input type='number' name='qosup'>
+              <input type='number' name='qosup' ng-model='vnetUpdateData.qosup'>
             </div>
           </div>
           <div class='form-group col-md-6 row'>
@@ -141,7 +144,7 @@
               </label>
             </div>
             <div class='col-sm-6'>
-              <input type='number' name='qosdn'>
+              <input type='number' name='qosdn' ng-model='vnetUpdateData.qosdn'>
             </div>
           </div>
         </div>
@@ -149,12 +152,15 @@
 
       <div class='row btn-set'>
         <div class='col-md-4'>
-          <button type='submit' class='btn btn-primary btn-block'>
+          <button type='submit' class='btn btn-primary btn-block'
+            ng-disabled='vnetUpdateForm.$pristine'>
             Submit Update
           </button>
         </div>
         <div class='col-md-4'>
-          <button type='button' class='btn btn-warning btn-block'>
+          <button type='button' class='btn btn-warning btn-block'
+            ng-disabled='vnetUpdateForm.$pristine || equals(vnetUpdateData)'
+            ng-click='revert(pristineVNet)'>
             Revert
           </button>
         </div>
