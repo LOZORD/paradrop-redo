@@ -491,12 +491,6 @@ angular.module('paradropApp')
         }
         if($scope.settingsJSON.zones){
           for(var zone in $scope.settingsJSON.zones){
-            for(var boundary in boundaries){
-              if($scope.coordsInside(boundaries[boundary][0], boundaries[boundary][1], $scope.settingsJSON.zones[zone].bounds)){
-                console.log('CONFLICT!!! new zone marker in prexisting zone');
-                return true;
-              }
-            }
             for(var bound in $scope.settingsJSON.zones[zone].bounds){
               var lat = $scope.settingsJSON.zones[zone].bounds[bound][0];
               var lng = $scope.settingsJSON.zones[zone].bounds[bound][1];
