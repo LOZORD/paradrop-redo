@@ -436,7 +436,7 @@ angular.module('paradropApp')
         for(var marker in $scope.map.markers){
           if(marker.indexOf('boundary') > -1 ){
             //boundary marker
-            var boundary = [$scope.map.markers[marker].position.k, $scope.map.markers[marker].position.D ];
+            var boundary = [Math.round($scope.map.markers[marker].position.k * 100) /100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
             $scope.settingsJSON.boundary.push(boundary);
           }else if(marker.indexOf('apid') > -1){
             //ap marker
