@@ -206,7 +206,7 @@ angular.module('paradropApp')
             var boundaries = [];
             var arr = zone.getPath().j;
             for(var i in arr){
-              boundaries.push([arr[i].k, arr[i].D]);
+              boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
             }
             $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type.name};
           };
