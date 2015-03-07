@@ -5,6 +5,7 @@
     <title>Paradrop</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+    <base href="/">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css(.) styles/vendor.css -->
     <!-- bower:css -->
@@ -22,7 +23,7 @@
           <a href=""><h4>Edit My Account</h4></a>
         </li>-->
         <li ng-if=" isAuthenticated()">
-          <a ng-href="#!/" ng-click="logout()"><h4>Logout</h4></a>
+          <a ng-href="" ng-click="logout()"><h4>Logout</h4></a>
         </li>
       </ul>
     </div snap-drawer>
@@ -42,7 +43,7 @@
                 <span class="glyphicon glyphicon-user"></span>
             </div></span>
             -->
-              <span class="nav-logo"><a class="para-text" href="#!/"><img ng-src='images/logo.png' width="40" height="40"/><span class="para-text">Paradrop</span></a></span>
+              <span class="nav-logo"><a class="para-text" href=""><img ng-src='images/logo.png' width="40" height="40"/><span class="para-text">Paradrop</span></a></span>
             </div>
             <div class="navbar-inner">
               <div class="navbar-center">
@@ -50,27 +51,27 @@
             </div>
             <div class="navbar-collapse" ng-class="{collapse: isCollapsed}">
               <ul class="nav navbar-nav navbar-right">
-                <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="#!/user/new">Signup</a></li>
-                <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="#!/login">Login</a></li>
+                <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="user/new">Signup</a></li>
+                <li ng-cloak ng-if="!isAuthenticated()"><a ng-href="login">Login</a></li>
                 <li ng-cloak ng-if="isAuthenticated()" class="dropdown">
                   <a href="" data-toggle="dropdown" class="dropdown-toggle">
                         My Paradrop <b class="caret"></b>
                   </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a ng-href="#!/my_paradrop">
+                      <a ng-href="my_paradrop">
                         Home
                       </a>
                     </li>
                     <li class="divider"></li>
                     <li>
-                      <a ng-href="#!/my_paradrop/configs">
+                      <a ng-href="my_paradrop/configs">
                         Configurations
                       </a>
                     </li>
                     <li class="divider"></li>
                     <li>
-                      <a ng-href="#!/" ng-click="logout()">
+                      <a ng-href="" ng-click="logout()">
                         Logout
                       </a>
                     </li>
@@ -82,23 +83,23 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a href="#!/recon/home/{{currentUser().defaultGroup}}">
+                      <a href="recon/home/{{currentUser().defaultGroup}}">
                         Overview
                       </a>
                     </li>
                     <li>
-                      <a href="#!/recon/dashboard/{{currentUser().defaultGroup}}">
+                      <a href="recon/dashboard/{{currentUser().defaultGroup}}">
                         Dashboard
                       </a>
                     </li>
                     <li>
-                      <a href="#!/recon/map/{{currentUser().defaultGroup}}">
+                      <a href="recon/map/{{currentUser().defaultGroup}}">
                         Location Tracking
                       </a>
                     </li>
                     <li class="divider"></li>
                     <li>
-                    <a href="#!/recon/settings/{{currentUser().defaultGroup}}">
+                    <a href="recon/settings/{{currentUser().defaultGroup}}">
                         Advanced Settings
                       </a>
                     </li>
@@ -110,27 +111,27 @@
                   </a>
                   <ul class="dropdown-menu">
                     <li>
-                      <a ng-href="#!/calibrate">
+                      <a ng-href="calibrate">
                         Calibrate Maps
                       </a>
                     </li>
                     <li>
-                      <a ng-href="#!/localization/State Street">
+                      <a ng-href="localization/State Street">
                         Localization Demo
                       </a>
                     </li>
                     <li class="divider"></li>
                     <li>
-                      <a ng-href="#!/map_settings/State Street">
+                      <a ng-href="map_settings/State Street">
                         Admin Map Settings
                       </a>
                     </li>
                   </ul>
                 </li>
-                <li ng-if="!isAuthenticated()"><a ng-href="#!/">Home</a></li>
-                <li><a ng-href="#!/blog">Blog</a></li>
-                <li><a ng-href="#!/about">About</a></li>
-                <li><a ng-href="#!/contact">Contact</a></li>
+                <li ng-if="!isAuthenticated()"><a ng-href="">Home</a></li>
+                <li><a ng-href="blog">Blog</a></li>
+                <li><a ng-href="about">About</a></li>
+                <li><a ng-href="contact">Contact</a></li>
               </ul>
             </div>
           </nav>

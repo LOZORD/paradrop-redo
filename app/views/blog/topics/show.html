@@ -1,7 +1,7 @@
 <h1>Blog Topic: <em>{{ currTopic }}</em></h1>
 <ul ng-if='topicPosts.length'>
   <li ng-repeat='post in topicPosts'>
-    <h2><a ng-href='#!/blog/posts/{{ post.ts }}'>{{ post.title }}</a></h2>
+    <h2><a ng-href='blog/posts/{{ post.ts }}'>{{ post.title }}</a></h2>
     <h5>{{ post.author }}</h5>
     <small>{{ post.ts | date: 'short' }}</small>
     <hr>

@@ -157,8 +157,7 @@ angular.module('paradropApp', [
   .config(function($locationProvider) {
     //setup urls for crawler to get static html
       $locationProvider
-    .html5Mode(false)
-    .hashPrefix('!');
+    .html5Mode(true)
   })
   .config(function ($httpProvider) {
     //disregard browser pre-flight checks

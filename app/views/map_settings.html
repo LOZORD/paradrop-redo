@@ -8,7 +8,7 @@
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <ul class="dropdown-menu" role="menu">
-        <li ng-repeat="map in mapsArray" ng-if="!map.data.invalid"><a href="#!/map_settings/{{map.groupname}}" >{{map.groupname}}-{{map.data.name}}</a></li>
+        <li ng-repeat="map in mapsArray" ng-if="!map.data.invalid"><a href="map_settings/{{map.groupname}}" >{{map.groupname}}-{{map.data.name}}</a></li>
       </ul>
     </div>
     <button class="btn btn-primary" data-toggle="modal" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode">Map Settings</button>

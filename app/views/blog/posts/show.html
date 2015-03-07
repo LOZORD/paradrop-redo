@@ -2,7 +2,7 @@
   <h1>{{ specificPost.title }}</h1>
   <h5>{{ specificPost.author }}</h5>
   <small>{{ specificPost.ts | date: 'short' }}</small>
-  <small>Topic: <a ng-href='#!/blog/topics/{{ specificPost.topic }}'>{{ specificPost.topic }}</a></small>
+  <small>Topic: <a ng-href='blog/topics/{{ specificPost.topic }}'>{{ specificPost.topic }}</a></small>
   <div class='post-content' ng-bind-html='specificPost.content'></div>
 </div>
 <div ng-if='!specificPost'>
