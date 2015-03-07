@@ -23,7 +23,7 @@
           <a href=""><h4>Edit My Account</h4></a>
         </li>-->
         <li ng-if=" isAuthenticated()">
-          <a ng-href="" ng-click="logout()"><h4>Logout</h4></a>
+          <a ng-href="/" ng-click="logout()"><h4>Logout</h4></a>
         </li>
       </ul>
     </div snap-drawer>
@@ -43,7 +43,7 @@
                 <span class="glyphicon glyphicon-user"></span>
             </div></span>
             -->
-              <span class="nav-logo"><a class="para-text" href=""><img ng-src='images/logo.png' width="40" height="40"/><span class="para-text">Paradrop</span></a></span>
+              <span class="nav-logo"><a class="para-text" href="/"><img ng-src='images/logo.png' width="40" height="40"/><span class="para-text">Paradrop</span></a></span>
             </div>
             <div class="navbar-inner">
               <div class="navbar-center">
@@ -71,7 +71,7 @@
                     </li>
                     <li class="divider"></li>
                     <li>
-                      <a ng-href="" ng-click="logout()">
+                      <a ng-href="/" ng-click="logout()">
                         Logout
                       </a>
                     </li>
@@ -128,7 +128,7 @@
                     </li>
                   </ul>
                 </li>
-                <li ng-if="!isAuthenticated()"><a ng-href="">Home</a></li>
+                <li ng-if="!isAuthenticated()"><a ng-href="/">Home</a></li>
                 <li><a ng-href="blog">Blog</a></li>
                 <li><a ng-href="about">About</a></li>
                 <li><a ng-href="contact">Contact</a></li>
