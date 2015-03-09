@@ -2,11 +2,20 @@
   <h1><strong>SomeVirtNet</strong>: Virtural Network Update</h1>
 
   <div ng-if='!vnetToUpdate.ispending'>
+    <div class='row' ng-if='vnetUpdateForm.$invalid'>
+      <div class='container bg-danger'>
+        <ul>
+          <li ng-repeat='inputName in vnetUpdateForm'>
+
+          </li>
+        </ul>
+      </div>
+    </div>
     <form name='vnetUpdateForm'
     method='post'
     novalidate
     ng-controller='VNetCtrl'
-    ng-submit='submitUpdate(vnetUpdateData, vneetUpdateForm.$valid)'
+    ng-submit='submitUpdate(vnetUpdateData, vnetUpdateForm.$valid)'
     form-autofill-fix>
 
       <div class='row'>
@@ -109,15 +118,14 @@
               <strong>Primary Virtual Network?</strong>
             </div>
             <div class='btn-group col-sm-6' data-toggle='buttons'>
-              TODO -- preset with DB value
-              <label class='btn btn-success btn-md'>
-                <input type='radio' name='isprimary' id='isprimary-yes' autocomplete='off'
-                  ng-model='vnetUpdateData.isprimary' ng-value='1'>
+              <label class='btn btn-success btn-md' ng-class='{"active": vnetUpdateData.isprimary}' ng-value='1'
+                ng-model='vnetUpdateData.isprimary'>
+                <input type='radio' name='isprimary' id='isprimary-yes' autocomplete='off' ng-model='vnetUpdateData.isprimary' ng-value='1'>
                 Yes
               </label>
-              <label class='btn btn-danger btn-md'>
-                <input type='radio' name='isprimary' id='isprimary-no' autocomplete='off'
-                  ng-model='vnetUpdateData.isprimary' ng-value='0'>
+              <label class='btn btn-danger btn-md' ng-class='{"active": !vnetUpdateData.isprimary}' ng-value='0'
+                ng-model='vnetUpdateData.isprimary'>
+                <input type='radio' name='isprimary' id='isprimary-no' autocomplete='off' ng-model='vnetUpdateData.isprimary' ng-value='0'>
                 No
               </label>
             </div>

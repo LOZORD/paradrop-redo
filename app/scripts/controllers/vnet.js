@@ -23,11 +23,6 @@ angular.module('paradropApp')
           'PSK2'
         ];
 
-        /*
-        console.log($scope);
-        console.log($rootScope);
-        */
-
         $scope.vnetUpdateData = {
           ssid:         null,
           password:     null,
@@ -49,8 +44,6 @@ angular.module('paradropApp')
 
         var vnetFetchDataURL = URLS.current + 'ap/chute/network';
 
-        //console.log('fetching vnet data',vnetFetchDataPayload);
-
         //TODO change this into something neater, ie not copypasta
         /*
         $scope.equals = function (a,b) {
@@ -68,10 +61,7 @@ angular.module('paradropApp')
         $http.post(vnetFetchDataURL, vnetFetchDataPayload)
         .then(
           function (result) {
-            //console.log('got result!');
-            console.log(result);
             var vnetConfig = JSON.parse(decodeURIComponent(result.data.config));
-            console.log(vnetConfig);
             $scope.vnetUpdateData = {
               ssid:           vnetConfig.ssid,
               password:       vnetConfig.passwd || '',
@@ -87,19 +77,41 @@ angular.module('paradropApp')
             $scope.pristineVNet = angular.copy($scope.vnetUpdateData);
 
             $scope.equals = function (newData) {
-              //console.log('new data is', newData);
-              var ret = angular.equals(newData, $scope.pristineVNet);
-              //console.log('ret is', ret);
-              return ret;
+              return angular.equals(newData, $scope.pristineVNet);
             };
-
-            //console.log('GOT DATA', $scope.vnetUpdateData);
           },
           function (result) {
-            console.log(result, 'redirecting due to error');
             $location.url('#!/my_paradrop');
           }
         );
+
+        $scope.submitUpdate = function (data, isValid) {
+          if (!isValid) {
+            console.log('invalid form!');
+            return;
+          }
+
+          var vnetUpdateURL = URLS.current + 'ap/vnet/networkChangeRequest';
+
+          var vnetUpdatePackage = {
+            sessionToken: $scope.currentUser().id,
+            apid:         $routeParams.apid,
+            chuteid:      $routeParams.chuteid,
+            payload:      data
+          };
+
+          console.log(vnetUpdatePackage);
+
+          $http.post(vnetUpdateURL, vnetUpdatePackage)
+          .then(
+            function (result) {
+              console.log(result);
+            },
+            function (error) {
+              console.log(error);
+            }
+          );
+        };
       }
     });
   }]);
