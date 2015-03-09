@@ -88,16 +88,31 @@ angular.module('paradropApp')
         $scope.submitUpdate = function (data, isValid) {
           if (!isValid) {
             console.log('invalid form!');
+            console.log($scope.vnetUpdateForm);
+            console.log($scope.vnetUpdateForm.$error);
             return;
           }
 
           var vnetUpdateURL = URLS.current + 'ap/vnet/networkChangeRequest';
 
+          //assuming password === conf, remove conf
+
+          var formattedData = {
+            ssid:       data.ssid,
+            passwd:     data.password,
+            encryption: data.encryption,
+            radioid:    data.radioid,
+            isprimary:  data.isprimary,
+            qosdown:    data.qosdn,
+            qosup:      data.qosup,
+            subnet:     data.subnet
+          };
+
           var vnetUpdatePackage = {
             sessionToken: $scope.currentUser().id,
             apid:         $routeParams.apid,
             chuteid:      $routeParams.chuteid,
-            payload:      data
+            payload:      formattedData
           };
 
           console.log(vnetUpdatePackage);
