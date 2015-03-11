@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route) {
+  .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', 'gmapMaker', '$route',
+    function ($scope, URLS, $http, $sce, gmapMaker, $route) {
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
           {name:'YELLOW', code:'#FFFF00'},
@@ -36,8 +36,6 @@ angular.module('paradropApp')
           {name:'Outside'},
           {name:'Impossible'}
       ];
-      $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
-      var group = $scope.group_id.toString();
       var isDeleteMode = false;
       $scope.settingsJSON = {};
       $scope.zone = {};
@@ -49,24 +47,7 @@ angular.module('paradropApp')
           $http.post(mapInitURL, postBody ).then(
               function(groupMaps){
                 $scope.mapsArray = groupMaps.data;
-                console.log($scope.mapsArray);
-                for(var i in $scope.mapsArray){
-                  if($scope.mapsArray[i].groupname == $scope.group_id){
-                    $scope.groupMaps = $scope.mapsArray[i];
-                    break;
-                  }
-                }
-                $scope.mapData = $scope.groupMaps.data;
-                $scope.settingsJSON = angular.copy($scope.mapData);
-                var builtMap = gmapMaker.buildMap($scope.mapData);
-                $scope.apNameMap = $scope.groupMaps.map;
-                $scope.revApNameMap = {};
-
-                for(var key in $scope.apNameMap){
-                  $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
-                }
-
-                $scope.firstFloorMapType = builtMap.mapType;
+                $scope.setMap($scope.mapsArray[gmapMaker.getIndex('settings')]);
 
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.map = map;
@@ -88,6 +69,28 @@ angular.module('paradropApp')
           , function(error){$scope.mapError = true;});
         };
       });
+
+      $scope.switchMap = function(index){
+        gmapMaker.setIndex(index, 'settings');
+        $route.reload();
+      };
+
+      $scope.setMap = function(map){
+        console.log(map);
+        $scope.groupMaps = map;
+        $scope.group_id = $scope.groupMaps.groupname;
+        $scope.apNameMap = $scope.groupMaps.map;
+        $scope.revApNameMap = {};
+        for(var key in $scope.apNameMap){
+          $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
+        }
+        $scope.mapData = $scope.groupMaps.data;
+        $scope.settingsJSON = angular.copy($scope.mapData);
+        if(!$scope.mapData.invalid){
+          var builtMap = gmapMaker.buildMap($scope.mapData);
+          $scope.firstFloorMapType = builtMap.mapType;
+        }
+      };
 
       $scope.onClick = function(event) {
         var ll = event.latLng;
@@ -451,16 +454,6 @@ angular.module('paradropApp')
       $scope.submitChanges = function(){
         $scope.confirmZone = false;
         $scope.updateMarkers();
-        for(var key in $scope.settingsJSON){
-          if($scope.settingsJSON[key] === undefined 
-              || $scope.settingsJSON[key] === "" 
-              || $scope.settingsJSON[key] === null)
-          {
-            alert('Reverting settings due to invalid value for: ' + key);
-            $scope.revert();
-            return;
-          }
-        }
         //console.log("Validation successful ready to send JSON");
         //console.log($scope.settingsJSON);
         var body = {
@@ -481,7 +474,6 @@ angular.module('paradropApp')
               alert('Error saving changes to database.');
             }
         );
-        console.log(body);
         $route.reload();
       };
 

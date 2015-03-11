@@ -139,12 +139,12 @@ angular.module('paradropApp', [
         templateUrl: 'views/modes/restricted_signup.html',
         auths: {}
       })
-      .when('/localization/:group_id*', {
+      .when('/localization', {
         templateUrl: 'views/localization.html',
         controller: 'LocalizationCtrl',
         auths: {admin: true, session: true}
       })
-      .when('/map_settings/:group_id*', {
+      .when('/map_settings', {
         templateUrl: 'views/map_settings.html',
         controller: 'MapSettingsCtrl',
         auths: {admin: true, session: true}

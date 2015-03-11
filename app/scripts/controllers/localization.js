@@ -8,9 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('LocalizationCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker) {
-      $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
+  .controller('LocalizationCtrl',['$scope', 'URLS', '$http', '$sce', '$route', 'gmapMaker',
+    function ($scope, URLS, $http, $sce, $route, gmapMaker) {
       $scope.authorizePage()
       .then(function(authorized){
         if(authorized){
@@ -29,21 +28,7 @@ angular.module('paradropApp')
             $http.post(mapInitURL, postBody ).then(
                 function(groupMaps){
                   $scope.mapsArray = groupMaps.data;
-                  for(var i in $scope.mapsArray){
-                    if($scope.mapsArray[i].groupname == $scope.group_id){
-                      $scope.groupMaps = $scope.mapsArray[i];
-                      break;
-                    }
-                  }
-                  $scope.mapData = $scope.groupMaps.data;
-                  var builtMap = gmapMaker.buildMap($scope.mapData);
-                  $scope.apNameMap = $scope.groupMaps.map;
-                  $scope.revApNameMap = {};
-                  for(var key in $scope.apNameMap){
-                    $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
-                  }
-                  $scope.firstFloorMapType = builtMap.mapType;
-                  $scope.onClick = builtMap.onClick;
+                  $scope.setMap($scope.mapsArray[gmapMaker.getIndex('localization')]);
                   $scope.$on('mapInitialized', function(event, map) {
                     $scope.heatmap = map.heatmapLayers.heatmap;
                     $scope.map = map;
@@ -89,6 +74,28 @@ angular.module('paradropApp')
           }
         }
       }
+
+      $scope.switchMap = function(index){
+        gmapMaker.setIndex(index, 'localization');
+        $route.reload();
+      };
+
+      $scope.setMap = function(map){
+        console.log(map);
+        $scope.groupMaps = map;
+        $scope.group_id = $scope.groupMaps.groupname;
+        $scope.apNameMap = $scope.groupMaps.map;
+        $scope.revApNameMap = {};
+        for(var key in $scope.apNameMap){
+          $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
+        }
+        $scope.mapData = $scope.groupMaps.data;
+        if(!$scope.mapData.invalid){
+          var builtMap = gmapMaker.buildMap($scope.mapData);
+          $scope.firstFloorMapType = builtMap.mapType;
+          $scope.onClick = builtMap.onClick;
+        }
+      };
 
       $scope.nextPoint = function(){
         i++;

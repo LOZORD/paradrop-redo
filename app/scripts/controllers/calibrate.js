@@ -8,12 +8,17 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$sce', '$route',
-    function ($scope, URLS, $http, gmapMaker, $sce, $route) {
+  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$localStorage', '$window',
+    function ($scope, URLS, $http, gmapMaker, $localStorage, $window) {
       $scope.authorizePage()
       .then(
         function(authorized){
           if(authorized){
+            console.log($localStorage.calibrateIndex);
+            if(!$localStorage.calibrateIndex){
+              $localStorage.calibrateIndex = 0;
+            }
+            $scope.mac = $localStorage.mac;
             $scope.pollResult = null;
             var startURL = URLS.current + 'recon/maps/start';
             var finishURL = URLS.current + 'recon/maps/finish';
@@ -30,6 +35,7 @@ angular.module('paradropApp')
               }
               mainBody.sessionToken = $scope.sessionToken();
               mainBody.mac = $scope.mac;
+              $localStorage.mac = $scope.mac;
               $http.post(startURL, mainBody ).then(
                 function() {
                   //nothing to do
@@ -117,8 +123,13 @@ angular.module('paradropApp')
                     }
                   }
                   if(!$scope.mapData.invalid){
-                    $scope.map.infoWindows.info.setContent($scope.successString);
-                    $scope.map.infoWindows.info.open($scope.map, $scope.map.markers.info);
+                    if(!$scope.infobox){
+                      $scope.infobox = new google.maps.InfoWindow();
+                    }
+                    var ll = new google.maps.LatLng($scope.mapData.centerX, $scope.mapData.centerY);
+                    $scope.infobox.open($scope.map);
+                    $scope.infobox.setPosition(ll);
+                    $scope.infobox.setContent($scope.successString);
                   }
                 },
                 function(){
@@ -175,7 +186,7 @@ angular.module('paradropApp')
             $http.post(mapInitURL, postBody ).then(
               function(groupMaps){
                 $scope.mapsArray = groupMaps.data;
-                $scope.setMap($scope.mapsArray[gmapMaker.getIndex('calibrate')]);
+                $scope.setMap($scope.mapsArray[$localStorage.calibrateIndex]);
 
                 if(!$scope.mapData.invalid){
                   $scope.onClick = function(event) {
@@ -186,7 +197,6 @@ angular.module('paradropApp')
                   };
                   $scope.$on('mapInitialized', function(event, map) {
                     $scope.map = map;
-                    $scope.map.markers.infoMarker.setVisible(false);
                   });
                 }
               },
@@ -194,11 +204,10 @@ angular.module('paradropApp')
           }
 
           $scope.switchMap = function(index){
-            gmapMaker.setIndex(index, 'calibrate');
-            $route.reload();
+            $localStorage.calibrateIndex = index;
+            setTimeout(function(){$window.location.reload();}, 1000);
           };
 
-          var i = 0;
           $scope.setMap = function(map){
             console.log(map);
             $scope.groupMaps = map;

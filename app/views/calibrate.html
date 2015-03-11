@@ -51,10 +51,5 @@
         </map-type>
         <marker ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{revApNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
         <marker ng-if="showLocation" position="{{coords.lat}},{{coords.lng}}" title="My Location" id="currentLocation" icon="images/here.png"></marker>
-        <marker position="-21.493963,-41.022949"  title="info" id="infoMarker"></marker>
-        <info-window id="info" max-width="200" visible-on-marker="infoMarker">
-        <div ng-non-bindable="">
-        </div>
-        </info-window>
         <!-- ngRepeat: pos in positions -->
     </map>
