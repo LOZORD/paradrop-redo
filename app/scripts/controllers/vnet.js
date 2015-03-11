@@ -14,7 +14,6 @@ angular.module('paradropApp')
     .then(function(isAuthorized) {
       if (isAuthorized) {
         $scope.togglerBtn = false;
-        $scope.vnetToUpdate = $scope.specificChute;
 
         //FIXME in the view
         $scope.ENCRYPTION_TYPES = [
@@ -80,8 +79,8 @@ angular.module('paradropApp')
               return angular.equals(newData, $scope.pristineVNet);
             };
           },
-          function (result) {
-            $location.url('#!/my_paradrop');
+          function () {
+            $location.url('/my_paradrop');
           }
         );
 
@@ -102,7 +101,7 @@ angular.module('paradropApp')
             passwd:     data.password,
             encryption: data.encryption,
             radioid:    data.radioid,
-            isprimary:  data.isprimary,
+            isprimary:  data.isprimary || false,
             qosdown:    data.qosdn,
             qosup:      data.qosup,
             subnet:     data.subnet
@@ -115,15 +114,22 @@ angular.module('paradropApp')
             payload:      formattedData
           };
 
-          console.log(vnetUpdatePackage);
+          //console.log(vnetUpdatePackage);
 
           $http.post(vnetUpdateURL, vnetUpdatePackage)
           .then(
             function (result) {
-              console.log(result);
+              //success
+              if (result.data === '') {
+                $location.path('/my_paradrop/configs/' +  $routeParams.apid + '/chutes/vnets/' + $routeParams.chuteid);
+              }
+              //failure
+              else {
+                window.alert('Could not push the update. Please try again.');
+              }
             },
-            function (error) {
-              console.log(error);
+            function () {
+              window.alert('Could not push the update. Please try again.');
             }
           );
         };

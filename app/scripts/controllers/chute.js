@@ -8,8 +8,8 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ChuteCtrl', ['$scope', '$http', 'URLS', '$routeParams', '$location',
-    function ($scope, $http, URLS, $routeParams, $location) {
+  .controller('ChuteCtrl', ['$scope', '$http', 'URLS', '$routeParams', '$location', '$rootScope',
+    function ($scope, $http, URLS, $routeParams, $location, $rootScope) {
     $scope.authorizePage()
     .then(function(isAuthorized) {
       if (isAuthorized) {
@@ -24,7 +24,7 @@ angular.module('paradropApp')
         };
 
         $scope.chutes         = null;
-        $scope.specificChute  = null;
+        $rootScope.specificChute  = null;
         $scope.chuteid        = null;
 
         //console.log(chuteListPayload);
@@ -37,20 +37,20 @@ angular.module('paradropApp')
             if ($routeParams.chuteid) {
               for (var chuteInd in $scope.chutes) {
                 if ($scope.chutes[chuteInd].chuteid === $routeParams.chuteid) {
-                  $scope.specificChute = $scope.chutes[chuteInd];
+                  $rootScope.specificChute = $scope.chutes[chuteInd];
                 }
               }
 
-              if (!$scope.specificChute) {
+              if (!$rootScope.specificChute) {
                 $location.path('/');
               }
 
-              $scope.chuteid = $scope.specificChute.chuteid;
+              $scope.chuteid = $rootScope.specificChute.chuteid;
 
               //config is a string, let's decode and parse it
-              var decodedConfig = decodeURIComponent($scope.specificChute.config);
+              var decodedConfig = decodeURIComponent($rootScope.specificChute.config);
               var configObj = JSON.parse(decodedConfig);
-              $scope.specificChute.config = configObj;
+              $rootScope.specificChute.config = configObj;
 
               //if no specific chute is found...
             }
