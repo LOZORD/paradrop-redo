@@ -384,8 +384,8 @@ angular.module('paradropApp')
         var boundID = 0;
           
         return function(coords){
-          var lat = -19;
-          var lng = -40;
+          var lat = $scope.mapData.centerX;
+          var lng = $scope.mapData.centerY;
           if(coords){
             lat = coords[0];
             lng = coords[1];
@@ -400,6 +400,7 @@ angular.module('paradropApp')
             icon: 'images/boundary.png',
             id: 'boundary' + boundID
           });
+          console.log(marker);
           $scope.map.markers['boundary'+ boundID] = marker;
           $scope.boundPoly.getPath().push($scope.map.markers['boundary' + boundID].position);
           google.maps.event.addListener(marker, 'drag', $scope.updateBoundPoly);
