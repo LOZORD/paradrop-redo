@@ -47,9 +47,6 @@
             <li ng-if='vnetUpdateForm.confirmation.$invalid'>
               Confirmation
               <ul>
-                <li ng-if='vnetUpdateForm.confirmation.$error.required'>
-                  Please provide a password confirmation
-                </li>
                 <li ng-if='vnetUpdateForm.confirmation.$error.mustMatch'>
                   Please match the confirmation with the password
                 </li>
@@ -159,9 +156,7 @@
           </div>
           <div class='col-sm-6'>
             <input type='password' name='confirmation' ng-model='vnetUpdateData.confirmation'
-              ng-minlength='{{ (vnetUpdateForm.encryption.$viewValue.toUpperCase() !== "NONE") ? 8 : 0 }}'
-              ng-maxlength='30'
-              ng-required='{{ vnetUpdateForm.encryption.$viewValue.toUpperCase() !== "NONE" }}'>
+              must-match='vnetUpdateData.password'>
           </div>
         </div>
       </div>
