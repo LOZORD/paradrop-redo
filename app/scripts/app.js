@@ -289,7 +289,7 @@ angular.module('paradropApp', [
   })
   .constant('URLS', {
     //Change the current url to change all calls globally
-    current: 'http://paradrop.wings.cs.wisc.edu:30330/v1/' //'https://dbapi.paradrop.io/v1/' XXX
+    current: 'http://paradrop.wings.cs.wisc.edu:20330/v1/' //'https://dbapi.paradrop.io/v1/' XXX
   })
   .constant('MODES', {
     restrictedSignup: true

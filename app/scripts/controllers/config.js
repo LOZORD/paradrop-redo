@@ -18,11 +18,7 @@ angular.module('paradropApp')
             return device.type.toLowerCase() === 'owner';
           });
 
-          //XXX update later
-          var pendingURL = 'http://paradrop.wings.cs.wisc.edu:30330/v1/ap/pendingOperations';
-          //'https://dbapi.paradrop.io:30333/v1' + 'ap/pendingOperations';
-
-          pendingURL = URLS.current + 'ap/pendingOperations';
+          var pendingURL = URLS.current + 'ap/pendingOperations';
 
           $http.post(pendingURL, { sessionToken: $scope.currentUser().id})
             .then(
@@ -51,10 +47,7 @@ angular.module('paradropApp')
             }
 
             //attempt to get live data
-            var radioStateURL = 'http://paradrop.wings.cs.wisc.edu:30330/v1/ap/radioState';
-            //URLS.current + 'ap/radioState';
-
-            radioStateURL = URLS.current + 'ap/radioState';
+            var radioStateURL = URLS.current + 'ap/radioState';
 
             var radioStatePackage = {
               sessionToken: $scope.currentUser().id,
