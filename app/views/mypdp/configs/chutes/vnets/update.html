@@ -1,15 +1,10 @@
 <div ng-controller='VNetCtrl'>
   <div class='container'>
-    <div>
-      <span>
-        <h1 style='overflow-wrap:break-word;'><strong>{{ specificChute.name }}</strong></h1>
-      </span>
-    </div>
-    <div>
-      <span>
-        <h1>Virutal Network Update</h1>
-      </span>
-    </div>
+    <span style='overflow-wrap:break-word;'>
+      <h1>
+        <strong>{{ specificChute.name }}</strong>: Virtual Network Update
+      </h1>
+    </span>
   </div>
   <br>
   <div ng-if='!specificChute.ispending'>
@@ -143,8 +138,12 @@
               </label>
             </div>
             <div class='col-xs-6 input-group'>
-              <select class='form-control' name='encryption'
-                ng-options='encrType for encrType in ENCRYPTION_TYPES' ng-model='vnetUpdateData.encryption' required>
+              <select
+                class='form-control'
+                name='encryption'
+                ng-options='encrType for encrType in ENCRYPTION_TYPES'
+                ng-model='vnetUpdateData.encryption'
+                required>
               </select>
             </div>
           </div>
@@ -175,7 +174,10 @@
               </label>
             </div>
             <div class='col-xs-6 input-group'>
-              <input class='form-control' type='password' name='confirmation'
+              <input
+                class='form-control'
+                type='password'
+                name='confirmation'
                 ng-model='vnetUpdateData.confirmation'
                 must-match='vnetUpdateData.password'>
             </div>
@@ -225,8 +227,13 @@
                 </label>
               </div>
               <div class='col-xs-6'>
-                <input class='form-control' type='text' name='radioid' ng-model='vnetUpdateData.radioid'
-                  ng-pattern='/^((\d)+)$/' required>
+                <input
+                  class='form-control'
+                  type='text'
+                  name='radioid'
+                  ng-model='vnetUpdateData.radioid'
+                  ng-pattern='/^((\d)+)$/'
+                  required>
               </div>
             </div>
             <div class='col-sm-6 row form-group'>
@@ -235,8 +242,8 @@
               </div>
               <div class='btn-group col-xs-6' data-toggle='buttons'>
                 <label
-                  class='btn btn-success btn-sm'
-                  ng-class='{"active": vnetUpdateData.isprimary}'
+                  class='btn btn-sm btn-default'
+                  ng-class='{ "active": vnetUpdateData.isprimary }'
                   ng-value='1'
                   ng-model='vnetUpdateData.isprimary'>
 
@@ -250,8 +257,8 @@
                   Yes
                 </label>
                 <label
-                  class='btn btn-danger btn-sm'
-                  ng-class='{"active": !vnetUpdateData.isprimary}'
+                  class='btn btn-sm btn-default'
+                  ng-class='{ "active": !vnetUpdateData.isprimary }'
                   ng-value='0'
                   ng-model='vnetUpdateData.isprimary'>
 
