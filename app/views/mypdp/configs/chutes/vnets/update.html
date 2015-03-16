@@ -1,17 +1,17 @@
 <div ng-controller='VNetCtrl'>
-  <div class='row'>
-    <div class='col-sm-6'>
+  <div class='container'>
+    <div>
       <span>
-        <!-- TODO - fix overflow -->
-        <h1><strong>{{ specificChute.name }}</strong></h1>
+        <h1 style='overflow-wrap:break-word;'><strong>{{ specificChute.name }}</strong></h1>
       </span>
     </div>
-    <div class='col-sm-6'>
+    <div>
       <span>
         <h1>Virutal Network Update</h1>
       </span>
     </div>
   </div>
+  <br>
   <div ng-if='!specificChute.ispending'>
     <form name='vnetUpdateForm'
     method='post'
@@ -21,7 +21,7 @@
     form-autofill-fix>
 
       <!-- Validation messages -->
-      <div class='row' ng-if='!vnetUpdateForm.$valid && vnetUpdateForm.$dirty'>
+      <div class='container row' ng-if='!vnetUpdateForm.$valid && vnetUpdateForm.$dirty'>
         <div class='alert alert-danger'>
           <ul>
             <li ng-if='vnetUpdateForm.ssid.$invalid'>
@@ -119,7 +119,7 @@
       <!-- Form inputs -->
       <div class='container'>
         <div class='row form-group'>
-          <div class='col-sm-6 row'>
+          <div class='col-sm-6 row form-group'>
             <div class='col-xs-6'>
               <label for='ssid'>
                 Network Name (SSID)
@@ -136,7 +136,7 @@
                 required>
             </div>
           </div>
-          <div class='col-sm-6 row'>
+          <div class='col-sm-6 row form-group'>
             <div class='col-xs-6'>
               <label for='encryption'>
                 Encryption
@@ -151,7 +151,7 @@
         </div>
 
         <div class='row form-group'>
-          <div class='col-sm-6 row'>
+          <div class='col-sm-6 row form-group'>
             <div class='col-xs-6'>
               <label for='password'>
                 Password
@@ -168,7 +168,7 @@
                 ng-required='{{ vnetUpdateForm.encryption.$viewValue.toUpperCase() !== "NONE" }}'>
             </div>
           </div>
-          <div class='col-sm-6 row'>
+          <div class='col-sm-6 row form-group'>
             <div class='col-xs-6'>
               <label for='confirmation'>
                 Confirm Password
@@ -200,7 +200,7 @@
 
         <div id='advanced_opts' ng-show='togglerBtn'>
           <div class='row form-group'>
-            <div class='input group col-sm-12 row'>
+            <div class='form-group col-sm-12 row'>
               <div class='col-xs-6'>
                 <label for='subnet'>
                   Subnet
@@ -217,7 +217,7 @@
 
           <hr>
 
-          <div class='row form-group'>
+          <div class='row'>
             <div class='col-sm-6 row form-group'>
               <div class='col-xs-6'>
                 <label for='radioid'>
@@ -234,14 +234,34 @@
                 <strong>Primary Virtual Network?</strong>
               </div>
               <div class='btn-group col-xs-6' data-toggle='buttons'>
-                <label class='btn btn-success btn-sm' ng-class='{"active": vnetUpdateData.isprimary}' ng-value='1'
+                <label
+                  class='btn btn-success btn-sm'
+                  ng-class='{"active": vnetUpdateData.isprimary}'
+                  ng-value='1'
                   ng-model='vnetUpdateData.isprimary'>
-                  <input type='radio' name='isprimary' id='isprimary-yes' autocomplete='off' ng-model='vnetUpdateData.isprimary' ng-value='1'>
+
+                  <input
+                    type='radio'
+                    name='isprimary'
+                    id='isprimary-yes'
+                    autocomplete='off'
+                    ng-model='vnetUpdateData.isprimary'
+                    ng-value='1'>
                   Yes
                 </label>
-                <label class='btn btn-danger btn-sm' ng-class='{"active": !vnetUpdateData.isprimary}' ng-value='0'
+                <label
+                  class='btn btn-danger btn-sm'
+                  ng-class='{"active": !vnetUpdateData.isprimary}'
+                  ng-value='0'
                   ng-model='vnetUpdateData.isprimary'>
-                  <input type='radio' name='isprimary' id='isprimary-no' autocomplete='off' ng-model='vnetUpdateData.isprimary' ng-value='0'>
+
+                  <input
+                    type='radio'
+                    name='isprimary'
+                    id='isprimary-no'
+                    autocomplete='off'
+                    ng-model='vnetUpdateData.isprimary'
+                    ng-value='0'>
                   No
                 </label>
               </div>
@@ -251,14 +271,20 @@
           <hr>
 
           <div class='row form-group'>
-            <div class='col-sm-6 row'>
+            <div class='col-sm-6 row form-group'>
               <div class='col-xs-6'>
                 <label for='qosup'>
                   QoS Up
                 </label>
               </div>
               <div class='col-xs-6'>
-                <input class='form-control' type='text' name='qosup' ng-model='vnetUpdateData.qosup' ng-pattern='/^((\d)+)$/' required>
+                <input
+                  class='form-control'
+                  type='text'
+                  name='qosup'
+                  ng-model='vnetUpdateData.qosup'
+                  ng-pattern='/^((\d)+)$/'
+                  required>
               </div>
             </div>
             <div class='col-sm-6 row'>
@@ -268,7 +294,13 @@
                 </label>
               </div>
               <div class='col-xs-6'>
-                <input class='form-control' type='text' name='qosdn' ng-model='vnetUpdateData.qosdn' ng-pattern='/^((\d)+)$/' required>
+                <input
+                  class='form-control'
+                  type='text'
+                  name='qosdn'
+                  ng-model='vnetUpdateData.qosdn'
+                  ng-pattern='/^((\d)+)$/'
+                  required>
               </div>
             </div>
           </div>
@@ -279,7 +311,7 @@
       <div class='row btn-set'>
         <div class='col-sm-4'>
           <button type='submit' class='btn btn-primary btn-block'
-            ng-disabled='vnetUpdateForm.$pristine'>
+            ng-disabled='vnetUpdateForm.$pristine || vnetUpdateForm.$invalid'>
             Submit Update
           </button>
         </div>
