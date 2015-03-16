@@ -34,6 +34,13 @@ angular.module('paradropApp')
           function(chuteList) {
             //console.log('cl',chuteList);
             $scope.chutes = chuteList.data;
+
+            //don't worry about LXC/lxc's for now
+
+            $scope.chutes = $scope.chutes.filter(function (chute) {
+              return chute.type.toLowerCase() != 'lxc';
+            });
+
             if ($routeParams.chuteid) {
               for (var chuteInd in $scope.chutes) {
                 if ($scope.chutes[chuteInd].chuteid === $routeParams.chuteid) {
@@ -56,54 +63,8 @@ angular.module('paradropApp')
             }
           },
           function () {
-            //hard code data for now
-            /*
-            $scope.chutes = [
-              {
-                type: 'app',
-                chuteid: 'test1',
-                name: 'TestAppChute',
-                state: 'running',
-                config: {
-                  struct: 'stuff here',
-                  runtime: 'more stuff here',
-                  traffic: 'stuff here',
-                  resource: 'stuff here',
-                  files: 'even more stuff here'
-                }
-              },
-              {
-                type: 'virtnet',
-                chuteid: 'test2',
-                name: 'TestVNetChuteA',
-                state: 'sleeping',
-                config: {
-                  struct: 'stuff here',
-                  runtime: 'more stuff here',
-                  traffic: 'stuff here',
-                  resource: 'stuff here',
-                  files: 'even more stuff here'
-                }
-              },
-              {
-                type: 'virtnet',
-                chuteid: 'test3',
-                name: 'TestAppChuteB',
-                state: 'running',
-                config: {
-                  struct: 'stuff here',
-                  runtime: 'more stuff here',
-                  traffic: 'stuff here',
-                  resource: 'stuff here',
-                  files: 'even more stuff here'
-                }
-              }
-            ];
-            */
           }
         );
-
-        //console.log('rp', $routeParams, $routeParams.chuteid);
 
         $scope.chuteURLType = function (type) {
           if (type === 'virtnet') {
