@@ -35,6 +35,7 @@ angular.module('paradropApp')
               }
               mainBody.sessionToken = $scope.sessionToken();
               mainBody.mac = $scope.mac;
+              mainBody.reconid = $scope.groupMaps.reconid;
               $localStorage.mac = $scope.mac;
               $http.post(startURL, mainBody ).then(
                 function() {
@@ -49,6 +50,7 @@ angular.module('paradropApp')
             $scope.finish = function() {
               mainBody.sessionToken = $scope.sessionToken();
               mainBody.mac = $scope.mac;
+              mainBody.reconid = $scope.groupMaps.reconid;
               $http.post(finishURL, mainBody ).then(
                 function() {
                   //nothing to do
@@ -66,6 +68,7 @@ angular.module('paradropApp')
               }
               mainBody.sessionToken = $scope.sessionToken();
               mainBody.mac = $scope.mac;
+              mainBody.reconid = $scope.groupMaps.reconid;
               $http.post(pollURL, mainBody ).then(
                 function(result) {
                   var time = Math.floor(Date.now() / 1000);

@@ -64,6 +64,21 @@ angular.module('paradropApp')
                   for(var zone in $scope.mapData.zones){
                     $scope.createPolygon($scope.mapData.zones[zone]);
                   }
+                  if($scope.mapData.syncCoords){
+                    var lat = $scope.mapData.syncCoords[0];
+                    var lng = $scope.mapData.syncCoords[1];
+                    var myLatlng = new google.maps.LatLng(lat,lng);
+                    var marker = new google.maps.Marker({
+                      position: myLatlng,
+                      map: $scope.map,
+                      title: 'Sync Marker',
+                      draggable: true,
+                      icon: 'images/here.png',
+                      id: 'syncMarker'
+                    });
+                    $scope.map.markers['syncMarker'] = marker;
+                    $scope.updateMarkers();
+                  }
                 });
               }
           , function(error){$scope.mapError = true;});
@@ -76,7 +91,17 @@ angular.module('paradropApp')
       };
 
       $scope.setMap = function(map){
-        console.log(map);
+        if(map.data.invalid){
+          for(var i in $scope.mapsArray){
+            if($scope.mapsArray[i].data.invalid){
+              continue;
+            }else{
+              map = $scope.mapsArray[i];
+              gmapMaker.setIndex(i, 'settings');
+              break;
+            }
+          }
+        }
         $scope.groupMaps = map;
         $scope.group_id = $scope.groupMaps.groupname;
         $scope.apNameMap = $scope.groupMaps.map;
@@ -160,20 +185,16 @@ angular.module('paradropApp')
               $scope.poly.getPath().push(new google.maps.LatLng(opts.bounds[i][0], opts.bounds[i][1]));
             };
             colorName = opts.color;
-            console.log(colorName);
             color = $scope.colorName[opts.color].code;
             name = opts.name;
             type = opts.type;
           }else{
             colorName = $scope.zone.color.name;
-            console.log($scope.colorName);
-            console.log($scope.zone.color);
             color = $scope.colorName[$scope.zone.color.name].code;
             name = $scope.zone.name;
             type = $scope.zone.type.name;
           }
           var paths = $scope.poly.getPath();
-          console.log(paths);
           // Construct the polygon.
           var polygon = new google.maps.Polygon({
             paths: paths,
@@ -214,7 +235,6 @@ angular.module('paradropApp')
             $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type};
           };
         }
-        console.log($scope.settingsJSON.zones);
       };
 
       $scope.nameTaken = function(){
@@ -236,8 +256,6 @@ angular.module('paradropApp')
           }
         }
         $scope.updateZones();
-        console.log($scope.map.polygons);
-        console.log($scope.settingsJSON);
       };
 
       $scope.polyInfo = function(poly){
@@ -400,7 +418,6 @@ angular.module('paradropApp')
             icon: 'images/boundary.png',
             id: 'boundary' + boundID
           });
-          console.log(marker);
           $scope.map.markers['boundary'+ boundID] = marker;
           $scope.boundPoly.getPath().push($scope.map.markers['boundary' + boundID].position);
           google.maps.event.addListener(marker, 'drag', $scope.updateBoundPoly);
@@ -429,7 +446,6 @@ angular.module('paradropApp')
                   delete $scope.map.markers[marker.id];
                   $scope.updateMarkers();
                   $scope.updateBoundPoly();
-                  console.log($scope.settingsJSON);
                 }
               };
       };
@@ -444,19 +460,17 @@ angular.module('paradropApp')
             $scope.settingsJSON.boundary.push(boundary);
           }else if(marker.indexOf('apid') > -1){
             //ap marker
-            var marker = {apid: marker.substring(4), lat: $scope.map.markers[marker].position.k, lng: $scope.map.markers[marker].position.D };
+            var marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].position.k * 100) /100, lng: Math.round($scope.map.markers[marker].position.D * 100) /100 };
             $scope.settingsJSON.aps.push(marker);
+          }else if(marker === 'syncMarker'){
+            $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
           }
         }
-       //console.log($scope.settingsJSON);
-       // console.log('******************');
       };
 
       $scope.submitChanges = function(){
         $scope.confirmZone = false;
         $scope.updateMarkers();
-        //console.log("Validation successful ready to send JSON");
-        //console.log($scope.settingsJSON);
         var body = {
           sessionToken: $scope.sessionToken(),
           reconid: $scope.groupMaps.reconid,
@@ -467,11 +481,9 @@ angular.module('paradropApp')
         $http.post(url, body).then(
             //success
             function(success){
-              console.log(success);
             },
             //error
             function(error){
-              console.log(error);
               alert('Error saving changes to database.');
             }
         );
@@ -509,7 +521,6 @@ angular.module('paradropApp')
       };
 
       $scope.coordsInside = function(lat, lng, boundary) {
-        //console.log('BOUNDARY: testing (%s, %s)', lat, lng);
         var i, j;
         var x = 0;
         var y = 1;

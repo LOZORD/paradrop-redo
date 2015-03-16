@@ -78,18 +78,21 @@ angular.module('paradropApp')
       return newMap; 
     };
 
-    gmapFuncs.buildHeatmap = function(){
+    gmapFuncs.buildHeatmap = function(offset){
+      if(!offset){
+        offset = 0;
+      }
       var genFakeMarkers = function(cnt, noise) {
         var markers = [];
         var hotspots = [
-          [-20, -40],
-          [-20, -53],
-          [-10, -33],
-          [-10, -45],
-          [-25, -45],
-          [-28.5, -36],
-          [-26, -49],
-          [-20, -33]
+          [-20, -40 + offset],
+          [-20, -53 + offset],
+          [-10, -33 + offset],
+          [-10, -45 + offset],
+          [-25, -45 + offset],
+          [-28.5, -36 + offset],
+          [-26, -49 + offset],
+          [-20, -33 + offset]
         ];
         for(var i = 0; i < cnt ; i++) {
           // First randomly choose a hotspot

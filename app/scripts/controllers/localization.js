@@ -82,6 +82,17 @@ angular.module('paradropApp')
 
       $scope.setMap = function(map){
         console.log(map);
+        if(map.data.invalid){
+          for(var i in $scope.mapsArray){
+            if($scope.mapsArray[i].data.invalid){
+              continue;
+            }else{
+              map = $scope.mapsArray[i];
+              gmapMaker.setIndex(i, 'localization');
+              break;
+            }
+          }
+        }
         $scope.groupMaps = map;
         $scope.group_id = $scope.groupMaps.groupname;
         $scope.apNameMap = $scope.groupMaps.map;
