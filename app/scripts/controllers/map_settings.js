@@ -286,15 +286,11 @@ angular.module('paradropApp')
       };
 
       $scope.numZoneMarkers = function(){
-        var z = 0;
-        if($scope.map){
-          for(var i in $scope.map.markers){
-            if(i.indexOf('zone') > -1){
-              z++;
-            }
-          }
+        if($scope.poly){
+          return $scope.poly.getPath().length < 3;
+        }else{
+          return false;
         }
-        return z;
       };
 
       $scope.addZoneBoundary = function(){

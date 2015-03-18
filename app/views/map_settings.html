@@ -36,7 +36,7 @@
   <div class='col-md-12 form-group'>
     <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode">Save Changes</button>
     <button class="btn btn-primary" ng-click="addZone()" ng-if="!isZoneMode" ng-disabled="isDeleteMode">Add Zone</button>
-    <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-if="isZoneMode">Confirm Zone</button>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-click="$digest" ng-if="isZoneMode">Confirm Zone</button>
     <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
     <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode">Add Boundary</button>
     <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete AP's/Boundaries"}}</button>
@@ -59,7 +59,7 @@
         <h4 class="modal-title" id="zoneLabel">Zone Info</h4>
       </div>
       <div class="modal-body">
-        <div class="alert alert-danger" role="alert" ng-show='numZoneMarkers() < 3'>
+        <div class="alert alert-danger" role="alert" ng-show='numZoneMarkers()'>
           You must have a least three boundaries to make a zone.
         </div>
         <div class="alert alert-danger" role="alert" ng-show='nameTaken()'>
@@ -93,7 +93,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">
           Cancel
         </button>
-        <button data-dismiss="modal" ng-click="confirmZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() < 3 || nameTaken()">
+        <button data-dismiss="modal" ng-click="confirmZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() || nameTaken()">
           Submit Zone
         </button>
       </div>
