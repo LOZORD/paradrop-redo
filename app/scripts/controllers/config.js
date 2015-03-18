@@ -61,8 +61,10 @@ angular.module('paradropApp')
                 function (result) {
                   $scope.configUpdateData = angular.copy(result.data[0]);
                   //used for reverting
-                  $scope.origConfigData = angular.copy($scope.configUpdateData);
-                  $scope.isUsingSlowChannel = $scope.usingSlowChannel($scope.configUpdateData.channel);
+                  if ($scope.configUpdateData) {
+                    $scope.origConfigData = angular.copy($scope.configUpdateData);
+                    $scope.isUsingSlowChannel = $scope.usingSlowChannel($scope.configUpdateData.channel);
+                  }
                 },
                 function () {
                   $scope.configUpdateData = {

@@ -38,7 +38,7 @@ angular.module('paradropApp')
             //don't worry about LXC/lxc's for now
 
             $scope.chutes = $scope.chutes.filter(function (chute) {
-              return chute.type.toLowerCase() != 'lxc';
+              return chute.type.toLowerCase() !== 'lxc';
             });
 
             if ($routeParams.chuteid) {
@@ -57,9 +57,26 @@ angular.module('paradropApp')
               //config is a string, let's decode and parse it
               var decodedConfig = decodeURIComponent($rootScope.specificChute.config);
               var configObj = JSON.parse(decodedConfig);
-              $rootScope.specificChute.config = configObj;
 
+              if (configObj && !$.isEmptyObject(configObj))
+              {
+                $rootScope.specificChute.config = configObj;
+
+                /*
+                XXX perhaps just do firstChar + '...' + lastChar
+                var passwd = $rootScope.specificChute.config.passwd;
+                var passln = passwd.length;
+
+                //replace the middle characters with stars
+                //there's probably a better way to do this
+                $rootScope.specificChute.hiddenPassword = passwd.charAt(0).concat(new Array(passln - 1).join('*')).concat(passwd.charAt(passln-1));
+                */
+              }
               //if no specific chute is found...
+              else
+              {
+                window.alert('No associated configuration with this chute!');
+              }
             }
           },
           function () {

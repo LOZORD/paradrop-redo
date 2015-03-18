@@ -3,7 +3,8 @@
     <div class='container'>
       <span style='overflow-wrap:break-word;'>
         <h1>
-          <strong>{{ specificChute.name }}</strong>: Virtual Network Update
+          <strong>{{ specificChute.name }}</strong>: Virtual Network
+          <!-- the link to edit this vnet -->
           <a ng-href='#!/my_paradrop/configs/{{apid}}/chutes/vnets/{{chuteid}}/update'>
             <span class='glyphicon glyphicon-edit' aria-hidden='true'></span>
           </a>
@@ -12,8 +13,20 @@
     </div>
     <br>
     <ul>
-      <li ng-repeat='(key,val) in specificChute.config'>
-        <strong>{{ key.toUpperCase() }}</strong>: {{ val }}
+      <li>
+        <strong>Password</strong>: {{ specificChute.config.passwd }}
+      </li>
+      <li>
+        <strong>Encryption</strong>: {{ specificChute.config.encryption }}
+      </li>
+      <li>
+        <strong>Subnet</strong>: {{ specificChute.config.subnet }}
+      </li>
+      <li>
+        <strong>Qos Up</strong>: {{ specificChute.config.qosup }}
+      </li>
+      <li>
+        <strong>Qos Down</strong>: {{ specificChute.config.qosdown }}
       </li>
     </ul>
   </div>
