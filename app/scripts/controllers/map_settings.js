@@ -494,7 +494,7 @@ angular.module('paradropApp')
         var boundaries = [];
         var arr = $scope.poly.getPath().j;
         for(var i in arr){
-          boundaries.push([arr[i].k, arr[i].D]);
+          boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
         }
         if($scope.settingsJSON.zones){
           for(var zone in $scope.settingsJSON.zones){
