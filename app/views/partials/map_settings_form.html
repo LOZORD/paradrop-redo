@@ -1,35 +1,139 @@
-<form name="mapSettings">
+<form name="mapSettingsForm">
   <div class="form-group">
     <label for=="name">Name:</label> 
-    <input type="text" class="form-control" id="name" ng-model="settingsJSON.name" />
+    <input type="text" class="form-control" id="name" name="name" required ng-model="mapSettingsFields.name" />
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.name.$dirty && mapSettingsForm.name.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.name.$error.required'>
+        Required Field.
+      </small>
+    </div>
   </div>
   <div class="form-group">
     <label for=="centerX">Lat Center:</label> 
-    <input type="number" class="form-control" id="centerX" ng-model="settingsJSON.centerX" />
+    <input type="number" class="form-control" id="centerX" name="centerX" required ng-model="mapSettingsFields.centerX" />
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.centerX.$dirty && mapSettingsForm.centerX.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.centerX.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.centerX.$error.number'>
+        This field must be a number.
+      </small>
+    </div>
   </div>
   <div class="form-group">
     <label for=="centerY">Lng Center:</label> 
-    <input type="number" class="form-control" id="centerY" ng-model="settingsJSON.centerY" />
+    <input type="number" class="form-control" id="centerY" name="centerY" required ng-model="mapSettingsFields.centerY" />
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.centerY.$dirty && mapSettingsForm.centerY.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.centerY.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.centerY.$error.number'>
+        This field must be a number.
+      </small>
+    </div>
   </div>
   <div class="form-group">
     <label for=="maxZoom">Max Zoom:</label> 
-    <input type="number" class="form-control" id="maxZoom" ng-model="settingsJSON.maxZoom" />
+    <input type="number" class="form-control" id="maxZoom" name="maxZoom" required ng-model="mapSettingsFields.maxZoom" />
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.maxZoom.$dirty && mapSettingsForm.maxZoom.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.maxZoom.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.maxZoom.$error.number'>
+        This field must be a number.
+      </small>
+    </div>
   </div>
   <div class="form-group">
     <label for=="minZoom">Min Zoom:</label> 
-    <input type="number" class="form-control" id="minZoom" ng-model="settingsJSON.minZoom" />
+    <input type="number" class="form-control" id="minZoom" name="minZoom" required ng-model="mapSettingsFields.minZoom" />
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.minZoom.$dirty && mapSettingsForm.minZoom.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.minZoom.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.minZoom.$error.number'>
+        This field must be a number.
+      </small>
+    </div>
   </div>
   <div class="form-group">
     <label for=="radius">Radius:</label> 
-    <input type="number" class="form-control" id="radius" ng-model="settingsJSON.radius" />
+    <input type="number" class="form-control" id="radius" name="radius" required ng-model="mapSettingsFields.radius" />
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.radius.$dirty && mapSettingsForm.radius.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.radius.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.radius.$error.number'>
+        This field must be a number.
+      </small>
+    </div>
   </div>
   <div class="form-group">
     <label for=="tileSizeX">Tile Size X:</label> 
-    <input type="number" class="form-control" id="tileSizeX" ng-model="settingsJSON.tileSizeX" />
+    <input type="number" class="form-control" id="tileSizeX" name="tileSizeX" required ng-model="mapSettingsFields.tileSizeX" />
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.tileSizeX.$dirty && mapSettingsForm.tileSizeX.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.tileSizeX.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.tileSizeX.$error.number'>
+        This field must be a number.
+      </small>
+    </div>
   </div>
   <div class="form-group">
     <label for=="tileSizeY">Tile Size Y:</label> 
-    <input type="number" class="form-control" id="tileSizeY" name="tileSizeY"
-    ng-model="settingsJSON.tileSizeY"/>
+    <input type="number" class="form-control" id="tileSizeY" name="tileSizeY" required
+    ng-model="mapSettingsFields.tileSizeY"/>
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.tileSizeY.$dirty && mapSettingsForm.tileSizeY.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.tileSizeY.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.tileSizeY.$error.number'>
+        This field must be a number.
+      </small>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for=="minCoords">Min Coords(lat,lng):</label> 
+    <input type="text" class="form-control" id="minCoords" name="minCoords" ng-model="mapSettingsFields.minCoords" required pattern="\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*"\>
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.minCoords.$dirty && mapSettingsForm.minCoords.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.minCoords.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.minCoords.$error.pattern'>
+        The min coords must be entered as a comma delimited pair i.e. lat,lng
+      </small>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for=="maxCoords">Max Coords(lat,lng):</label> 
+    <input type="text" class="form-control" id="maxCoords" name="maxCoords" required pattern="\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*"
+    ng-model="mapSettingsFields.maxCoords"/>
+    <div  class='error-container bg-danger'
+          ng-show='mapSettingsForm.maxCoords.$dirty && mapSettingsForm.maxCoords.$invalid'>
+      <small class='error' ng-show='mapSettingsForm.maxCoords.$error.required'>
+        Required Field.
+      </small>
+      <small class='error' ng-show='mapSettingsForm.maxCoords.$error.pattern'>
+        The max coords must be entered as a comma delimited pair i.e. lat,lng
+      </small>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="resetMapSettings()" class="btn btn-default" data-dismiss="modal">
+      Cancel
+    </button>
+    <button data-dismiss="modal" ng-click="saveMapSettings();submitChanges();" ng-disabled="mapSettingsForm.$invalid" class="btn btn-primary">
+      Submit changes
+    </button>
   </div>
 </form>

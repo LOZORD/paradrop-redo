@@ -36,6 +36,19 @@ angular.module('paradropApp')
           {name:'Outside'},
           {name:'Impossible'}
       ];
+      $scope.mapSettingsFields = {
+        name: null,
+        centerX: null,
+        centerY: null,
+        maxZoom: null,
+        minZoom: null,
+        radius: null,
+        tileSizeX: null,
+        tileSizeY: null,
+        minCoords: null,
+        maxCoords: null
+      };
+
       var isDeleteMode = false;
       $scope.settingsJSON = {};
       $scope.zone = {};
@@ -79,11 +92,30 @@ angular.module('paradropApp')
                     $scope.map.markers['syncMarker'] = marker;
                     $scope.updateMarkers();
                   }
+                  if($scope.mapData.minCoords && $scope.mapData.maxCoords){
+                    console.log($scope.mapData.minCoords);
+                    console.log($scope.mapData.maxCoords);
+                    $scope.drawMinMaxBounds();
+                  }
                 });
               }
           , function(error){$scope.mapError = true;});
         };
       });
+
+      $scope.drawMinMaxBounds = function(){
+        if($scope.minMaxPoly){
+          $scope.minMaxPoly.setMap(null);
+          $scope.minMaxPoly = null;
+        }
+        $scope.minMaxPoly = $scope.newPoly('#191970');
+        $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.minCoords[0],$scope.mapData.minCoords[1]));
+        $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.maxCoords[0],$scope.mapData.minCoords[1]));
+        $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.maxCoords[0],$scope.mapData.maxCoords[1]));
+        $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.minCoords[0],$scope.mapData.maxCoords[1]));
+        $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.minCoords[0],$scope.mapData.minCoords[1]));
+        $scope.minMaxPoly.setMap($scope.map);
+      };
 
       $scope.switchMap = function(index){
         gmapMaker.setIndex(index, 'settings');
@@ -137,6 +169,29 @@ angular.module('paradropApp')
         for(var marker in $scope.map.markers){
           $scope.map.markers[marker].setVisible(isVisible);
         }
+      };
+
+      $scope.resetMapSettings = function(){
+        for(var i in $scope.mapSettingsFields){
+          console.log($scope.settingsJSON[i]);
+          $scope.mapSettingsFields[i] = angular.copy($scope.settingsJSON[i]);
+        }
+        console.log($scope.mapSettingsFields);
+      };
+
+      $scope.saveMapSettings = function(){
+        for(var i in $scope.mapSettingsFields){
+          $scope.settingsJSON[i] = angular.copy($scope.mapSettingsFields[i]);
+        }
+        if(angular.isString($scope.settingsJSON.minCoords)){
+          var arr = $scope.settingsJSON.minCoords.split(",");
+          $scope.settingsJSON.minCoords = [parseFloat(arr[0]), parseFloat(arr[1])];
+        }
+        if(angular.isString($scope.settingsJSON.maxCoords)){
+          var arr = $scope.settingsJSON.maxCoords.split(",");
+          $scope.settingsJSON.maxCoords = [parseFloat(arr[0]), parseFloat(arr[1])];
+        }
+        console.log($scope.mapSettingsFields);
       };
 
       $scope.addZone = function(){
@@ -482,7 +537,7 @@ angular.module('paradropApp')
             function(error){
               alert('Error saving changes to database.');
             }
-        );
+        )
         $route.reload();
       };
 

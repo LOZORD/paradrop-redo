@@ -11,7 +11,7 @@
         <li ng-repeat="map in mapsArray" ng-if="!map.data.invalid"><a ng-click="switchMap($index)">{{map.groupname}}-{{map.data.name}}</a></li>
       </ul>
     </div>
-    <button class="btn btn-primary" data-toggle="modal" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode">Map Settings</button>
+    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings()" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode">Map Settings</button>
   </div>
 </div>
   <!-- Tab panes -->
@@ -101,11 +101,11 @@
   </div>
 </div>
 
-<div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-labelledby="Settings" aria-hidden="true">
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="settings" tabindex="-1" role="dialog" aria-labelledby="Settings" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">
+        <button type="button" class="close" ng-click="resetMapSettings()" data-dismiss="modal">
           <span aria-hidden="true">&times;</span>
           <span class="sr-only">Cancel</span>
         </button>
@@ -113,14 +113,6 @@
       </div>
       <div class="modal-body">
         <ng-include src="'views/partials/map_settings_form.html'"></ng-include>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">
-          Cancel
-        </button>
-        <button data-dismiss="modal" ng-click="submitChanges()" class="btn btn-primary">
-          Submit changes
-        </button>
       </div>
     </div>
   </div>
