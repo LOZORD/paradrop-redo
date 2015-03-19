@@ -11,7 +11,7 @@
         <li ng-repeat="map in mapsArray" ng-if="!map.data.invalid"><a ng-click="switchMap($index)">{{map.groupname}}-{{map.data.name}}</a></li>
       </ul>
     </div>
-    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings()" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode">Map Settings</button>
+    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings()" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode || isScaling">Map Settings</button>
   </div>
 </div>
   <!-- Tab panes -->
@@ -70,13 +70,13 @@
 </div>
 <div class="row">
   <div class='col-md-12 form-group'>
-    <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode">Save Changes</button>
-    <button class="btn btn-primary" ng-click="addZone()" ng-if="!isZoneMode" ng-disabled="isDeleteMode">Add Zone</button>
+    <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode || isScaling">Save Changes</button>
+    <button class="btn btn-primary" ng-click="addZone()" ng-if="!isZoneMode" ng-disabled="isDeleteMode || isScaling">Add Zone</button>
     <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-click="$digest" ng-if="isZoneMode">Confirm Zone</button>
     <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
-    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode">Add Boundary</button>
-    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete AP's/Boundaries"}}</button>
-    <button class="btn btn-primary" ng-click="changeScaleFactor()" ng-disabled="isZoneMode || isDeleteMode || isScaleMode">Adjust Scale Factor</button>
+    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode || isScaling">Add Boundary</button>
+    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling">{{isDeleteMode ? "Exit Delete Mode" : "Delete AP's/Boundaries"}}</button>
+    <button class="btn btn-primary" ng-click="changeScaleFactor()" ng-disabled="isZoneMode || isDeleteMode || isScaling">Adjust Scale Factor</button>
     <div class="checkbox">
       <label>
         <input type="checkbox" ng-click="toggleMarkers()" ng-disabled="isZoneMode"> Hide Markers

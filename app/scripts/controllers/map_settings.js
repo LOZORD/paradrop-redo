@@ -168,6 +168,7 @@ angular.module('paradropApp')
 
       $scope.changeScaleFactor = function(){
         $scope.isScaleMode = true;
+        $scope.isScaling = true;
         $scope.scaleArr = [];
         $scope.$watch(function(){if($scope.scaleArr){return $scope.scaleArr.length;}else{return 0;}},
             function(newVal, oldVal){if(newVal === 2){$scope.isScaleMode = false; $scope.pickScale = true;}});
@@ -179,13 +180,14 @@ angular.module('paradropApp')
         var latDelta = Math.abs($scope.scaleArr[0].lat() - $scope.scaleArr[1].lat());
         var lngDelta = Math.abs($scope.scaleArr[0].lng() - $scope.scaleArr[1].lng());
         if(latDelta > lngDelta){
-          $scope.settingsJSON.scale = $scope.scaleDist / latDelta;
+          $scope.settingsJSON.scale = Math.round(($scope.scaleDist / latDelta) * 1000) / 1000;
         }else{
-          $scope.settingsJSON.scale = $scope.scaleDist / lngDelta;
+          $scope.settingsJSON.scale = Math.round(($scope.scaleDist / lngDelta) * 1000) / 1000;
         }
         console.log($scope.settingsJSON.scale);
         $scope.justSetScale = true;
-        $scope.scaleDist = null;
+        $scope.isScaling = false;
+        delete $scope.scaleDist;
       };
 
       var isVisible = true;
