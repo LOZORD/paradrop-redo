@@ -32,6 +32,42 @@
   </div>
 </div>
 <br>
+<div class="alert alert-info" role="alert" ng-show="isScaleMode">
+  Click on two points to set scale factor.
+</div>
+<div class="alert alert-warning" role="alert" ng-show="pickScale">
+  <div class="row">
+    <div class="col-sm-9">
+      <form name="scaleForm">
+        <div class="form-group">
+          <label for=="scaleDist">Please enter the distance in feet between the points:</label> 
+          <input type="number" class="form-control" id="scaleDist" name="scaleDist" required ng-model="scaleDist" />
+          <div  class='error-container bg-danger'
+                ng-show='scaleForm.scaleDist.$dirty && scaleForm.scaleDist.$invalid'>
+            <small class='error' ng-show='scaleForm.scaleDist.$error.required'>
+              Required Field.
+            </small>
+            <small class='error' ng-show='scaleForm.scaleDist.$error.number'>
+              This field must be a number.
+            </small>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-sm-3">
+      <button type="button" class="btn btn-warning pull-right" ng-click="calcScale()" ng-disabled="scaleForm.$invalid">
+        submit
+      </button>
+    </div>
+  </div>
+</div>
+<div class="alert alert-success" role="alert" ng-show="justSetScale">
+  You successfully set the scale factor to: {{settingsJSON.scale}}. Remember to <b>Save</b> this change if it is correct!
+  <button type="button" class="close" ng-click="justSetScale = false;">
+    <span aria-hidden="true">&times;</span>
+    <span class="sr-only">Cancel</span>
+  </button>
+</div>
 <div class="row">
   <div class='col-md-12 form-group'>
     <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode">Save Changes</button>
@@ -40,6 +76,7 @@
     <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
     <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode">Add Boundary</button>
     <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete AP's/Boundaries"}}</button>
+    <button class="btn btn-primary" ng-click="changeScaleFactor()" ng-disabled="isZoneMode || isDeleteMode || isScaleMode">Adjust Scale Factor</button>
     <div class="checkbox">
       <label>
         <input type="checkbox" ng-click="toggleMarkers()" ng-disabled="isZoneMode"> Hide Markers
