@@ -208,6 +208,16 @@ angular.module('paradropApp')
         }
       };
 
+      $scope.toggleZones = function(){
+        var zonesVisible = true;
+        return function(){
+          zonesVisible = !zonesVisible
+          for(var zone in $scope.map.polygons){
+            $scope.map.polygons[zone].setVisible(zonesVisible);
+          }
+        };
+      }();
+
       $scope.turnMarkersOn = function(){
         for(var marker in $scope.map.markers){
           $scope.map.markers[marker].setVisible(true);
@@ -464,7 +474,8 @@ angular.module('paradropApp')
         var polyOptions = {
           strokeColor: color,
           strokeOpacity: 1.0,
-          strokeWeight: 3
+          strokeWeight: 3,
+          clickable: false
         };
 
         var poly = new google.maps.Polyline(polyOptions);
