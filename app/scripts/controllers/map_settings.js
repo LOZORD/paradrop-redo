@@ -78,6 +78,9 @@ angular.module('paradropApp')
                   for(var zone in $scope.mapData.zones){
                     $scope.createPolygon($scope.mapData.zones[zone]);
                   }
+                  for(var mac in $scope.mapData.fixedMacs){
+                    $scope.addMacMarker($scope.mapData.fixedMacs[mac], mac);
+                  }
                   if($scope.mapData.syncCoords){
                     var lat = $scope.mapData.syncCoords[0];
                     var lng = $scope.mapData.syncCoords[1];
@@ -94,8 +97,6 @@ angular.module('paradropApp')
                     $scope.updateMarkers();
                   }
                   if($scope.mapData.minCoords && $scope.mapData.maxCoords){
-                    console.log($scope.mapData.minCoords);
-                    console.log($scope.mapData.maxCoords);
                     $scope.drawMinMaxBounds();
                   }
                 });
@@ -245,6 +246,7 @@ angular.module('paradropApp')
       $scope.addZone = function(){
         $scope.zone.name = '';
         $scope.zone.color = '';
+        $scope.zone.type = undefined;
         $scope.turnMarkersOff();
         if($scope.settingsJSON.zones){
           for(var zone in $scope.settingsJSON.zones){
@@ -341,6 +343,17 @@ angular.module('paradropApp')
         }
       };
 
+      $scope.macNameTaken = function(){
+        if($scope.nameCheckDisabled){
+          return false;
+        }
+        if($scope.settingsJSON && $scope.settingsJSON.fixedMacs && $scope.fixedMac){
+          return !!$scope.settingsJSON.fixedMacs[$scope.fixedMac.name];
+        }else{
+          return false;
+        }
+      };
+
       $scope.nameTaken = function(){
         if($scope.settingsJSON && $scope.settingsJSON.zones){
           return !!$scope.settingsJSON.zones[$scope.zone.name];
@@ -349,6 +362,23 @@ angular.module('paradropApp')
         }
       };
 
+      $scope.saveFixedMac = function(){
+        $scope.nameCheckDisabled = true;
+        if(!$scope.settingsJSON.fixedMacs){
+          $scope.settingsJSON.fixedMacs = {};
+        }
+        if(angular.isString($scope.fixedMac.position)){
+          var arr = $scope.fixedMac.position.split(",");
+          $scope.fixedMac.position = [parseFloat(arr[0]), parseFloat(arr[1])];
+        }
+        $scope.settingsJSON.fixedMacs[$scope.fixedMac.name] = { mac: $scope.fixedMac.mac, position: $scope.fixedMac.position };
+        $scope.addMacMarker($scope.settingsJSON.fixedMacs[$scope.fixedMac.name], $scope.fixedMac.name);
+        console.log($scope.settingsJSON);
+      };
+
+      $scope.resetFixedMac = function(){
+        delete $scope.fixedMac;
+      };
 
       $scope.deleteZone = function(zone){
         zone.setMap(null);
@@ -498,6 +528,22 @@ angular.module('paradropApp')
         $scope.updateMarkers();
       };
 
+      $scope.addMacMarker = function(mac,name){
+        var myLatlng = new google.maps.LatLng(mac.position[0],mac.position[1]);
+        var marker = new google.maps.Marker(
+        {
+          position: myLatlng,
+          map: $scope.map,
+          title: 'Fixed Mac: ' + name + '\nAddress: ' + mac.mac,
+          draggable: true,
+          icon: 'images/red-wifi.png',
+          id: 'macMarker' + name,
+          mac: mac.mac
+        });
+        $scope.map.markers['macMarker'+ name] = marker;
+        $scope.updateMarkers();
+      };
+
       $scope.addBoundary = function(){
       
         //create id counter in private scope  
@@ -534,7 +580,9 @@ angular.module('paradropApp')
         $scope.isDeleteMode = !$scope.isDeleteMode;
         if($scope.isDeleteMode){
           for(var marker in $scope.map.markers){
-            google.maps.event.addListener($scope.map.markers[marker], 'click', removeMarkerFnc($scope.map.markers[marker]));
+            if(marker != 'syncMarker' && !(marker.indexOf('apid') > -1)){
+              google.maps.event.addListener($scope.map.markers[marker], 'click', removeMarkerFnc($scope.map.markers[marker]));
+            }
           }
         }
       };
@@ -555,6 +603,7 @@ angular.module('paradropApp')
       $scope.updateMarkers = function() {
         $scope.settingsJSON.aps = [];
         $scope.settingsJSON.boundary = [];
+        $scope.settingsJSON.fixedMacs = {};
         for(var marker in $scope.map.markers){
           if(marker.indexOf('boundary') > -1 ){
             //boundary marker
@@ -566,7 +615,12 @@ angular.module('paradropApp')
             $scope.settingsJSON.aps.push(marker);
           }else if(marker === 'syncMarker'){
             $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
+          }else if(marker.indexOf('macMarker') > -1){
+            $scope.settingsJSON.fixedMacs[marker.substring(9)] = {};
+            $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
+            $scope.settingsJSON.fixedMacs[marker.substring(9)].mac = $scope.map.markers[marker].mac;
           }
+
         }
       };
 

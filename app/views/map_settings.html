@@ -11,7 +11,7 @@
         <li ng-repeat="map in mapsArray" ng-if="!map.data.invalid"><a ng-click="switchMap($index)">{{map.groupname}}-{{map.data.name}}</a></li>
       </ul>
     </div>
-    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings()" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode || isScaling">Map Settings</button>
+    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings();mapSettingsForm.$setPristine();" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode || isScaling">Map Settings</button>
   </div>
 </div>
   <!-- Tab panes -->
@@ -74,12 +74,13 @@
 <div class="row">
   <div class='col-md-12 form-group'>
     <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode || isScaling">Save Changes</button>
-    <button class="btn btn-primary" ng-click="addZone()" ng-if="!isZoneMode" ng-disabled="isDeleteMode || isScaling">Add Zone</button>
+    <button class="btn btn-primary" ng-click="addZone();zoneForm.$setPristine();" ng-if="!isZoneMode" ng-disabled="isDeleteMode || isScaling">Add Zone</button>
     <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-click="$digest" ng-if="isZoneMode">Confirm Zone</button>
     <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
     <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode || isScaling">Add Boundary</button>
-    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling">{{isDeleteMode ? "Exit Delete Mode" : "Delete AP's/Boundaries"}}</button>
-    <button class="btn btn-primary" ng-click="changeScaleFactor()" ng-disabled="isZoneMode || isDeleteMode || isScaling">Adjust Scale Factor</button>
+    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling">{{isDeleteMode ? "Exit Delete Mode" : "Delete Mode"}}</button>
+    <button class="btn btn-primary" ng-click="changeScaleFactor();scaleForm.$setPristine();" ng-disabled="isZoneMode || isDeleteMode || isScaling">Adjust Scale Factor</button>
+    <button class="btn btn-primary" ng-click="nameCheckDisabled=false;resetFixedMac();fixedMacForm.$setPristine();" data-toggle="modal" data-target="#fixedMacs" ng-disabled="isZoneMode || isDeleteMode || isScaling">Add Fixed Location MAC</button>
     <div class="checkbox">
       <label>
         <input type="checkbox" ng-click="toggleMarkers()" ng-bind="markersVisible" ng-disabled="isZoneMode"> Hide Markers
@@ -88,7 +89,7 @@
   </div>
 </div>
 
-<div class="modal fade" id="zones" tabindex="-1" role="dialog" aria-labelledby="zones" aria-hidden="true">
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="zones" tabindex="-1" role="dialog" aria-labelledby="zones" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
@@ -135,6 +136,74 @@
         </button>
         <button data-dismiss="modal" ng-click="acceptZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() || nameTaken()">
           Submit Zone
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" data-backdrop="static" data-keyboard="false" id="fixedMacs" tabindex="-1" role="dialog" aria-labelledby="fixedMacs" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" ng-click="resetFixedMac()" class="close" data-dismiss="modal">
+          <span aria-hidden="true">&times;</span>
+          <span class="sr-only">Cancel</span>
+        </button>
+        <h4 class="modal-title" id="fixedMacLabel">Add a new Fixed Location Mac Address</h4>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" role="alert" ng-show='macNameTaken()'>
+          That name is already taken! Please select a new name or delete the other fixed mac first.
+        </div>
+        <form name="fixedMacForm">
+          <div class="form-group">
+            <label for=="macName">Name:</label> 
+            <input type="text" class="form-control" id="macName" name="name" ng-model="fixedMac.name" required pattern="\s*\w*\s*"/>
+            <div  class='error-container bg-danger'
+                  ng-show='fixedMacForm.name.$dirty && fixedMacForm.name.$invalid'>
+              <small class='error' ng-show='fixedMacForm.name.$error.required'>
+                A name is required.
+              </small>
+              <small class='error' ng-show='fixedMacForm.name.$error.pattern'>
+                The name can only contain letters, numbers, and underscores with no spaces.
+              </small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for=="mac">MAC Address:</label> 
+            <input type="text" class="form-control" id="mac" name="mac" ng-model="fixedMac.mac" required pattern="([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})"/>
+            <div  class='error-container bg-danger'
+                  ng-show='fixedMacForm.mac.$dirty && fixedMacForm.mac.$invalid'>
+              <small class='error' ng-show='fixedMacForm.mac.$error.required'>
+                A MAC address is required.
+              </small>
+              <small class='error' ng-show='fixedMacForm.mac.$error.pattern'>
+                Invalid MAC Address.
+              </small>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for=="macPosition">Location (lat,lng):</label> 
+            <input type="text" class="form-control" id="macPosition" name="macPosition" ng-model="fixedMac.position" required pattern="\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*"\>
+            <div  class='error-container bg-danger'
+                  ng-show='fixedMacForm.macPosition.$dirty && fixedMacForm.macPosition.$invalid'>
+              <small class='error' ng-show='fixedMacForm.macPosition.$error.required'>
+                Required Field.
+              </small>
+              <small class='error' ng-show='fixedMacForm.macPosition.$error.pattern'>
+                The position must be entered as a comma delimited pair i.e. lat,lng
+              </small>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" ng-click="resetFixedMac()" class="btn btn-default" data-dismiss="modal">
+          Cancel
+        </button>
+        <button data-dismiss="modal" ng-click="saveFixedMac()" class="btn btn-primary" ng-disabled="fixedMacForm.$invalid || macNameTaken()">
+          Submit
         </button>
       </div>
     </div>
