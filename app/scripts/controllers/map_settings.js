@@ -10,6 +10,7 @@
 angular.module('paradropApp')
   .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', 'gmapMaker', '$route',
     function ($scope, URLS, $http, $sce, gmapMaker, $route) {
+      $scope.markersVisible = true;
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
           {name:'YELLOW', code:'#FFFF00'},
@@ -149,6 +150,12 @@ angular.module('paradropApp')
         }
       };
 
+      $scope.pendingChanges = function(){
+        //console.log(JSON.stringify($scope.mapData) != JSON.stringify($scope.settingsJSON));
+        //return JSON.stringify($scope.mapData) != JSON.stringify($scope.settingsJSON);
+        return false;
+      };
+
       $scope.onClick = function(event) {
         var ll = event.latLng;
         if(!$scope.isDeleteMode && !$scope.isZoneMode){
@@ -190,11 +197,25 @@ angular.module('paradropApp')
         delete $scope.scaleDist;
       };
 
-      var isVisible = true;
       $scope.toggleMarkers = function(){
-        isVisible = !isVisible;
+        if($scope.markersVisible){
+          $scope.turnMarkersOff();
+          $scope.markersVisible = false;
+        }else{
+          $scope.turnMarkersOn();
+          $scope.markersVisible = true;
+        }
+      };
+
+      $scope.turnMarkersOn = function(){
         for(var marker in $scope.map.markers){
-          $scope.map.markers[marker].setVisible(isVisible);
+          $scope.map.markers[marker].setVisible(true);
+        }
+      };
+
+      $scope.turnMarkersOff = function(){
+        for(var marker in $scope.map.markers){
+          $scope.map.markers[marker].setVisible(false);
         }
       };
 
@@ -224,7 +245,7 @@ angular.module('paradropApp')
       $scope.addZone = function(){
         $scope.zone.name = '';
         $scope.zone.color = '';
-        $scope.toggleMarkers();
+        $scope.turnMarkersOff();
         if($scope.settingsJSON.zones){
           for(var zone in $scope.settingsJSON.zones){
             zone = $scope.settingsJSON.zones[zone];
@@ -238,7 +259,8 @@ angular.module('paradropApp')
       };
 
       $scope.acceptZone = function(){
-        setTimeout($scope.confirmZone, 0);
+        setTimeout($scope.confirmZone, 500);
+        $scope.isZoneMode = false;
       };
 
       $scope.confirmZone = function(){
@@ -361,7 +383,9 @@ angular.module('paradropApp')
           }
         }, 0);
         
-        $scope.toggleMarkers();
+        if($scope.markersVisible){
+          $scope.turnMarkersOn();
+        }
         //clean up polyline
         $scope.resetPoly();
         $scope.isZoneMode = false;
@@ -612,4 +636,5 @@ angular.module('paradropApp')
         }
         return c;
       };
+
   }]);

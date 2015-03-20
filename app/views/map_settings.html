@@ -15,6 +15,9 @@
   </div>
 </div>
   <!-- Tab panes -->
+  <div class="alert alert-danger" role="alert" ng-show="pendingChanges()" ng-cloak>
+    <b>You have pending changes that have not been saved!</b>
+  </div>
   <div class="tab-pane">
     <h1 ng-if="mapError">Error loading map</h1>
     <img class="img-responsive center-block" ng-show="!(mapData || mapError)" ng-src='images/spinner.gif'/>
@@ -79,7 +82,7 @@
     <button class="btn btn-primary" ng-click="changeScaleFactor()" ng-disabled="isZoneMode || isDeleteMode || isScaling">Adjust Scale Factor</button>
     <div class="checkbox">
       <label>
-        <input type="checkbox" ng-click="toggleMarkers()" ng-disabled="isZoneMode"> Hide Markers
+        <input type="checkbox" ng-click="toggleMarkers()" ng-bind="markersVisible" ng-disabled="isZoneMode"> Hide Markers
       </label>
     </div>
   </div>
@@ -130,7 +133,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">
           Cancel
         </button>
-        <button data-dismiss="modal" ng-click="confirmZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() || nameTaken()">
+        <button data-dismiss="modal" ng-click="acceptZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() || nameTaken()">
           Submit Zone
         </button>
       </div>
