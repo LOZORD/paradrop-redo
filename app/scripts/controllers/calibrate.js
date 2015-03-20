@@ -39,7 +39,18 @@ angular.module('paradropApp')
               $localStorage.mac = $scope.mac;
               $http.post(startURL, mainBody ).then(
                 function() {
-                  //nothing to do
+                  //create wifi network
+                  var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id +'/create';
+                  var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib' };
+                  $http.post(wifiURL, wifiBody).then(
+                    function(success) {
+                      //success
+                      alert('Wifi network created.');
+                    },
+                    function(error){
+                      //failure
+                      alert('Error failed to create network.');
+                    });
                 },
                 function(){
                   alert('There was an error you may already have started tracking.');
@@ -54,6 +65,17 @@ angular.module('paradropApp')
               $http.post(finishURL, mainBody ).then(
                 function() {
                   //nothing to do
+                  var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id + '/destroy';
+                  var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib'};
+                  $http.post(wifiURL, wifiBody).then(
+                    function(success){
+                      //succesful destroy
+                      alert('Wifi network destroyed.');
+                    },
+                    function(error){
+                      //failure to destroy
+                      alert('Error failed to destroy Network');
+                    });
                 },
                 function(){
                   alert('There was an error make sure you started tracking.');
