@@ -534,7 +534,7 @@ angular.module('paradropApp')
         {
           position: myLatlng,
           map: $scope.map,
-          title: 'Fixed Mac: ' + name + '\nAddress: ' + mac.mac,
+          title: 'Fixed Wifi Device: ' + name + '\nMac: ' + mac.mac,
           draggable: true,
           icon: 'images/red-wifi.png',
           id: 'macMarker' + name,

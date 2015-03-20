@@ -80,7 +80,7 @@
     <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode || isScaling">Add Boundary</button>
     <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling">{{isDeleteMode ? "Exit Delete Mode" : "Delete Mode"}}</button>
     <button class="btn btn-primary" ng-click="changeScaleFactor();scaleForm.$setPristine();" ng-disabled="isZoneMode || isDeleteMode || isScaling">Adjust Scale Factor</button>
-    <button class="btn btn-primary" ng-click="nameCheckDisabled=false;resetFixedMac();fixedMacForm.$setPristine();" data-toggle="modal" data-target="#fixedMacs" ng-disabled="isZoneMode || isDeleteMode || isScaling">Add Fixed Location MAC</button>
+    <button class="btn btn-primary" ng-click="nameCheckDisabled=false;resetFixedMac();fixedMacForm.$setPristine();" data-toggle="modal" data-target="#fixedMacs" ng-disabled="isZoneMode || isDeleteMode || isScaling">Add Fixed Location Wifi Device</button>
     <div class="checkbox">
       <label>
         <input type="checkbox" ng-click="toggleMarkers()" ng-bind="markersVisible" ng-disabled="isZoneMode"> Hide Markers
@@ -150,7 +150,7 @@
           <span aria-hidden="true">&times;</span>
           <span class="sr-only">Cancel</span>
         </button>
-        <h4 class="modal-title" id="fixedMacLabel">Add a new Fixed Location Mac Address</h4>
+        <h4 class="modal-title" id="fixedMacLabel">Add a new Fixed Location Wifi Device</h4>
       </div>
       <div class="modal-body">
         <div class="alert alert-danger" role="alert" ng-show='macNameTaken()'>
