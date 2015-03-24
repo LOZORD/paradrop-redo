@@ -80,8 +80,8 @@ angular.module('paradropApp')
         var url = URLS.current + 'recon/coords/get/' + $scope.group_id;
         var stop = Math.floor(Date.now()/1000);
         var start = stop - 10;
-        //var postBody = { sessionToken: $scope.sessionToken(), startts: start , stopts: stop};
-        var postBody = { sessionToken: $scope.sessionToken(), startts: 1425933453 ,stopts: 1425933500};
+        var postBody = { sessionToken: $scope.sessionToken(), startts: start , stopts: stop};
+        //var postBody = { sessionToken: $scope.sessionToken(), startts: 1425933453 ,stopts: 1425933500};
         return $http.post(url, postBody ).then( heatDataRecieved, heatDataError);
       };
 

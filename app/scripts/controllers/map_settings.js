@@ -102,16 +102,16 @@ angular.module('paradropApp')
                       icon: 'images/here.png',
                       id: 'syncMarker'
                     });
-                    $scope.map.markers['syncMarker'] = marker;
+                    $scope.map.markers.syncMarker = marker;
                     $scope.updateMarkers();
                   }
                   if($scope.mapData.minCoords && $scope.mapData.maxCoords){
                     $scope.drawMinMaxBounds();
                   }
                 });
-              }
-          , function(error){$scope.mapError = true;});
-        };
+              }, 
+              function(error){$scope.mapError = true;});
+        }
       });
 
       $scope.drawMinMaxBounds = function(){
@@ -171,8 +171,8 @@ angular.module('paradropApp')
           $scope.infobox.open($scope.map);
           $scope.infobox.setPosition(ll);
           $scope.infobox
-            .setContent('<div>Lat: '+ ll.lat() + '</div>'
-                + '<div>Lng: '+ ll.lng() + '</div>');
+            .setContent('<div>Lat: '+ ll.lat() + '</div>' + 
+                '<div>Lng: '+ ll.lng() + '</div>');
         }else if($scope.isZoneMode){
           $scope.addZoneBoundary(ll);
         }
@@ -215,15 +215,15 @@ angular.module('paradropApp')
         }
       };
 
-      $scope.toggleZones = function(){
+      $scope.toggleZones = (function(){
         var zonesVisible = true;
         return function(){
-          zonesVisible = !zonesVisible
+          zonesVisible = !zonesVisible;
           for(var zone in $scope.map.polygons){
             $scope.map.polygons[zone].setVisible(zonesVisible);
           }
         };
-      }();
+      }());
 
       $scope.turnMarkersOn = function(){
         for(var marker in $scope.map.markers){
@@ -250,11 +250,11 @@ angular.module('paradropApp')
           $scope.settingsJSON[i] = angular.copy($scope.mapSettingsFields[i]);
         }
         if(angular.isString($scope.settingsJSON.minCoords)){
-          var arr = $scope.settingsJSON.minCoords.split(",");
+          var arr = $scope.settingsJSON.minCoords.split(',');
           $scope.settingsJSON.minCoords = [parseFloat(arr[0]), parseFloat(arr[1])];
         }
         if(angular.isString($scope.settingsJSON.maxCoords)){
-          var arr = $scope.settingsJSON.maxCoords.split(",");
+          var arr = $scope.settingsJSON.maxCoords.split(',');
           $scope.settingsJSON.maxCoords = [parseFloat(arr[0]), parseFloat(arr[1])];
         }
         console.log($scope.mapSettingsFields);
