@@ -43,11 +43,11 @@ angular.module('paradropApp')
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id +'/create';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib' };
                   $http.post(wifiURL, wifiBody).then(
-                    function(success) {
+                    function() {
                       //success
                       alert('Wifi network created.');
                     },
-                    function(error){
+                    function(){
                       //failure
                       alert('Error failed to create network.');
                     });
@@ -68,11 +68,11 @@ angular.module('paradropApp')
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id + '/destroy';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib'};
                   $http.post(wifiURL, wifiBody).then(
-                    function(success){
+                    function(){
                       //succesful destroy
                       alert('Wifi network destroyed.');
                     },
-                    function(error){
+                    function(){
                       //failure to destroy
                       alert('Error failed to destroy Network');
                     });
@@ -94,14 +94,15 @@ angular.module('paradropApp')
               $http.post(pollURL, mainBody ).then(
                 function(result) {
                   var time = Math.floor(Date.now() / 1000);
+                  var key;
+                  var rid;
                   if($scope.mapData.invalid){
-                    for(var rid in result.data){
+                    for(rid in result.data){
                       if(result.data[rid]){
                         tsDeltas[rid] = time - result.data[rid].ts;
                       }
                     }
                   }else{
-                    var key;
                     tsDeltas = {};
                     if(!$scope.pollResult){
                       $scope.pollResult = {};
@@ -111,7 +112,7 @@ angular.module('paradropApp')
                         }
                       }
                     }
-                    for(var rid in result.data){
+                    for(rid in result.data){
                       if(result.data[rid]){
                         if($scope.pollResult[rid]){
                           if($scope.pollResult[rid].ts === result.data[rid].ts){

@@ -56,7 +56,6 @@ angular.module('paradropApp')
         maxCoords: null
       };
 
-      var isDeleteMode = false;
       $scope.settingsJSON = {};
       $scope.zone = {};
       $scope.authorizePage()
@@ -110,7 +109,7 @@ angular.module('paradropApp')
                   }
                 });
               }, 
-              function(error){$scope.mapError = true;});
+              function(){$scope.mapError = true;});
         }
       });
 
@@ -186,7 +185,7 @@ angular.module('paradropApp')
         $scope.isScaling = true;
         $scope.scaleArr = [];
         $scope.$watch(function(){if($scope.scaleArr){return $scope.scaleArr.length;}else{return 0;}},
-            function(newVal, oldVal){if(newVal === 2){$scope.isScaleMode = false; $scope.pickScale = true;}});
+            function(newVal){if(newVal === 2){$scope.isScaleMode = false; $scope.pickScale = true;}});
       };
 
       $scope.calcScale = function(){
@@ -254,8 +253,8 @@ angular.module('paradropApp')
           $scope.settingsJSON.minCoords = [parseFloat(arr[0]), parseFloat(arr[1])];
         }
         if(angular.isString($scope.settingsJSON.maxCoords)){
-          var arr = $scope.settingsJSON.maxCoords.split(',');
-          $scope.settingsJSON.maxCoords = [parseFloat(arr[0]), parseFloat(arr[1])];
+          var arr2 = $scope.settingsJSON.maxCoords.split(',');
+          $scope.settingsJSON.maxCoords = [parseFloat(arr2[0]), parseFloat(arr2[1])];
         }
         console.log($scope.mapSettingsFields);
       };
@@ -280,7 +279,7 @@ angular.module('paradropApp')
       $scope.confirmZone = function(){
         $scope.isZoneMode = false;
         if(!$scope.isIntersecting()){
-          var polygon = $scope.createPolygon();
+          $scope.createPolygon();
           $scope.updateZones();
         }else{
           alert('You can\'t overlap Zones!');
@@ -288,7 +287,7 @@ angular.module('paradropApp')
         $scope.abortZone();
       };
 
-      $scope.createPolygon = function(){
+      $scope.createPolygon = (function(){
         var polyID = 0;
         return function(opts){
           if(!$scope.map.polygons){
@@ -302,7 +301,7 @@ angular.module('paradropApp')
             $scope.resetPoly();
             for(var i in opts.bounds){
               $scope.poly.getPath().push(new google.maps.LatLng(opts.bounds[i][0], opts.bounds[i][1]));
-            };
+            }
             colorName = opts.color;
             color = $scope.colorName[opts.color].code;
             name = opts.name;
@@ -337,7 +336,7 @@ angular.module('paradropApp')
           $scope.resetPoly();
           return polygon;
         };
-      }();
+      }());
 
       $scope.updateZones = function(){
         delete $scope.settingsJSON.zones;
@@ -345,14 +344,13 @@ angular.module('paradropApp')
           $scope.settingsJSON.zones = {};
           for(var zone in $scope.map.polygons){
             zone = $scope.map.polygons[zone];
-            var color = '';
             var boundaries = [];
             var arr = zone.getPath().j;
             for(var i in arr){
               boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
             }
             $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type};
-          };
+          }
         }
       };
 
@@ -381,7 +379,7 @@ angular.module('paradropApp')
           $scope.settingsJSON.fixedMacs = {};
         }
         if(angular.isString($scope.fixedMac.position)){
-          var arr = $scope.fixedMac.position.split(",");
+          var arr = $scope.fixedMac.position.split(',');
           $scope.fixedMac.position = [parseFloat(arr[0]), parseFloat(arr[1])];
         }
         $scope.settingsJSON.fixedMacs[$scope.fixedMac.name] = { mac: $scope.fixedMac.mac, position: $scope.fixedMac.position };
@@ -442,7 +440,7 @@ angular.module('paradropApp')
         }
       };
 
-      $scope.addZoneBoundary = function(){
+      $scope.addZoneBoundary = (function(){
         var zoneID = 0;
         return function(ll, noPoly){
           var image = 'images/here.png';
@@ -468,7 +466,7 @@ angular.module('paradropApp')
           google.maps.event.addListener(marker, 'click', $scope.addBoundPoint);
           zoneID++;
         };
-      }();
+      }());
 
       $scope.newPoly = function(color){
         if(!color){
@@ -483,7 +481,7 @@ angular.module('paradropApp')
 
         var poly = new google.maps.Polyline(polyOptions);
         return poly;
-      }
+      };
 
       $scope.addBoundPoint = function(event){
         var ll = event.latLng;
@@ -558,7 +556,7 @@ angular.module('paradropApp')
         $scope.updateMarkers();
       };
 
-      $scope.addBoundary = function(){
+      $scope.addBoundary = (function(){
       
         //create id counter in private scope  
         var boundID = 0;
@@ -587,14 +585,14 @@ angular.module('paradropApp')
           $scope.updateMarkers();
           $scope.updateBoundPoly();
           boundID++;
-        }
-      }();
+        };
+      }());
 
       $scope.toggleDeleteMode = function(){
         $scope.isDeleteMode = !$scope.isDeleteMode;
         if($scope.isDeleteMode){
           for(var marker in $scope.map.markers){
-            if(marker != 'syncMarker' && !(marker.indexOf('apid') > -1)){
+            if(marker !== 'syncMarker' && marker.indexOf('apid') === -1){
               google.maps.event.addListener($scope.map.markers[marker], 'click', removeMarkerFnc($scope.map.markers[marker]));
             }
           }
@@ -603,7 +601,7 @@ angular.module('paradropApp')
 
       function removeMarkerFnc(marker){
 
-       return function(event){
+       return function(){
                 if($scope.isDeleteMode){
                   $scope.updateMarkers();
                   marker.setMap(null);
@@ -612,7 +610,7 @@ angular.module('paradropApp')
                   $scope.updateBoundPoly();
                 }
               };
-      };
+      }
 
       $scope.updateMarkers = function() {
         $scope.settingsJSON.aps = [];
@@ -625,7 +623,7 @@ angular.module('paradropApp')
             $scope.settingsJSON.boundary.push(boundary);
           }else if(marker.indexOf('apid') > -1){
             //ap marker
-            var marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].position.k * 100) /100, lng: Math.round($scope.map.markers[marker].position.D * 100) /100 };
+            marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].position.k * 100) /100, lng: Math.round($scope.map.markers[marker].position.D * 100) /100 };
             $scope.settingsJSON.aps.push(marker);
           }else if(marker === 'syncMarker'){
             $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
@@ -650,13 +648,13 @@ angular.module('paradropApp')
         var url = URLS.current + 'recon/maps/update';
         $http.post(url, body).then(
             //success
-            function(success){
+            function(){
             },
             //error
-            function(error){
+            function(){
               alert('Error saving changes to database.');
             }
-        )
+        );
         $route.reload();
       };
 
@@ -672,7 +670,7 @@ angular.module('paradropApp')
               var lat = $scope.settingsJSON.zones[zone].bounds[bound][0];
               var lng = $scope.settingsJSON.zones[zone].bounds[bound][1];
               var test = true;
-              for(var i in boundaries){
+              for(i in boundaries){
                 if( lat === boundaries[i][0] && lng === boundaries[i][1]){
                   //if they're the same point we don't care
                   test = false;
@@ -697,7 +695,7 @@ angular.module('paradropApp')
         var c = false;
         // DFW: got this alg from here: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
         for (i = 0, j = boundary.length - 1; i < boundary.length; j = i++) {
-          if( ((boundary[i][y] > lng) != (boundary[j][y] > lng)) &&
+          if( ((boundary[i][y] > lng) !== (boundary[j][y] > lng)) &&
             (lat < (boundary[j][x] - boundary[i][x]) * (lng - boundary[i][y]) / (boundary[j][y] - boundary[i][y]) + boundary[i][x])) {
             c = !c;
           }

@@ -16,7 +16,7 @@ angular.module('paradropApp')
 
           //grab map and build!
           var body = { sessionToken: $scope.sessionToken() };
-          var localURL = URLS.current + 'recon/readjson'
+          var localURL = URLS.current + 'recon/readjson';
           $http.post(localURL, body ).then(
               function(json){
                 $scope.array = json.data;
@@ -35,8 +35,8 @@ angular.module('paradropApp')
                     $scope.heatmap.set('radius', 40);
                     setTimeout(function(){$scope.changeMarkers();}, 0);
                   });
-                }
-            , function(error){$scope.mapError = true;});
+                }, 
+                function(){$scope.mapError = true;});
           });
 
         } 
@@ -49,7 +49,7 @@ angular.module('paradropApp')
         $scope.changeMarkers();
         $scope.buildHeatMap();
         $scope.setHeatMap();
-      }
+      };
 
       $scope.changeMarkers = function(){
         for(var key in $scope.map.markers){
@@ -73,7 +73,7 @@ angular.module('paradropApp')
             }
           }
         }
-      }
+      };
 
       $scope.switchMap = function(index){
         gmapMaker.setIndex(index, 'localization');
@@ -116,7 +116,7 @@ angular.module('paradropApp')
         $scope.changeMarkers();
         $scope.buildHeatMap();
         $scope.setHeatMap();
-      }
+      };
 
       $scope.buildHeatMap = function(){
         $scope.heatMapData = [];
@@ -133,12 +133,12 @@ angular.module('paradropApp')
         }
         $scope.real = {lat: $scope.array[i].true_coord[0], lng: $scope.array[i].true_coord[1]};
         $scope.pred = {lat: $scope.array[i].pred_coord[0], lng: $scope.array[i].pred_coord[1]};
-      }
+      };
 
       $scope.setHeatMap = function(){
         $scope.heatmap.setMap(null);
         $scope.heatmap = new google.maps.visualization.HeatmapLayer({radius: 40, data: $scope.heatMapData});
         $scope.heatmap.setMap($scope.map);
-      }
+      };
       });
 }]);
