@@ -16,7 +16,6 @@ angular.module('paradropApp')
       }else{
         $scope.superAdmin = true;
       }
-      console.log($scope.group_id);
       $scope.markersVisible = true;
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
