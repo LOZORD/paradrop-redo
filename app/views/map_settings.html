@@ -12,7 +12,6 @@
       </ul>
     </div>
     <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings();mapSettingsForm.$setPristine();" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode || isScaling">Map Settings</button>
-    <button class="btn btn-primary" ng-click="pendingChanges()">Pending Changes?</button>
   </div>
 </div>
   <!-- Tab panes -->
@@ -138,7 +137,7 @@
         <button type="button" class="btn btn-default" data-dismiss="modal">
           Cancel
         </button>
-        <button data-dismiss="modal" ng-click="acceptZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() || nameTaken()">
+        <button data-dismiss="modal" ng-click="confirmZone()" class="btn btn-primary" ng-disabled="!zoneForm.$valid || numZoneMarkers() || nameTaken()">
           Submit Zone
         </button>
       </div>

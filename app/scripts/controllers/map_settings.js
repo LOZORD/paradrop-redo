@@ -278,15 +278,11 @@ angular.module('paradropApp')
         $scope.isZoneMode = true;
       };
 
-      $scope.acceptZone = function(){
-        setTimeout($scope.confirmZone, 500);
-        $scope.isZoneMode = false;
-      };
-
       $scope.confirmZone = function(){
+        $scope.isZoneMode = false;
         if(!$scope.isIntersecting()){
           var polygon = $scope.createPolygon();
-          setTimeout(function(){$scope.updateZones();}, 0);
+          $scope.updateZones();
         }else{
           alert('You can\'t overlap Zones!');
         }
@@ -373,7 +369,7 @@ angular.module('paradropApp')
       };
 
       $scope.nameTaken = function(){
-        if($scope.settingsJSON && $scope.settingsJSON.zones){
+        if($scope.settingsJSON && $scope.settingsJSON.zones && $scope.isZoneMode){
           return !!$scope.settingsJSON.zones[$scope.zone.name];
         }else{
           return false;
@@ -422,6 +418,7 @@ angular.module('paradropApp')
 
       $scope.abortZone = function(){
         //clean up markers
+        $scope.isZoneMode = false;
         setTimeout(function(){
           for(var marker in $scope.map.markers){
             if(marker.indexOf('zone') > -1 || marker.indexOf('holder') > -1){
@@ -436,11 +433,10 @@ angular.module('paradropApp')
         }
         //clean up polyline
         $scope.resetPoly();
-        $scope.isZoneMode = false;
       };
 
       $scope.numZoneMarkers = function(){
-        if($scope.poly){
+        if($scope.poly && $scope.isZoneMode){
           return $scope.poly.getPath().length < 3;
         }else{
           return false;
