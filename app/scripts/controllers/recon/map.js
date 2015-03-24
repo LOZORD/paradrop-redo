@@ -126,6 +126,7 @@ angular.module('paradropApp')
       };
 
       $scope.setMap = function(map){
+        map = map.data;
         console.log(map);
         if(map.invalid){
           $scope.isValidMap = false;
