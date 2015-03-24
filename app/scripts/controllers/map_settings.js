@@ -11,6 +11,12 @@ angular.module('paradropApp')
   .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', 'gmapMaker', '$route','$routeParams',
     function ($scope, URLS, $http, $sce, gmapMaker, $route, $routeParams) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
+      if($scope.group_id){
+        $scope.superAdmin = false;
+      }else{
+        $scope.superAdmin = true;
+      }
+      console.log($scope.group_id);
       $scope.markersVisible = true;
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
@@ -57,8 +63,10 @@ angular.module('paradropApp')
       $scope.authorizePage()
       .then(function(authorized){
         if(authorized){
-          var mapInitURL = URLS.current + 'recon/maps/init';
           var mapInitURL = URLS.current + 'recon/meta/' + $scope.group_id+ '/maps';
+          if($scope.superAdmin){
+            mapInitURL = URLS.current + 'recon/maps/init';
+          }
           var postBody = { sessionToken: $scope.sessionToken() };
           $http.post(mapInitURL, postBody ).then(
               function(groupMaps){
