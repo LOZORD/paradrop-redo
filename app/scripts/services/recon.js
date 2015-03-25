@@ -48,9 +48,15 @@ angular.module('paradropApp')
         today = Math.floor(today.getTime() / 1000);
 
         self.prevOpts = function(offset) {
+          var close;
+            if((new Date()).getHours() < 10){
+              close = $rootScope.closeTime - offset*86400;
+            }else{
+              close = today - offset*86400;
+            }
           return {
             start: $rootScope.openTime - offset*86400,
-            stop: today - offset*86400,
+            stop: close,
             groupName: Session.defaultGroup
           };
         };
