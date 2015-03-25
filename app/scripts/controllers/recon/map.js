@@ -17,7 +17,7 @@ angular.module('paradropApp')
         if(!auth){
           return;
         }else{
-          getHeatMapData().then(controller);
+          controller();
         }
       }
       
@@ -60,16 +60,14 @@ angular.module('paradropApp')
         $scope.setMap($scope.mapsArray[gmapMaker.getIndex('recon')]);
         $scope.$on('mapInitialized', function(event, map) {
           $scope.map = map;
-          $scope.heatmap.setMap($scope.map);
+          getHeatMapData();
         });
         $scope.toggleHeatmap= function(event) {
             $scope.heatmap.setMap($scope.heatmap.getMap() ? null : $scope.map);
         };
-        if(!$scope.exampleHeatmap){
-          var heatPoll = $interval(getHeatMapData, 10000);
-          //make sure to cancel the interval when the controller is destroyed
-          $scope.$on('$destroy', function(){ $interval.cancel(heatPoll);});
-        }
+        var heatPoll = $interval(getHeatMapData, 10000);
+        //make sure to cancel the interval when the controller is destroyed
+        $scope.$on('$destroy', function(){ $interval.cancel(heatPoll);});
       };
 
       function mapError(error){
@@ -80,8 +78,7 @@ angular.module('paradropApp')
         var url = URLS.current + 'recon/coords/get/' + $scope.group_id;
         var stop = Math.floor(Date.now()/1000);
         var start = stop - 10;
-        var postBody = { sessionToken: $scope.sessionToken(), startts: start , stopts: stop};
-        //var postBody = { sessionToken: $scope.sessionToken(), startts: 1425933453 ,stopts: 1425933500};
+        var postBody = { sessionToken: $scope.sessionToken(), startts: null , stopts: null, typeid: $scope.mapData.typeid };
         return $http.post(url, postBody ).then( heatDataRecieved, heatDataError);
       };
 
@@ -103,21 +100,15 @@ angular.module('paradropApp')
       };
 
       $scope.setHeatMap = function(){
-        var map = null;
         if($scope.heatmap){
-          map = $scope.heatmap.getMap();
           $scope.heatmap.setMap(null);
         }
         $scope.heatmap = new google.maps.visualization.HeatmapLayer({radius: 40, data: $scope.heatMapData});
-        $scope.heatmap.setMap(map);
-        $scope.exampleHeatmap = false;
+        $scope.heatmap.setMap($scope.map);
       };
 
       function heatDataError(error){
         console.log(error);
-        $scope.heatMapData = gmapMaker.buildHeatmap(16);
-        $scope.heatmap = new google.maps.visualization.HeatmapLayer({radius: 40, data: $scope.heatMapData});
-        $scope.exampleHeatmap = true;
       };
 
       $scope.switchMap = function(index){
