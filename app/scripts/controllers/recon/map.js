@@ -62,9 +62,6 @@ angular.module('paradropApp')
           $scope.map = map;
           getHeatMapData();
         });
-        $scope.toggleHeatmap= function(event) {
-            $scope.heatmap.setMap($scope.heatmap.getMap() ? null : $scope.map);
-        };
         var heatPoll = $interval(getHeatMapData, 10000);
         //make sure to cancel the interval when the controller is destroyed
         $scope.$on('$destroy', function(){ $interval.cancel(heatPoll);});
