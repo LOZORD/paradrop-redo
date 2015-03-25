@@ -227,6 +227,9 @@ angular.module('paradropApp')
                 if($scope.superAdmin){
                   $scope.setMap($scope.mapsArray[$localStorage.adminCalibrateIndex]);
                 }else{
+                  if($scope.mapsArray.length < $localStorage.calibrateIndex){
+                    $localStorage.calibrateIndex = 0;
+                  }
                   $scope.setMap($scope.mapsArray[$localStorage.calibrateIndex]);
                 }
 
