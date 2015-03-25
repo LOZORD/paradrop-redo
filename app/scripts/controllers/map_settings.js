@@ -69,7 +69,11 @@ angular.module('paradropApp')
           $http.post(mapInitURL, postBody ).then(
               function(groupMaps){
                 $scope.mapsArray = groupMaps.data;
-                $scope.setMap($scope.mapsArray[gmapMaker.getIndex('settings')]);
+                if($scope.superAdmin){
+                  $scope.setMap($scope.mapsArray[gmapMaker.getIndex('adminSettings')]);
+                }else{
+                  $scope.setMap($scope.mapsArray[gmapMaker.getIndex('settings')]);
+                }
 
                 $scope.$on('mapInitialized', function(event, map) {
                   $scope.map = map;
@@ -128,7 +132,11 @@ angular.module('paradropApp')
       };
 
       $scope.switchMap = function(index){
-        gmapMaker.setIndex(index, 'settings');
+        if($scope.superAdmin){
+          gmapMaker.setIndex(index, 'adminSettings');
+        }else{
+          gmapMaker.setIndex(index, 'settings');
+        }
         $route.reload();
       };
 
@@ -139,7 +147,11 @@ angular.module('paradropApp')
               continue;
             }else{
               map = $scope.mapsArray[i];
-              gmapMaker.setIndex(i, 'settings');
+              if($scope.superAdmin){
+                gmapMaker.setIndex(i, 'adminSettings');
+              }else{
+                gmapMaker.setIndex(i, 'settings');
+              }
               break;
             }
           }

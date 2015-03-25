@@ -8,8 +8,14 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$localStorage', '$window',
-    function ($scope, URLS, $http, gmapMaker, $localStorage, $window) {
+  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$localStorage', '$window', '$routeParams', '$sce',
+    function ($scope, URLS, $http, gmapMaker, $localStorage, $window, $routeParams, $sce) {
+      $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
+      if($scope.group_id){
+        $scope.superAdmin = false;
+      }else{
+        $scope.superAdmin = true;
+      }
       $scope.authorizePage()
       .then(
         function(authorized){
@@ -17,6 +23,9 @@ angular.module('paradropApp')
             console.log($localStorage.calibrateIndex);
             if(!$localStorage.calibrateIndex){
               $localStorage.calibrateIndex = 0;
+            }
+            if(!$localStorage.adminCalibrateIndex){
+              $localStorage.adminCalibrateIndex = 0;
             }
             $scope.mac = $localStorage.mac;
             $scope.pollResult = null;
@@ -207,12 +216,19 @@ angular.module('paradropApp')
             };
 
             //grab and build map
-            var mapInitURL = URLS.current + 'recon/maps/init';
+            var mapInitURL = URLS.current + 'recon/meta/' + $scope.group_id+ '/maps';
+            if($scope.superAdmin){
+              mapInitURL = URLS.current + 'recon/maps/init';
+            }
             var postBody = { sessionToken: $scope.sessionToken() };
             $http.post(mapInitURL, postBody ).then(
               function(groupMaps){
                 $scope.mapsArray = groupMaps.data;
-                $scope.setMap($scope.mapsArray[$localStorage.calibrateIndex]);
+                if($scope.superAdmin){
+                  $scope.setMap($scope.mapsArray[$localStorage.adminCalibrateIndex]);
+                }else{
+                  $scope.setMap($scope.mapsArray[$localStorage.calibrateIndex]);
+                }
 
                 if(!$scope.mapData.invalid){
                   $scope.onClick = function(event) {
@@ -230,7 +246,11 @@ angular.module('paradropApp')
           }
 
           $scope.switchMap = function(index){
-            $localStorage.calibrateIndex = index;
+            if($scope.superAdmin){
+              $localStorage.adminCalibrateIndex = index;
+            }else{
+              $localStorage.calibrateIndex = index;
+            }
             setTimeout(function(){$window.location.reload();}, 1000);
           };
 

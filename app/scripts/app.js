@@ -135,6 +135,11 @@ angular.module('paradropApp', [
         controller: 'CalibrateCtrl',
         auths: {admin: true, session: true}
       })
+      .when('/calibrate/:group_id', {
+        templateUrl: 'views/calibrate.html',
+        controller: 'CalibrateCtrl',
+        auths: { session: true}
+      })
       .when('/modes/restricted_signup', {
         templateUrl: 'views/modes/restricted_signup.html',
         auths: {}

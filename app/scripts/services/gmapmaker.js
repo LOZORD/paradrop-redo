@@ -112,7 +112,7 @@ angular.module('paradropApp')
       return heatMapData; 
     };
 
-    var storedIndex = { calibrate: 0, localization: 0, recon: 0, settings: 0};
+    var storedIndex = { calibrate: 0, localization: 0, recon: 0, settings: 0, adminSettings: 0};
     gmapFuncs.setIndex = function(index, page){
         storedIndex[page] = index;
     };
