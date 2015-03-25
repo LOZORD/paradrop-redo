@@ -102,10 +102,14 @@ angular.module('paradropApp')
           if(currDay > 0){
             currDay--;
             self.recon = self.storedData[currDay];
+            var gran = 3600;
+            if(self.recon.gran){
+              gran = self.recon.gran;
+            }
             $rootScope.reconDate = self.recon.dateString;
             var graphData = self.recon.getTotalGroupByTS(self.recon.myOpts.start,
-                              self.recon.myOpts.stop, 3600);
-            chartBuilder.buildTotalUsers(graphData, 3600);
+                              self.recon.myOpts.stop, gran);
+            chartBuilder.buildTotalUsers(graphData, gran);
             graphData = self.recon.getEngagementByTS([0, 300, 600, 900]);
             chartBuilder.buildEngagementChart(graphData);
             graphData = self.recon.getRepeatVisits();
@@ -120,6 +124,7 @@ angular.module('paradropApp')
         };
 
         self.recon.myOpts = opts;
+        self.recon.gran = $rootScope.granularity;
         self.recon.dateString = 'so far Today';
         self.recon.prefetch(opts)
         .then(function(){
