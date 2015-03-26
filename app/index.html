@@ -147,6 +147,34 @@
           </nav>
       <div class="container">
         <div class="header"></div>
+        <div ng-cloak class="alert alert-success" role="alert" ng-show="showSuccessAlert">
+          <span ng-bind-html="successText"></span>
+          <button type="button" class="close" ng-click="closeSuccessAlert()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cancel</span>
+          </button>
+        </div>
+        <div ng-cloak class="alert alert-warning" role="alert" ng-show="showWarningAlert">
+          <span ng-bind-html="warningText"></span>
+          <button type="button" class="close" ng-click="closeWarningAlert()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cancel</span>
+          </button>
+        </div>
+        <div ng-cloak class="alert alert-danger" role="alert" ng-show="showDangerAlert">
+          <span ng-bind-html="dangerText"></span>
+          <button type="button" class="close" ng-click="closeDangerAlert()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cancel</span>
+          </button>
+        </div>
+        <div ng-cloak class="alert alert-info" role="alert" ng-show="showInfoAlert">
+          <span ng-bind-html="infoText"></span>
+          <button type="button" class="close" ng-click="closeInfoAlert()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cancel</span>
+          </button>
+        </div>
 
         <div ng-view=""></div>
 

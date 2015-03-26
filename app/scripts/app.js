@@ -186,6 +186,49 @@ angular.module('paradropApp', [
     $rootScope.$on('$viewContentLoaded', track);
   })
   .run(function($rootScope, Recon) {
+    //setup alert system
+    $rootScope.closeAlerts = function(){
+      $rootScope.showSuccessAlert = false;
+      $rootScope.showDangerAlert = false;
+      $rootScope.showWarningAlert = false;
+      $rootScope.showInfoAlert = false;
+    };
+
+    $rootScope.closeSuccessAlert = function(){
+      $rootScope.showSuccessAlert = false;
+    };
+
+    $rootScope.closeWarningAlert = function(){
+      $rootScope.showWarningAlert = false;
+    };
+
+    $rootScope.closeDangerAlert = function(){
+      $rootScope.showDangerAlert = false;
+    };
+
+    $rootScope.closeInfoAlert = function(){
+      $rootScope.showInfoAlert = false;
+    };
+
+    $rootScope.warningAlert = function(text){
+      $rootScope.warningText = text;
+      $rootScope.showWarningAlert = true;
+    };
+
+    $rootScope.dangerAlert = function(text){
+      $rootScope.dangerText = text;
+      $rootScope.showDangerAlert = true;
+    };
+
+    $rootScope.successAlert = function(text){
+      $rootScope.successText = text;
+      $rootScope.showSuccessAlert = true;
+    };
+
+    $rootScope.infoAlert = function(text){
+      $rootScope.infoText = text;
+      $rootScope.showInfoAlert = true;
+    };
     //hack to avoid jshint complaint
     Recon.nothing();
     //determine the date  and open times for recon fetching

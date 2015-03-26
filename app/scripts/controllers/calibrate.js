@@ -16,6 +16,10 @@ angular.module('paradropApp')
       }else{
         $scope.superAdmin = true;
       }
+      //enable bootstrap tooltips
+      $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+      })
       $scope.authorizePage()
       .then(
         function(authorized){
@@ -28,18 +32,18 @@ angular.module('paradropApp')
               $localStorage.adminCalibrateIndex = 0;
             }
             $scope.mac = $localStorage.mac;
-            $scope.pollResult = null;
             var startURL = URLS.current + 'recon/maps/start';
             var finishURL = URLS.current + 'recon/maps/finish';
             var pollURL = URLS.current + 'recon/maps/poll';
             var coordsURL = URLS.current + 'recon/maps/coords';
             var mainBody = {};
             var coordsBody = {};
-            var tsDeltas = {};
+            var lastSeenTS = null;
 
             $scope.start = function() {
               if(!$scope.mac){
-                alert('Please enter a MAC.');
+                $scope.closeAlerts();
+                $scope.dangerAlert('<strong>Error:</strong> Please enter a MAC.');
                 return;
               }
               mainBody.sessionToken = $scope.sessionToken();
@@ -51,18 +55,27 @@ angular.module('paradropApp')
                   //create wifi network
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id +'/create';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib' };
-                  $http.post(wifiURL, wifiBody).then(
-                    function() {
-                      //success
-                      alert('Wifi network created.');
-                    },
-                    function(){
-                      //failure
-                      alert('Error failed to create network.');
-                    });
+                  if($scope.createNetwork){
+                    $http.post(wifiURL, wifiBody).then(
+                      function() {
+                        //success
+                        $scope.closeAlerts();
+                        $scope.successAlert('Wifi Network created!');
+                      },
+                      function(){
+                        //failure
+                        $scope.closeAlerts();
+                        $scope.dangerAlert('<strong>Error:</strong> Calibration started. Failed to create Network.');
+
+                      });
+                  }else{
+                    $scope.closeAlerts();
+                    $scope.successAlert('Calibration successfully started. No network created.');
+                  }
                 },
                 function(){
-                  alert('There was an error you may already have started tracking.');
+                  $scope.closeAlerts();
+                  $scope.dangerAlert('There was an error you may already have started tracking.');
                 }
               );
             };
@@ -73,28 +86,31 @@ angular.module('paradropApp')
               mainBody.reconid = $scope.groupMaps.reconid;
               $http.post(finishURL, mainBody ).then(
                 function() {
-                  //nothing to do
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id + '/destroy';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib'};
                   $http.post(wifiURL, wifiBody).then(
                     function(){
                       //succesful destroy
-                      alert('Wifi network destroyed.');
+                      $scope.closeAlerts();
+                      $scope.successAlert('<strong>Success:</strong> You\'ve successfully exited calibration Mode');
                     },
                     function(){
                       //failure to destroy
-                      alert('Error failed to destroy Network');
+                      $scope.closeAlerts();
+                      $scope.dangerAlert('<strong>Error:</strong> Successfully finished calibration. Failed to destroy Network');
                     });
                 },
                 function(){
-                  alert('There was an error make sure you started tracking.');
+                  $scope.closeAlerts();
+                  $scope.dangerAlert('<strong>Error:</strong> Make sure you started tracking.');
                 }
               );
             };
 
             $scope.poll = function() {
               if(!$scope.mac){
-                alert('Please enter a MAC.');
+                $scope.closeAlerts();
+                $scope.dangerAlert('<strong>Error:</strong> Please enter a MAC.');
                 return;
               }
               mainBody.sessionToken = $scope.sessionToken();
@@ -102,84 +118,80 @@ angular.module('paradropApp')
               mainBody.reconid = $scope.groupMaps.reconid;
               $http.post(pollURL, mainBody ).then(
                 function(result) {
-                  var time = Math.floor(Date.now() / 1000);
-                  var key;
-                  var rid;
-                  if($scope.mapData.invalid){
-                    for(rid in result.data){
-                      if(result.data[rid]){
-                        tsDeltas[rid] = time - result.data[rid].ts;
-                      }
-                    }
-                  }else{
-                    tsDeltas = {};
-                    if(!$scope.pollResult){
-                      $scope.pollResult = {};
-                      for(key in $scope.map.markers){
-                        if(key !== 'currentLocation'){
-                          $scope.map.markers[key].setIcon('images/green-wifi.png');
-                        }
-                      }
-                    }
-                    for(rid in result.data){
-                      if(result.data[rid]){
-                        if($scope.pollResult[rid]){
-                          if($scope.pollResult[rid].ts === result.data[rid].ts){
-                            //signify already seen
-                            if($scope.map.markers[$scope.apNameMap[rid].apid]){
-                              $scope.map.markers[$scope.apNameMap[rid].apid]
-                                .setIcon('images/red-wifi.png');
-                            }
-                          }else{
-                            //signify new entry
-                            if($scope.map.markers[$scope.apNameMap[rid].apid]){
-                              $scope.map.markers[$scope.apNameMap[rid].apid]
-                                .setIcon('images/green-wifi.png');
-                            }
-                          }
-                        }
-                        if($scope.map.markers[$scope.apNameMap[rid].apid]){
-                          $scope.map.markers[$scope.apNameMap[rid].apid].setMap($scope.map);
-                        }
-                        tsDeltas[rid] = time - result.data[rid].ts;
-                      }else{
-                        if($scope.map.markers[$scope.apNameMap[rid].apid]){
-                          $scope.map.markers[$scope.apNameMap[rid].apid].setMap(null);
-                        }
-                      }
-                    }
-                  }
-                  $scope.pollResult = result.data;
+                  console.log(result.data);
+                  var coords = result.data.coords;
+                  $scope.isTraining = result.data.training;
                   $scope.successString = 'Success<br>';
-                  for(key in $scope.pollResult){
-                    if($scope.pollResult[key]){
-                      $scope.successString += key + ': {rssi: ' + $scope.pollResult[key].rssi;
-                      $scope.successString += ', ts: ' + $scope.pollResult[key].ts + ' }<br>';
+                  $scope.successString += 'ts: ' + result.data.ts + '<br>';
+                  $scope.successString += 'mapid: ' + coords.mapid + '<br>zone: ' + 
+                    coords.zone + '<br>isinside: ' + coords.isinside + '<br>err: ' + coords.err + '<br>';
+                  for(var key in result.data.signals){
+                    if(result.data.signals[key]){
+                      $scope.successString += $scope.apNameMap[key].name + ': {rssi: ' + result.data.signals[key] + ' }<br>';
                     }
                   }
-                  if(!$scope.mapData.invalid){
-                    if(!$scope.infobox){
-                      $scope.infobox = new google.maps.InfoWindow();
+                  lastSeenTS = result.data.ts;
+                  if($scope.mapData.invalid){
+                    //skip other stuff
+                  }else{
+                    for(var ap in $scope.map.markers){
+                      if(ap === 'currentLocation' || ap === 'guessMarker'){
+                        continue;
+                      }else if(result.data.signals[$scope.apNameMap[ap].rid]){
+                        //ap saw you
+                        var strength = result.data.signals[$scope.apNameMap[ap].rid];
+                        if(strength > -65){
+                          $scope.map.markers[ap].setIcon('images/green-signal.png');
+                        }else if(strength > -85){
+                          $scope.map.markers[ap].setIcon('images/yellow-signal.png');
+                        }else{
+                          $scope.map.markers[ap].setIcon('images/red-signal.png');
+                        }
+                        $scope.map.markers[ap].setMap($scope.map);
+                      }else{
+                        //ap didn't see you
+                        $scope.map.markers[ap].setMap(null);
+                      }
                     }
-                    var ll = new google.maps.LatLng($scope.mapData.centerX, $scope.mapData.centerY);
-                    $scope.infobox.open($scope.map);
-                    $scope.infobox.setPosition(ll);
-                    $scope.infobox.setContent($scope.successString);
+                    var myLatlng = new google.maps.LatLng(coords.lat, coords.lng);
+                    if($scope.map.markers.guessMarker){
+                      $scope.map.markers.guessMarker.setPosition(myLatlng);
+                      $scope.map.markers.guessMarker.setMap($scope.map);
+                      $scope.guessInfowindow.setContent($scope.successString);
+                      $scope.guessInfowindow.open($scope.map,$scope.map.markers.guessMarker);
+                    }else{
+                      $scope.map.markers.guessMarker = new google.maps.Marker({
+                        position: myLatlng,
+                        map: $scope.map,
+                        title: 'We think you\'re here.',
+                        icon: 'images/down.png'
+                      });
+                      $scope.guessInfowindow = new google.maps.InfoWindow({
+                        content: $scope.successString
+                      });
+                      google.maps.event.addListener($scope.map.markers.guessMarker, 'click', function() {
+                        $scope.guessInfowindow.open($scope.map,$scope.map.markers.guessMarker);
+                      });
+                      $scope.guessInfowindow.open($scope.map,$scope.map.markers.guessMarker);
+                    }
                   }
                 },
                 function(){
-                  alert('There was an error make sure you started tracking.');
+                  $scope.closeAlerts();
+                  $scope.dangerAlert('<strong>Error:</strong> Make sure you started tracking.');
                 }
               );
             };
 
             $scope.sendCoord = function() {
               if(!$scope.mac){
-                alert('Please enter a MAC.');
+                $scope.closeAlerts();
+                $scope.dangerAlert('<strong>Error:</strong> Please enter a MAC.');
                 return;
               }
               if(!$scope.coords && !$scope.mapData.invalid){
-                alert('Please select a location to send.');
+                $scope.closeAlerts();
+                $scope.dangerAlert('<strong>Error:</strong> Please select a location to send.');
                 return;
               }
               coordsBody.sessionToken = $scope.sessionToken();
@@ -192,17 +204,17 @@ angular.module('paradropApp')
                 coordsBody.lng = $scope.coords.lng;
               }
               coordsBody.mac = $scope.mac;
-              coordsBody.time = Math.floor(Date.now() / 1000);
-              coordsBody.extras = tsDeltas;
+              coordsBody.time = lastSeenTS;
               coordsBody.typeid = $scope.mapData.typeid;
               coordsBody.reconid = $scope.groupMaps.reconid;
-              tsDeltas = {};
               $http.post(coordsURL, coordsBody ).then(
                 function() {
-                  //nothing to do
+                  $scope.closeAlerts();
+                  $scope.successAlert('<strong>Success:</strong> Coordinates successfully sent.');
                 },
                 function(){
-                  alert('There was an error make sure you started tracking.');
+                  $scope.closeAlerts();
+                  $scope.dangerAlert('<strong>Error:</strong> Make sure you started tracking.');
                 }
               );
             };
@@ -245,7 +257,11 @@ angular.module('paradropApp')
                   });
                 }
               },
-              function(){$scope.mapError = true;});
+              function(){
+                $scope.mapError = true;
+                $scope.closeAlerts();
+                $scope.dangerAlert('<strong>Error:</strong> There was an error retrieving the map information. Please refresh the page to try again.');
+              });
           }
 
           $scope.switchMap = function(index){
@@ -265,10 +281,13 @@ angular.module('paradropApp')
             $scope.group_id = $scope.groupMaps.groupname;
             mainBody.typeid = $scope.groupMaps.data.typeid;
             $scope.apNameMap = $scope.groupMaps.map;
-            $scope.revApNameMap = {};
+            console.log($scope.apNameMap);
+            //add to mappings
             for(var key in $scope.apNameMap){
-              $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
+              $scope.apNameMap[$scope.apNameMap[key].apid] = {name: $scope.apNameMap[key].name, rid: key};
+              $scope.apNameMap[$scope.apNameMap[key].name] = {apid: $scope.apNameMap[key].apid, rid: key};
             }
+            console.log($scope.apNameMap);
             $scope.mapData = $scope.groupMaps.data;
             if(!$scope.mapData.invalid){
               var builtMap = gmapMaker.buildMap($scope.mapData);

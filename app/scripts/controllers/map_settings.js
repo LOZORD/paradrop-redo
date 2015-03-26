@@ -294,7 +294,8 @@ angular.module('paradropApp')
           $scope.createPolygon();
           $scope.updateZones();
         }else{
-          alert('You can\'t overlap Zones!');
+          $scope.closeAlerts();
+          $scope.dangerAlert('Error: You can\'t overlap Zones!');
         }
         $scope.abortZone();
       };
@@ -664,7 +665,8 @@ angular.module('paradropApp')
             },
             //error
             function(){
-              alert('Error saving changes to database.');
+              $scope.closeAlerts();
+              $scope.dangerAlert('Error saving changes to database.');
             }
         );
         $route.reload();

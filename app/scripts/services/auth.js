@@ -154,7 +154,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         //admin pages
         if($route.current.auths.admin && !Session.isAdmin){
           $location.url('/my_paradrop');
-          alert('You must be an admin to view this page!');
+          $rootScope.closeAlerts();
+          $rootScope.dangerAlert('You must be an admin to view that page!');
           return false;
         }
 

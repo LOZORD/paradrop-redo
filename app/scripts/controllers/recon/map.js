@@ -62,13 +62,17 @@ angular.module('paradropApp')
           $scope.map = map;
           getHeatMapData();
         });
-        var heatPoll = $interval(getHeatMapData, 10000);
-        //make sure to cancel the interval when the controller is destroyed
-        $scope.$on('$destroy', function(){ $interval.cancel(heatPoll);});
+        if($scope.isValidMap){
+          var heatPoll = $interval(getHeatMapData, 10000);
+          //make sure to cancel the interval when the controller is destroyed
+          $scope.$on('$destroy', function(){ $interval.cancel(heatPoll);});
+        }
       };
 
       function mapError(error){
         $scope.mapError = true;
+        $scope.closeAlerts();
+        $scope.dangerAlert('<strong>Error:</strong> There was an error retrieving the map information. Please refresh the page to try again.');
       };
 
       function getHeatMapData(){
@@ -119,16 +123,18 @@ angular.module('paradropApp')
         if(map.invalid){
           $scope.isValidMap = false;
           for(var i in $scope.mapsArray){
-            if($scope.mapsArray[i].invalid){
+            if($scope.mapsArray[i].data.invalid){
               continue;
             }else{
-              map = $scope.mapsArray[i];
+              map = $scope.mapsArray[i].data;
               gmapMaker.setIndex(i, 'recon');
               $scope.isValidMap = true;
               break;
             }
           }
           if(!$scope.isValidMap){
+            $scope.closeAlerts();
+            $scope.dangerAlert('<strong>Error:</strong> This user has no valid maps to display. Please contact <a class="alert-link" href="mailto:admin@paradrop.io">admin@paradrop.io</a> if you think this is an error.');
             return;
           }
         }

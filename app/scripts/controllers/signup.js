@@ -54,8 +54,8 @@ angular.module('paradropApp')
                 $location.url('/notify');
               }
               else {
-                window.alert('We could not complete the signup process. Please try again.');
-                window.alert(response.data);
+                $scope.closeAlerts();
+                $scope.dangerAlert('Error: We could not complete the signup process. Please try again.\n' + response.data);
               }
             },
             /* USER SIGNUP FAILED */
@@ -65,9 +65,10 @@ angular.module('paradropApp')
                 $location.url('/modes/restricted_signup');
               }
               else {
-                window.alert('There was a failure in the signup process. Please try again.');
+                $scope.closeAlerts();
+                $scope.dangerAlert('Error: There was a failure in the signup process. Please try again.');
                 if (response.data) {
-                  window.alert(response.data);
+                  $scope.dangerAlert('Error: There was a failure in the signup process. Please try again.\n' + response.data);
                 }
               }
             }
@@ -94,7 +95,8 @@ angular.module('paradropApp')
                 },
                 /* FAILURE */
                 function () {
-                  alert('We could not set us your new account. Please try reverifying using the email we sent you.');
+                  $scope.closeAlerts();
+                  $scope.dangerAlert('Error: We could not set up your new account. Please try reverifying using the email we sent you.');
                 }
              );
           },

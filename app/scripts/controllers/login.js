@@ -28,10 +28,12 @@ angular.module('paradropApp')
 
       $scope.login = function (credentials) {
         if(!credentials.username){
-          alert('The username field cannot be blank. Please enter your username.');
+          $scope.closeAlerts();
+          $scope.dangerAlert('Error: The username field cannot be blank. Please enter your username.');
           return;
         }else if(!credentials.password){
-          alert('The password field cannot be blank. Please enter your password.');
+          $scope.closeAlerts();
+          $scope.dangerAlert('Error: The password field cannot be blank. Please enter your password.');
           return;
         }
         try{
@@ -39,8 +41,9 @@ angular.module('paradropApp')
               //Successful session restore
               function() {
                 //redirect to their homepage
-                alert('You are already logged in. Please logout if you want to log in as a different user.');
                 $location.url('/my_paradrop');
+                $scope.closeAlerts();
+                $scope.dangerAlert('You were already logged in. Please logout if you want to log in as a different user.');
               },
               //failed to restore a session
               function() {
@@ -61,15 +64,20 @@ angular.module('paradropApp')
           /* FAILED LOGIN */
           function (error) {
             if(error.data === 'User is not verified!'){
-              alert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
+              $scope.closeAlerts();
+              $scope.dangerAlert('Your account has not yet been verified! Please check your email for instructions and a link to verify your account. If you just created your account you should recieve the email shortly.');
             }else if(error.data === 'User is disabled!'){
-              alert('Your account has been disabled. Please contact us at admin@paradrop.io if you think there has been an error.');
+              $scope.closeAlerts();
+              $scope.dangerAlert('Your account has been disabled. Please contact us at admin@paradrop.io if you think there has been an error.');
             }else if(error.data === 'Threshold Met!'){
-              alert('Your account has been temporarily frozen due to too many failed attempts to login. If you think there has been an error contact admin@paradrop.io');
+              $scope.closeAlerts();
+              $scope.dangerAlert('Your account has been temporarily frozen due to too many failed attempts to login. If you think there has been an error contact admin@paradrop.io');
             }else if(error.data){
-              alert(error.data);
+              $scope.closeAlerts();
+              $scope.dangerAlert('Error: ' + error.data);
             }else{
-              alert('Login Failed! This site is currently in development if you are seeing this error please visit ' + URLS.current +' and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
+              $scope.closeAlerts();
+              $scope.dangerAlert('Login Failed! This site is currently in development if you are seeing this error please visit ' + URLS.current +' and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
             }
           }
         );

@@ -93,7 +93,8 @@ angular.module('paradropApp')
               enableButtons();
             }
           }else{
-            alert('You can only look at the last 7 days of data.');
+            $rootScope.closeAlerts();
+            $rootScope.warningAlert('You can only look at the last 7 days of data.');
           }
           return {};
         };
@@ -118,7 +119,8 @@ angular.module('paradropApp')
             enableButtons();
           }else{
             buildCharts();
-            alert('Today is the most recent day you can view data for.');
+            $rootScope.closeAlerts();
+            $rootScope.warningAlert('Today is the most recent day you can view data for.');
           }
           return {};
         };
