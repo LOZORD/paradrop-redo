@@ -123,13 +123,14 @@ angular.module('paradropApp')
                   console.log(result.data);
                   var coords = result.data.coords;
                   $scope.isTraining = result.data.training;
-                  $scope.successString = 'Success<br>';
-                  $scope.successString += 'ts: ' + result.data.ts + '<br>';
-                  $scope.successString += 'mapid: ' + coords.mapid + '<br>zone: ' + 
-                    coords.zone + '<br>isinside: ' + coords.isinside + '<br>err: ' + coords.err + '<br>';
+                  var time = new Date(result.data.ts * 1000);
+                  $scope.successString = '<h3>Success</h3>';
+                  $scope.successString += '<b>Time:</b> ' + time.toLocaleTimeString() + ' (' + result.data.ts + ')<br>';
+                  $scope.successString += '<b>Map:</b> ' + coords.mapid + '<br><b>Zone Guess:</b> ' + 
+                    coords.zone + '<br><b>Inside?:</b> ' + coords.isinside + '<br><b>Error:</b> ' + coords.err + '<br>';
                   for(var key in result.data.signals){
                     if(result.data.signals[key]){
-                      $scope.successString += $scope.apNameMap[key].name + ': {rssi: ' + result.data.signals[key] + ' }<br>';
+                      $scope.successString += '<b>' + $scope.apNameMap[key].name + '(rssi):</b> ' + result.data.signals[key] + '<br>';
                     }
                   }
                   lastSeenTS = result.data.ts;
@@ -163,8 +164,10 @@ angular.module('paradropApp')
                       $scope.heatmap.setMap(null);
                       delete $scope.heatmap;
                     }
-                    $scope.heatmap = new google.maps.visualization.HeatmapLayer({data: heatMapData, radius: 30, opacity: .75});
-                    $scope.heatmap.setMap($scope.map);
+                    $scope.heatmap = new google.maps.visualization.HeatmapLayer({data: heatMapData, radius: 35, opacity: .75});
+                    if(!$scope.hideHeatmap){
+                      $scope.heatmap.setMap($scope.map);
+                    }
                     var myLatlng = new google.maps.LatLng(coords.lat, coords.lng);
                     if($scope.map.markers.guessMarker){
                       $scope.map.markers.guessMarker.setPosition(myLatlng);
@@ -196,6 +199,19 @@ angular.module('paradropApp')
                 }
               );
             };
+
+            $scope.$watch(
+                  function() { return $scope.hideHeatmap; },
+                  function(hideHeatMap) {
+                    if($scope.map && $scope.heatmap){
+                      if (hideHeatMap) {
+                        $scope.heatmap.setMap(null);
+                      }else{
+                        $scope.heatmap.setMap($scope.map);
+                      }
+                    }
+                  }
+            );
 
             $scope.sendCoord = function() {
               if(!$scope.mac){
