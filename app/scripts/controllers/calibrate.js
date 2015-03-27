@@ -260,6 +260,31 @@ angular.module('paradropApp')
               $scope.coords = {};
             };
 
+            $scope.train = function() {
+              if($scope.isTraining){
+                return;
+              }
+              $scope.isTraining = true;
+              var trainBody = {};
+              trainBody.sessionToken = $scope.sessionToken();
+              trainBody.mac = $scope.mac;
+              trainBody.reconid = $scope.groupMaps.reconid;
+              var trainURL = URLS.current + 'recon/maps/train';
+              $http.post(trainURL, trainBody).then(
+                function(){
+                  //success
+                  $scope.closeAlerts();
+                  $scope.successAlert('<strong>Success:</strong> Training begun!');
+                },
+                function(){
+                  //failure
+                  $scope.closeAlerts();
+                  $scope.dangerAlert('<strong>Error:</strong> Could not start training.');
+                  $scope.isTraining = false;
+                }
+              );
+            };
+
             //grab and build map
             var mapInitURL = URLS.current + 'recon/meta/' + $scope.group_id+ '/maps';
             if($scope.superAdmin){

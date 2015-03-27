@@ -30,25 +30,32 @@
       </div>
     </form>
   </div>
-  <div class='col-sm-8'>
-  </div>
 </div>
 <div class="row">
-  <div class='col-sm-8 form-group'>
+  <div class='col-sm-6 form-group'>
     <button class="btn btn-primary" ng-click="start()" ng-disabled="macForm.$invalid">Start</button>
     <button class="btn btn-primary" ng-click="finish()">Finish</button>
     <button class="btn btn-primary" ng-click="poll()" ng-disabled="macForm.$invalid">Poll</button>
     <button class="btn btn-primary" ng-click="sendCoord()" ng-disabled="macForm.$invalid">Send Coord</button>
     <button type="button" class="btn btn-primary" ng-click="clear()" ng-disabled="mapData.invalid">Clear</button>
-    <label data-toggle="tooltip" data-placement="bottom" 
-      title='To help with calibration Paradrop can manually launch a special test WiFi network on each AP, the networks will be called "pdcalib#". They are open networks for testing only and will be destroyed when calibration is complete. For the best calibration results, please connect your phone or testing device to one of these networks during the calibration process.'>
-      <input type="checkbox" ng-model="createNetwork" ng-init="createNetwork = false" ng-disabled="true"> Create Wifi Network
-    </label>
-    <label> 
-      <input type="checkbox" ng-model="hideHeatmap" ng-click="toggleHeatmap()"> Hide Heatmap
-    </label>
+    <button type="button" data-toggle="tooltip" data-placement="bottom" title="" class="btn btn-primary" ng-click="train()" ng-disabled="isTraining">Train</button>
   </div>
-  <div class='col-sm-4'>
+  <div class='col-sm-6'>
+    <div class="row">
+      <div class='col-sm-12'>
+        <label data-toggle="tooltip" data-placement="bottom" 
+          title='To help with calibration Paradrop can manually launch a special test WiFi network on each AP, the networks will be called "pdcalib#". They are open networks for testing only and will be destroyed when calibration is complete. For the best calibration results, please connect your phone or testing device to one of these networks during the calibration process.'>
+          <input type="checkbox" ng-model="createNetwork" ng-init="createNetwork = false" ng-disabled="true"> Create Wifi Network
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class='col-sm-12'>
+        <label> 
+          <input type="checkbox" ng-model="hideHeatmap" ng-click="toggleHeatmap()"> Hide Heatmap
+        </label>
+      </div>
+    </div>
   </div>
 </div>
     <img class="img-responsive center-block" ng-show="!mapData && !mapError" ng-src='images/spinner.gif'/>
