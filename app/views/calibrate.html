@@ -12,16 +12,29 @@
     </div>
   </div>
 </div>
-<div class="row" ng-if="!mapError">
-  <div class='col-sm-12 form-group'>
-    <label>
-      MAC:
-      <input type='text' id='MAC' class='form-control' ng-model='mac'>
-    </label>
-    <button class="btn btn-primary" ng-click="start()">Start</button>
+<div class="row">
+  <div class='col-sm-4 form-group'>
+    <form name="macForm">
+      <label for=="mac">
+        MAC:
+      </label>
+      <input type='text' id='MAC' name="mac" class='form-control' ng-model='mac'required pattern="([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})">
+      <div  class='error-container bg-danger'
+            ng-show='macForm.mac.$dirty && macForm.mac.$invalid'>
+        <small class='error' ng-show='macForm.mac.$error.required'>
+          A MAC address is required.
+        </small>
+        <small class='error' ng-show='macForm.mac.$error.pattern'>
+          Invalid MAC Address.
+        </small>
+      </div>
+    </form>
+  </div>
+  <div class='col-sm-8'>
+    <button class="btn btn-primary" ng-click="start()" ng-disabled="macForm.$invalid">Start</button>
     <button class="btn btn-primary" ng-click="finish()">Finish</button>
-    <button class="btn btn-primary" ng-click="poll()">Poll</button>
-    <button class="btn btn-primary" ng-click="sendCoord()">Send Coord</button>
+    <button class="btn btn-primary" ng-click="poll()" ng-disabled="macForm.$invalid">Poll</button>
+    <button class="btn btn-primary" ng-click="sendCoord()" ng-disabled="macForm.$invalid">Send Coord</button>
     <button type="button" class="btn btn-primary" ng-click="clear()" ng-disabled="mapData.invalid">Clear</button>
     <label data-toggle="tooltip" data-placement="bottom" 
       title='To help with calibration Paradrop can manually launch a special test WiFi network on each AP, the networks will be called "pdcalib#". They are open networks for testing only and will be destroyed when calibration is complete. For the best calibration results, please connect your phone or testing device to one of these networks during the calibration process.'>

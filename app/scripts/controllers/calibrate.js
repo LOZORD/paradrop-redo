@@ -108,6 +108,7 @@ angular.module('paradropApp')
             };
 
             $scope.poll = function() {
+              console.log($scope.mac);
               if(!$scope.mac){
                 $scope.closeAlerts();
                 $scope.dangerAlert('<strong>Error:</strong> Please enter a MAC.');
@@ -116,6 +117,7 @@ angular.module('paradropApp')
               mainBody.sessionToken = $scope.sessionToken();
               mainBody.mac = $scope.mac;
               mainBody.reconid = $scope.groupMaps.reconid;
+              console.log(mainBody);
               $http.post(pollURL, mainBody ).then(
                 function(result) {
                   console.log(result.data);
@@ -153,6 +155,16 @@ angular.module('paradropApp')
                         $scope.map.markers[ap].setMap(null);
                       }
                     }
+                    var heatMapData = [];
+                    for(var point in coords.heatmap){
+                      heatMapData.push({ location: new google.maps.LatLng(coords.heatmap[point][0], coords.heatmap[point][1]), weight: coords.heatmap[point][2]});
+                    }
+                    if($scope.heatmap){
+                      $scope.heatmap.setMap(null);
+                      delete $scope.heatmap;
+                    }
+                    $scope.heatmap = new google.maps.visualization.HeatmapLayer({data: heatMapData, radius: 30, opacity: .75});
+                    $scope.heatmap.setMap($scope.map);
                     var myLatlng = new google.maps.LatLng(coords.lat, coords.lng);
                     if($scope.map.markers.guessMarker){
                       $scope.map.markers.guessMarker.setPosition(myLatlng);
@@ -175,6 +187,8 @@ angular.module('paradropApp')
                       $scope.guessInfowindow.open($scope.map,$scope.map.markers.guessMarker);
                     }
                   }
+                  $scope.closeAlerts();
+                  $scope.successAlert('<strong>Success:</strong> Poll response recieved.');
                 },
                 function(){
                   $scope.closeAlerts();
