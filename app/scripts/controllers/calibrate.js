@@ -253,6 +253,9 @@ angular.module('paradropApp')
               for(var key in $scope.map.markers){
                 $scope.map.markers[key].setMap(null);
               }
+              if($scope.heatmap){
+                $scope.heatmap.setMap(null);
+              }
               $scope.showLocation = false;
               $scope.coords = {};
             };
