@@ -19,6 +19,7 @@ angular.module('paradropApp')
       $scope.$on('$routeChangeStart',
         function(){
           $scope.isCollapsed = true;
+          $scope.closeAlerts();
         }
       );
       $scope.isAuthenticated = AuthService.isAuthenticated;
