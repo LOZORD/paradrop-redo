@@ -179,7 +179,7 @@ angular.module('paradropApp')
                         position: myLatlng,
                         map: $scope.map,
                         title: 'We think you\'re here.',
-                        icon: 'images/down.png'
+                        icon: 'images/location.png'
                       });
                       $scope.guessInfowindow = new google.maps.InfoWindow({
                         content: $scope.successString
