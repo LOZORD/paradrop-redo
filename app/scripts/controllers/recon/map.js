@@ -86,13 +86,13 @@ angular.module('paradropApp')
       function heatDataRecieved(data){
         console.log(data);
         //array indexes
-        var ts = 0;
-        var lat = 1;
-        var lng = 2;
-        var mac = 3;
-        var isinside = 4;
-        var zone = 5;
-        var error = 6;
+        var ts = 1;
+        var lat = 2;
+        var lng = 3;
+        var mac = 4;
+        var isinside = 5;
+        var zone = 6;
+        var error = 7;
         $scope.heatMapData = [];
         for(var i in data.data){
           $scope.heatMapData.push(new google.maps.LatLng(data.data[i][lat],data.data[i][lng]));
@@ -106,6 +106,7 @@ angular.module('paradropApp')
         }
         $scope.heatmap = new google.maps.visualization.HeatmapLayer({radius: 40, data: $scope.heatMapData});
         $scope.heatmap.setMap($scope.map);
+        console.log($scope.heatmap);
       };
 
       function heatDataError(error){
