@@ -44,7 +44,14 @@
           <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeText(!showMarkers,true);" ng-disabled="!mapData">{{markerBtnText}} Paradrop Access Points</button>
         </div>
       </div>
-      <div class='col-md-3'>
+      <div class='col-md-9'>
+        <label for=="mac">
+          Search:
+        </label>
+        <input type='text' class='form-control' ng-model='searchText'>
+        <label ng-repeat="(key, value) in showingData"> 
+          <input type="checkbox" ng-model="value.poly.hidden" ng-click="value.poly.setVisible(!value.poly.hidden)"> Hide {{value.id}}</input>
+        </label>
       </div>
     </div>
   </div>
