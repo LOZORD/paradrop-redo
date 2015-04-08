@@ -1,5 +1,4 @@
 'use strict';
-hidden = $scope.macData[mac].poly.hidden;
 
 /**
  * @ngdoc service
