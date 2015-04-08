@@ -37,7 +37,6 @@ angular.module('paradropApp')
           if ($routeParams.cDeviceID) {
             $scope.deviceToUpdate = null;
             $scope.CHANNELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 149, 153, 157, 161, 165];
-            //TODO, use http to get default values
 
             for (var i = 0, len = $scope.configurableDevices.length; i < len; i++) {
               if ($scope.configurableDevices[i].guid === $routeParams.cDeviceID) {
@@ -63,7 +62,6 @@ angular.module('paradropApp')
                   //used for reverting
                   if ($scope.configUpdateData) {
                     $scope.origConfigData = angular.copy($scope.configUpdateData);
-                    $scope.isUsingSlowChannel = $scope.usingSlowChannel($scope.configUpdateData.channel);
                   }
                 },
                 function () {
@@ -122,8 +120,7 @@ angular.module('paradropApp')
             };
 
             $scope.usingSlowChannel = function (val) {
-              $scope.isUsingSlowChannel = ((val < 11) && ([1, 6, 11].indexOf(val) === -1));
-              return $scope.isUsingSlowChannel;
+              return (val < 11) && (val !== 1) && (val !== 6);
             };
           }
         }
