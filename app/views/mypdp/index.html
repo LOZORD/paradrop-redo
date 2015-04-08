@@ -22,10 +22,10 @@
         <div id="collapse{{key}}" class="panel-collapse collapse">
           <div class="panel-body">
             <!--<a data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>-->
-            <a ng-if='ap.type === "owner"' ng-href='/#!/my_paradrop/configs/{{ap.guid}}/update'>Configure this Access Point</a>
+            <a ng-if='ap.type === "owner"' ng-href='/my_paradrop/configs/{{ap.guid}}/update'>Configure this Access Point</a>
             <a ng-if='ap.type !== "owner"' data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>
             <p>Location: {{ap.devinfo.location}}</p>
-            <a ng-href='/#!/my_paradrop/configs/{{ap.guid}}/chutes/'>Chutes on this AP</a>
+            <a ng-href='/my_paradrop/configs/{{ap.guid}}/chutes/'>Chutes on this AP</a>
             <p>List apps here!</p>
           </div>
         </div>
