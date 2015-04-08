@@ -18,7 +18,7 @@
   <ul class="nav nav-tabs" role="tablist">
     <li><a ng-href="recon/home/{{group_id}}">Overview</a></li>
     <li><a ng-href="recon/dashboard/{{group_id}}">Dashboard</a></li>
-    <li class="active"><a ng-href="recon/map/{{group_id}}">Location Tracking</a></li>
+    <li class="active"><a ng-href="recon/map/{{group_id}}">Live Tracking</a></li>
     <li><a ng-href="recon/settings/{{group_id}}">Advanced Settings</a></li>
   </ul>
   <!-- Tab panes -->
@@ -44,14 +44,71 @@
           <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeText(!showMarkers,true);" ng-disabled="!mapData">{{markerBtnText}} Paradrop Access Points</button>
         </div>
       </div>
-      <div class='col-md-9'>
-        <label for=="mac">
-          Search:
-        </label>
-        <input type='text' class='form-control' ng-model='searchText'>
-        <label ng-repeat="(key, value) in showingData"> 
-          <input type="checkbox" ng-model="value.poly.hidden" ng-click="value.poly.setVisible(!value.poly.hidden)"> Hide {{value.id}}</input>
-        </label>
+      <div class='col-md-6 max-height'>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>MAC</th>
+                <th>Hide</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="(key, value) in showingData | orderBy : 'name'">
+                <td>
+                  {{value.name}}
+                </td>
+                <td>{{value.oui}}</td> 
+                <td>
+                  {{value.mac}}
+                </td> 
+                <td>
+                  <label>
+                    <input type="checkbox" ng-model="polylines[value.name].hidden" ng-click="polylines[value.name].setVisible(!polylines[value.name].hidden)"> Hide {{value.name}}
+                    </input>
+                  </label>
+                </td> 
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class='col-md-3'>
+        <h2>Filters:</h2>
+        <div class="row">
+          <label for=="name">
+            Name:
+          </label>
+          <input name="name" type='text' class='form-control' ng-model='searchText.name'>
+        </div>
+        <div class="row">
+          <label for=="oui">
+            Brand:
+          </label>
+          <input name="oui" type='text' class='form-control' ng-model='searchText.oui'>
+        </div>
+        <div class="row">
+          <label for=="zone">
+            Zone:
+          </label>
+          <input name="zone" type='text' class='form-control' ng-model='searchText.allZones'>
+        </div>
+        <div class="row">
+          <label for=="mac">
+            MAC:
+          </label>
+          <input name="mac" type='text' class='form-control' ng-model='searchText.mac'>
+        </div>
+        <div class="row">
+          <div class="form-group">
+            <label for=="inside">Inside Filter:</label> 
+             <select ng-model="filterType" ng-change="inFilter()" class="form-control" name="inside" ng-options="filter.name as filter.name for filter in insideFilters"></select>
+          </div>
+        </div>
+      </div>
+        </div>
       </div>
     </div>
   </div>

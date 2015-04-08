@@ -16,6 +16,7 @@ angular.module('paradropApp')
 
     this.recon = null;
     this.nothing = function(){};
+    this.today = null;
     var self = this;
 
     $rootScope.sessionBuilt.promise.then(function(){
@@ -23,7 +24,7 @@ angular.module('paradropApp')
         var post = function(url, args){
           //Inject the session token into the args list to POST
           args.sessionToken = Session.id;
-          console.log('POST to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
+          //console.log('POST to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
           var call = $http.post(URLS.current.substr(0, URLS.current.length-4) + url, args);
           return call;
         };
@@ -130,6 +131,7 @@ angular.module('paradropApp')
         self.recon.dateString = 'so far Today';
         self.recon.prefetch(opts)
         .then(function(){
+          self.today = self.recon;
           $rootScope.reconInit.resolve();
           var stopts = $rootScope.closeTime;
           var startts = $rootScope.openTime;

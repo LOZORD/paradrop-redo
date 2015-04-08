@@ -13,6 +13,11 @@ font-family: 'Century Gothic', sans-serif;
   padding: 0.2em 0;
 }
 
+.max-height {
+  max-height: 300px;
+  overflow: auto;
+}
+
 .para-text {
   padding-left: 20px;
   font-family: 'Century Gothic', sans-serif;
