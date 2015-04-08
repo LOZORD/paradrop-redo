@@ -50,7 +50,7 @@ angular.module('paradropApp')
 
             var radioStatePackage = {
               sessionToken: $scope.currentUser().id,
-              apid:         $scope.deviceToUpdate.guid
+              apid:         $scope.deviceToUpdate.name
             };
 
             $scope.origConfigData = null;
@@ -58,11 +58,19 @@ angular.module('paradropApp')
             $http.post(radioStateURL, radioStatePackage)
               .then(
                 function (result) {
-                  $scope.configUpdateData = angular.copy(result.data[0]);
-                  //used for reverting
-                  if ($scope.configUpdateData) {
-                    $scope.origConfigData = angular.copy($scope.configUpdateData);
+                  if (!result.data[0]) {
+                    $scope.configUpdateData = {
+                      isauto:   1,
+                      channel:  1,
+                      radioid:  1
+                    };
                   }
+                  else {
+                    $scope.configUpdateData = angular.copy(result.data[0]);
+                  }
+
+                  //used for reverting
+                  $scope.origConfigData = angular.copy($scope.configUpdateData);
                 },
                 function () {
                   $scope.configUpdateData = {
@@ -92,7 +100,7 @@ angular.module('paradropApp')
 
               var dataPackage = {
                 sessionToken: $scope.currentUser().id,
-                apid:         $scope.deviceToUpdate.guid,
+                apid:         $scope.deviceToUpdate.name,
                 payload:      data
               };
 
