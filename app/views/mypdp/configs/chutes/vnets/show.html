@@ -4,10 +4,6 @@
       <span style='overflow-wrap:break-word;'>
         <h1>
           <strong>{{ specificChute.name }}</strong>: Virtual Network
-          <!-- the link to edit this vnet -->
-          <a ng-href='my_paradrop/configs/{{apid}}/chutes/vnets/{{chuteid}}/update'>
-            <span class='glyphicon glyphicon-edit' aria-hidden='true'></span>
-          </a>
         </h1>
       </span>
     </div>
@@ -29,6 +25,12 @@
         <strong>Qos Down</strong>: {{ specificChute.config.qosdown }}
       </li>
     </ul>
+    <div class='container'>
+      <a class='btn btn-primary' ng-href='my_paradrop/configs/{{ apid }}/chutes/vnets/{{ chuteid }}/update'>
+        Edit this Virtual Network
+      </a>
+    </div>
+    <br>
   </div>
   <div ng-if="!specificChute">
     You do not have access to this virtual network.
