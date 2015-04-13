@@ -34,12 +34,13 @@ angular.module('paradropApp')
 
           /* UPDATING */
           //if we were routed here for updating a config
-          if ($routeParams.cDeviceID) {
+          if ($routeParams.apName) {
+            $scope.apName = $routeParams.apName;
             $scope.deviceToUpdate = null;
             $scope.CHANNELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 149, 153, 157, 161, 165];
 
             for (var i = 0, len = $scope.configurableDevices.length; i < len; i++) {
-              if ($scope.configurableDevices[i].guid === $routeParams.cDeviceID) {
+              if ($scope.configurableDevices[i].name === $scope.apName) {
                 $scope.deviceToUpdate = $scope.configurableDevices[i];
                 break;
               }

@@ -87,7 +87,7 @@ angular.module('paradropApp', [
         controller: 'ConfigCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:cDeviceID/update', {
+      .when('/my_paradrop/configs/:apName/update', {
         templateUrl: 'views/mypdp/configs/update.html',
         controller: 'ConfigCtrl',
         auths: { session: true }
