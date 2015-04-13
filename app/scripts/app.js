@@ -97,12 +97,12 @@ angular.module('paradropApp', [
         controller: 'ChuteCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid', { //FIXME apid -> apName
+      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid', {
         templateUrl: 'views/mypdp/configs/chutes/vnets/show.html',
         controller: 'ChuteCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid/update', { //FIXME apid -> apName
+      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid/update', {
         templateUrl: 'views/mypdp/configs/chutes/vnets/update.html',
         controller: 'ChuteCtrl',
         auths: { session: true }

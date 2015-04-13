@@ -15,7 +15,6 @@ angular.module('paradropApp')
       if (isAuthorized) {
         $scope.togglerBtn = false;
 
-        //FIXME in the view
         $scope.ENCRYPTION_TYPES = [
           'NONE',
           'PSK',
