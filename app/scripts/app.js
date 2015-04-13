@@ -92,17 +92,17 @@ angular.module('paradropApp', [
         controller: 'ConfigCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:apid/chutes', {
+      .when('/my_paradrop/configs/:apName/chutes', {
         templateUrl: 'views/mypdp/configs/chutes/index.html',
         controller: 'ChuteCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:apid/chutes/vnets/:chuteid', {
+      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid', { //FIXME apid -> apName
         templateUrl: 'views/mypdp/configs/chutes/vnets/show.html',
         controller: 'ChuteCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:apid/chutes/vnets/:chuteid/update', {
+      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid/update', { //FIXME apid -> apName
         templateUrl: 'views/mypdp/configs/chutes/vnets/update.html',
         controller: 'ChuteCtrl',
         auths: { session: true }
@@ -289,7 +289,7 @@ angular.module('paradropApp', [
   })
   .constant('URLS', {
     //Change the current url to change all calls globally
-    current: 'http://paradrop.wings.cs.wisc.edu:20330/v1/' //'https://dev.dbapi.paradrop.io'
+    current: 1 ? 'http://paradrop.wings.cs.wisc.edu:20330/v1/' : 'https://dev.dbapi.paradrop.io'
   })
   .constant('MODES', {
     restrictedSignup: true

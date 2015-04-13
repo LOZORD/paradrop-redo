@@ -109,7 +109,7 @@ angular.module('paradropApp')
 
           var vnetUpdatePackage = {
             sessionToken: $scope.currentUser().id,
-            apid:         $routeParams.apid,
+            apid:         $routeParams.apName,
             chuteid:      $routeParams.chuteid,
             payload:      formattedData
           };
@@ -121,7 +121,7 @@ angular.module('paradropApp')
             function (result) {
               //success
               if (result.data === '') {
-                $location.path('/my_paradrop/configs/' +  $routeParams.apid + '/chutes/vnets/' + $routeParams.chuteid);
+                $location.path('/my_paradrop/configs/' +  $routeParams.apName + '/chutes/vnets/' + $routeParams.chuteid);
               }
               //failure
               else {

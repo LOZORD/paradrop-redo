@@ -15,19 +15,18 @@ angular.module('paradropApp')
       if (isAuthorized) {
         //first get the chutes for this user
 
-        var chuteListURL = /*'https://dbapi.paradrop.io/v1/'*/ URLS.current + 'ap/chute/list';
+        var chuteListURL = URLS.current + 'ap/chute/list';
 
-        $scope.apid = $routeParams.apid;
+        $scope.apName = $routeParams.apName;
+
         var chuteListPayload = {
           sessionToken: $scope.currentUser().id,
-          apid: $scope.apid
+          apid: $scope.apName //FIXME might want to change this confusing param
         };
 
         $scope.chutes         = null;
         $rootScope.specificChute  = null;
         $scope.chuteid        = null;
-
-        //console.log(chuteListPayload);
 
         $http.post(chuteListURL, chuteListPayload)
         .then(
