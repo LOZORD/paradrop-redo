@@ -29,8 +29,14 @@ angular.module('paradropApp')
           return call;
         };
 
+        var get = function(url){
+          console.log('GET to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
+          var getCall = $http.get(URLS.current.substr(0, URLS.current.length-4) + url);
+          return getCall;
+        };
 
-        self.recon = new Recon( { postFunc: post} );
+
+        self.recon = new Recon( { postFunc: post, getFunc: get} );
         //setup prev day recon dictionary
         self.storedData = {0: self.recon, 1: null , 2: null, 3: null, 4: null, 5: null, 6: null, 7: null };
         //setup opts for prefetch
@@ -83,7 +89,7 @@ angular.module('paradropApp')
             chartBuilder.buildRepeatVisitsChart(graphData);
             buildCharts();
             if(!self.storedData[currDay+1] && currDay !== 7){
-              self.storedData[currDay+1] = new Recon({postFunc: post});
+              self.storedData[currDay+1] = new Recon({postFunc: post, getFunc: get});
               self.storedData[currDay+1].myOpts = self.prevOpts(currDay+1); 
               self.storedData[currDay+1].dateString = 'on ' + 
                 (new Date(self.storedData[currDay+1].myOpts.start*1000))
@@ -145,7 +151,7 @@ angular.module('paradropApp')
           chartBuilder.chartsBuilt();
         });
 
-        self.storedData[currDay+1] = new Recon( { postFunc: post } );
+        self.storedData[currDay+1] = new Recon( { postFunc: post, getFunc: get } );
         self.storedData[currDay+1].myOpts = self.prevOpts(currDay+1); 
         self.storedData[currDay+1].dateString = 'on ' + 
           (new Date(self.storedData[currDay+1].myOpts.start*1000))
