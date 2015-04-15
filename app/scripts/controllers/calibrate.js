@@ -11,6 +11,8 @@ angular.module('paradropApp')
   .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$localStorage', '$window', '$routeParams', '$sce',
     function ($scope, URLS, $http, gmapMaker, $localStorage, $window, $routeParams, $sce) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
+      $scope.channels = [1, 6, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165];
+      $scope.channel = $scope.channels[0];
       if($scope.group_id){
         $scope.superAdmin = false;
       }else{
@@ -37,6 +39,7 @@ angular.module('paradropApp')
             var pollURL = URLS.current + 'recon/maps/poll';
             var coordsURL = URLS.current + 'recon/maps/coords';
             var mainBody = {};
+            var startBody = {};
             var coordsBody = {};
             var lastSeenTS = null;
 
@@ -46,15 +49,18 @@ angular.module('paradropApp')
                 $scope.dangerAlert('<strong>Error:</strong> Please enter a MAC.');
                 return;
               }
-              mainBody.sessionToken = $scope.sessionToken();
-              mainBody.mac = $scope.mac;
-              mainBody.reconid = $scope.groupMaps.reconid;
+              startBody.sessionToken = $scope.sessionToken();
+              startBody.mac = $scope.mac;
+              startBody.reconid = $scope.groupMaps.reconid;
+              startBody.typeid = $scope.mapData.typeid;
+              startBody.channel = $scope.channel;
+              startBody.groupname = $scope.groupMaps.groupname;
               $localStorage.mac = $scope.mac;
-              $http.post(startURL, mainBody ).then(
+              $http.post(startURL, startBody ).then(
                 function() {
                   //create wifi network
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id +'/create';
-                  var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib' };
+                  var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib', channel: $scope.channel };
                   if($scope.createNetwork){
                     $http.post(wifiURL, wifiBody).then(
                       function() {

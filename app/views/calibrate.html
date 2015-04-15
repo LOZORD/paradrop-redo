@@ -40,12 +40,12 @@
     <button type="button" class="btn btn-primary" ng-click="clear()" ng-disabled="mapData.invalid">Clear</button>
     <button type="button" data-toggle="tooltip" data-placement="bottom" title="" class="btn btn-primary" ng-click="train()" ng-disabled="isTraining">Train</button>
   </div>
-  <div class='col-sm-6'>
+  <div class='col-sm-3'>
     <div class="row">
       <div class='col-sm-12'>
         <label data-toggle="tooltip" data-placement="bottom" 
           title='To help with calibration Paradrop can manually launch a special test WiFi network on each AP, the networks will be called "pdcalib#". They are open networks for testing only and will be destroyed when calibration is complete. For the best calibration results, please connect your phone or testing device to one of these networks during the calibration process.'>
-          <input type="checkbox" ng-model="createNetwork" ng-init="createNetwork = false" ng-disabled="true"> Create Wifi Network
+          <input type="checkbox" ng-model="createNetwork" ng-init="createNetwork = false"> Create Wifi Network
         </label>
       </div>
     </div>
@@ -56,6 +56,12 @@
         </label>
       </div>
     </div>
+  </div>
+  <div class="col-sm-3 form-group">
+    <label for=="time">
+      Channel:
+    </label>
+    <select name="time" class='form-control' ng-model='channel' ng-options="channel for channel in channels"></select>
   </div>
 </div>
     <img class="img-responsive center-block" ng-show="!mapData && !mapError" ng-src='images/spinner.gif'/>
