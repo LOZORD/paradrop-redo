@@ -5,7 +5,7 @@
       <ul>
         <li ng-repeat='cDevice in configurableDevices | orderBy:"name"'>
           <h4>
-            <a ng-if='!cDevice.ispending' ng-href='my_paradrop/configs/{{ cDevice.guid }}/update'>{{ cDevice.name }}</a>
+            <a ng-if='!cDevice.ispending' ng-href='my_paradrop/configs/{{ cDevice.name }}/update'>{{ cDevice.name }}</a>
             <span ng-if='cDevice.ispending' style='color: grey;'>{{ cDevice.name }} - updates pending</span>
           </h4>
         </li>

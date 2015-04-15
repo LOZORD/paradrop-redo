@@ -28,7 +28,6 @@ angular.module('paradropApp')
           encryption:   null,
           subnet:       null,
           radioid:      null,
-          isprimary:    null,
           qosup:        null,
           qosdn:        null
         };
@@ -41,13 +40,6 @@ angular.module('paradropApp')
         };
 
         var vnetFetchDataURL = URLS.current + 'ap/chute/network';
-
-        //TODO change this into something neater, ie not copypasta
-        /*
-        $scope.equals = function (a,b) {
-          return angular.equals(a,b);
-        };
-        */
 
         $scope.equals = angular.noop;
 
@@ -67,7 +59,6 @@ angular.module('paradropApp')
               encryption:     vnetConfig.encryption.toUpperCase() || 'NONE',
               subnet:         vnetConfig.subnet,
               radioid:        result.data.radioid,
-              isprimary:      result.data.isprimary || 0,
               qosup:          vnetConfig.qosup,
               qosdn:          vnetConfig.qosdown
             };
@@ -100,11 +91,15 @@ angular.module('paradropApp')
             passwd:     data.password,
             encryption: data.encryption,
             radioid:    data.radioid,
-            isprimary:  data.isprimary || false,
             qosdown:    data.qosdn,
             qosup:      data.qosup,
             subnet:     data.subnet
           };
+
+          //no password if no encryption
+          if (formattedData.encryption === 'NONE') {
+            formattedData.passwd = '';
+          }
 
           var vnetUpdatePackage = {
             sessionToken: $scope.currentUser().id,
@@ -119,7 +114,7 @@ angular.module('paradropApp')
           .then(
             function (result) {
               //success
-              if (result.data === '') {
+              if (result.data === '' || !isNaN(parseInt(result.data,10))) {
                 $location.path('/my_paradrop/configs/' +  $routeParams.apName + '/chutes/vnets/' + $routeParams.chuteid);
               }
               //failure
