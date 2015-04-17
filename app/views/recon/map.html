@@ -2,7 +2,7 @@
 <div class="row">
   <div class='col-md-12 form-group'>
     <div ng-if="isValidMap" class="btn-group">
-      <button type="button" class="btn btn-primary">{{group_id}}-{{mapData.name}}</button>
+      <button type="button" class="btn btn-primary" ng-click="setChartData()">{{group_id}}-{{mapData.name}}</button>
       <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
         <span class="caret"></span>
         <span class="sr-only">Toggle Dropdown</span>
@@ -22,7 +22,7 @@
     <li><a ng-href="recon/settings/{{group_id}}">Advanced Settings</a></li>
   </ul>
   <!-- Tab panes -->
-  <div class="tab-pane">
+  <div class="tab-pane extra-wide">
     <div class='row'>
       <div class='col-md-12 form-group'>
         <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeText(!showMarkers,true);" ng-disabled="!mapData">{{markerBtnText}} Paradrop Access Points</button>
@@ -124,7 +124,7 @@
         </div>
       </div>
       <div class="col-sm-4" ng-if="!polyMode">
-        <h1>Graph Coming Soon!</h1>
+        <highchart id="zoneChart" config="chartConfig"></highchart>
       </div>
     </div>
       </div>

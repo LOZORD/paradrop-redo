@@ -8,10 +8,12 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ReconMapCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$interval', '$filter', 'Recon',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $interval, $filter, Recon) {
+  .controller('ReconMapCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$interval', '$filter', 'Recon', 'chartBuilder',
+    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $interval, $filter, Recon, chartBuilder) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.searchText ={};
+      $scope.chartConfig = chartBuilder.buildZoneChart().chartConfig;
+      console.log($scope.chartConfig);
       $scope.timeFilters = [
         {name: 'Rolling', value: null},
         {name: '10 Seconds', value: 10},
@@ -44,6 +46,7 @@ angular.module('paradropApp')
           LIME: { code:'#00FF00'},
           BLACK: { code:'#000000'},
       };
+
       var entryTime = Date.now() / 1000; 
       $scope.filterType = $scope.insideFilters[0].name;
       $scope.latest = $scope.timeFilters[0].value;
@@ -134,6 +137,41 @@ angular.module('paradropApp')
         return opts; 
       };
 
+      $scope.setChartData = function(){
+      };
+
+      function updateChart(data){
+        var series = {};
+        for(var mac in data){
+          if(data[mac].zoneNow){
+            if(!series[data[mac].zoneNow]){
+              series[data[mac].zoneNow] = 1;
+            }else{
+              series[data[mac].zoneNow]++;
+            }
+          }
+        }
+        $scope.chartConfig.loading = false;
+        $scope.chartConfig.series.pop();
+        $scope.chartConfig.series.push({
+          data: [],
+          name: 'Number of Devices',
+          color: '#7cb5ec'
+        });
+        $scope.chartConfig.xAxis.categories = [];
+        for(var zone in $scope.mapData.zones){
+          if($scope.mapData.zones[zone].type != "Impossible"){
+            if(series[zone]){
+              $scope.chartConfig.series[0].data.push({name: zone, y: series[zone]});
+              $scope.chartConfig.xAxis.categories.push(zone);
+            }else{
+              $scope.chartConfig.series[0].data.push({name: zone, y: 0});
+              $scope.chartConfig.xAxis.categories.push(zone);
+            }
+          }
+        }
+      }
+
       //watch for filtering in polymode
       $scope.$watch(function(){return $scope.searchText;}, filterPolylines, true);
 
@@ -141,6 +179,7 @@ angular.module('paradropApp')
         $scope.reconInit.promise.then(
         function(){
           Recon.today.addCoordData(data.data);
+          updateChart(Recon.today.getCoordData({latest: 10}));
           //array indexes
           var ts = 1;
           var lat = 2;
@@ -441,6 +480,7 @@ angular.module('paradropApp')
             return;
           }
         }
+        console.log(map);
         $scope.mapData = map;
         console.log($scope.mapData);
         var builtMap = gmapMaker.buildMap($scope.mapData);
