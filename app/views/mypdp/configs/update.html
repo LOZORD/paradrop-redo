@@ -26,21 +26,58 @@
         </div>
 
         <div class='row'>
-          <div class='form-group col-md-6'>
-            <strong>Operating Mode</strong>
-            <input type='radio' ng-model='configUpdateData.isauto' ng-value='1'> Automatic
-            <input type='radio' ng-model='configUpdateData.isauto' ng-value='0'> Manual
+
+          <div class='form-group col-md-6 row'>
+            <div class='col-sm-6'>
+              <strong>Operating Mode</strong> TEST ME
+            </div>
+            <div class='col-sm-6 btn-group'>
+              <div class='btn btn-default'
+                ng-model='configUpdateData.isauto'
+                ng-class='{ active:  configUpdateData.isauto }'
+                ng-click='configUpdateData.isauto = 1'>
+                Automatic
+              </div>
+              <div class='btn btn-default'
+                ng-model='configUpdateData.isauto'
+                ng-class='{ active: !configUpdateData.isauto }'
+                ng-click='configUpdateData.isauto = 0'>
+                Manual
+              </div>
+            </div>
           </div>
 
           <div ng-if='!configUpdateData.isauto'>
-            <div class='form-group col-md-6' ng-show='!configUpdateData.isauto'>
-              <label for='channelSelect'>
-                Channel Select
-              </label>
-              <select class='form-control' name='channelSelect' ng-model='configUpdateData.channel'
-                ng-options='channelNumber for channelNumber in CHANNELS | orderBy:channelNumber'
-                ng-disabled='configUpdateData.isauto'>
-              </select>
+            <div class='form-group col-md-6 row' ng-show='!configUpdateData.isauto'>
+              <div class='col-sm-6'>
+                <label for='channelSelect'>
+                  Channel Select
+                </label>
+                {{ configUpdateData | json }}
+              </div>
+              <div class='col-sm-6'>
+                <select
+                  class='form-control'
+                  ng-disabled='configUpdateData.isauto'
+                  ng-value='configUpdateData.channel'
+                  name='channelSelect'
+                  ng-model='configUpdateData.channel'
+                  xxxng-options='channel.value disable when !channel.enabled for channel in CHANNELS'>
+                <!--
+                <select
+                  class='form-control'
+                  ng-disabled='configUpdateData.isauto'
+                  ng-value='configUpdateData.channel'
+                  name='channelSelect'
+                  ng-model='configUpdateData.channel'>
+
+                  <option
+                    ng-repeat='channel in CHANNELS'
+                    ng-disabled='!channel.enabled'
+                    ng-selected='channel.value === configUpdateData.channel'>{{ channel.value }}</option>
+                </select>
+                -->
+              </div>
             </div>
           </div>
           <div class='form-group col-md-6' ng-if='configUpdateData.isauto'>

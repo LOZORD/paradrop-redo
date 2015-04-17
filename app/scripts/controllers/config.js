@@ -37,7 +37,30 @@ angular.module('paradropApp')
           if ($routeParams.apName) {
             $scope.apName = $routeParams.apName;
             $scope.deviceToUpdate = null;
-            $scope.CHANNELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 149, 153, 157, 161, 165];
+            $scope.CHANNELS = [
+              { value: '2.4Ghz options',  enabled: false },
+              { value: 1,       enabled: true },
+              { value: 2,       enabled: true },
+              { value: 3,       enabled: true },
+              { value: 4,       enabled: true },
+              { value: 5,       enabled: true },
+              { value: 6,       enabled: true },
+              { value: 7,       enabled: true },
+              { value: 8,       enabled: true },
+              { value: 9,       enabled: true },
+              { value: 10,      enabled: true },
+              { value: 11,      enabled: true },
+              { value: '5Ghz options',    enabled: false },
+              { value: 36,      enabled: true },
+              { value: 40,      enabled: true },
+              { value: 44,      enabled: true },
+              { value: 48,      enabled: true },
+              { value: 149,     enabled: true },
+              { value: 153,     enabled: true },
+              { value: 157,     enabled: true },
+              { value: 161,     enabled: true },
+              { value: 165,     enabled: true }
+            ];
 
             for (var i = 0, len = $scope.configurableDevices.length; i < len; i++) {
               if ($scope.configurableDevices[i].name === $scope.apName) {
