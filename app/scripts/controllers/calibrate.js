@@ -8,10 +8,12 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$localStorage', '$window', '$routeParams', '$sce',
-    function ($scope, URLS, $http, gmapMaker, $localStorage, $window, $routeParams, $sce) {
+  .controller('CalibrateCtrl',['$scope', 'URLS', '$http', 'gmapMaker', '$localStorage', '$window', '$routeParams', '$sce', '$interval',
+    function ($scope, URLS, $http, gmapMaker, $localStorage, $window, $routeParams, $sce, $interval) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.channels = [1, 6, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165];
+      $scope.pingRates = ['Disabled', 1, 5, 10, 20];
+      $scope.pingRate = $scope.pingRates[0];
       $scope.channel = $scope.channels[0];
       if($scope.group_id){
         $scope.superAdmin = false;
@@ -43,6 +45,46 @@ angular.module('paradropApp')
             var coordsBody = {};
             var lastSeenTS = null;
 
+            function startPing(){
+              if($scope.pingRate !== $scope.pingRates[0]){
+                $scope.pingPoll = $interval(ping, 1000/$scope.pingRate);
+                //make sure to cancel the interval when the controller is destroyed
+                $scope.$on('$destroy', function(){ $interval.cancel($scope.pingPoll);});
+                $scope.isPinging = true;
+              }
+            }
+
+            $scope.changePingRate = function(){
+              if($scope.isPinging){
+                $interval.cancel($scope.pingPoll);
+                $scope.isPinging = false;
+              }
+              //start with new rate unless disabled
+              startPing();
+              console.log($scope.pingRate);
+            };
+
+            function endPing(){
+              if($scope.isPinging){
+                $interval.cancel($scope.pingPoll);
+                $scope.isPinging = false;
+              }
+            }
+
+            function ping(){
+              var pingUrl = URLS.current + 'recon/maps/ping';
+              $http.get(pingUrl).then(
+                function(success){
+                  console.log('PING');
+                  console.log(success);
+                },
+                function(err){
+                  console.log('ERROR');
+                  console.log(err);
+                }
+              );
+            }
+
             $scope.start = function() {
               if(!$scope.mac){
                 $scope.closeAlerts();
@@ -56,8 +98,10 @@ angular.module('paradropApp')
               startBody.channel = $scope.channel;
               startBody.groupname = $scope.groupMaps.groupname;
               $localStorage.mac = $scope.mac;
+              console.log(startBody);
               $http.post(startURL, startBody ).then(
                 function() {
+                  startPing();
                   //create wifi network
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id +'/create';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib', channel: $scope.channel };
@@ -92,19 +136,26 @@ angular.module('paradropApp')
               mainBody.reconid = $scope.groupMaps.reconid;
               $http.post(finishURL, mainBody ).then(
                 function() {
+                  endPing();
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id + '/destroy';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib'};
-                  $http.post(wifiURL, wifiBody).then(
-                    function(){
-                      //succesful destroy
-                      $scope.closeAlerts();
-                      $scope.successAlert('<strong>Success:</strong> You\'ve successfully exited calibration Mode');
-                    },
-                    function(){
-                      //failure to destroy
-                      $scope.closeAlerts();
-                      $scope.dangerAlert('<strong>Error:</strong> Successfully finished calibration. Failed to destroy Network');
-                    });
+                  //destroy if create network box is checked
+                  if($scope.createNetwork){
+                    $http.post(wifiURL, wifiBody).then(
+                      function(){
+                        //succesful destroy
+                        $scope.closeAlerts();
+                        $scope.successAlert('<strong>Success:</strong> You\'ve successfully exited calibration Mode. Network destroyed.');
+                      },
+                      function(){
+                        //failure to destroy
+                        $scope.closeAlerts();
+                        $scope.dangerAlert('<strong>Error:</strong> Successfully finished calibration. Failed to destroy Network');
+                      });
+                  }else{
+                    $scope.closeAlerts();
+                    $scope.successAlert('<strong>Success:</strong> You\'ve successfully exited calibration Mode. Network not destroyed.');
+                  }
                 },
                 function(){
                   $scope.closeAlerts();
@@ -243,6 +294,12 @@ angular.module('paradropApp')
               coordsBody.time = lastSeenTS;
               coordsBody.typeid = $scope.mapData.typeid;
               coordsBody.reconid = $scope.groupMaps.reconid;
+              var rate = $scope.pingRate;
+              if(rate === 'Disabled'){
+                rate = 0;
+              }
+              coordsBody.extras = {channel: $scope.channel, ping: rate};
+              console.log(coordsBody);
               $http.post(coordsURL, coordsBody ).then(
                 function() {
                   $scope.closeAlerts();

@@ -11,11 +11,11 @@
         <li ng-repeat="map in mapsArray" ng-if="!map.data.invalid"><a ng-click="switchMap($index)">{{map.groupname}}-{{map.data.name}}</a></li>
       </ul>
     </div>
-    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings();mapSettingsForm.$setPristine();" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode || isScaling">Map Settings</button>
+    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings();mapSettingsForm.$setPristine();" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode || isScaling || measureMode">Map Settings</button>
   </div>
 </div>
   <!-- Tab panes -->
-  <div class="alert alert-danger" role="alert" ng-show="pendingChanges()" ng-cloak>
+  <div class="alert alert-danger" role="alert" ng-show="pendingChanges" ng-cloak>
     <b>You have pending changes that have not been saved!</b>
   </div>
   <div class="tab-pane">
@@ -35,8 +35,11 @@
   </div>
 </div>
 <br>
-<div class="alert alert-info" role="alert" ng-show="isScaleMode">
-  Click on two points to set scale factor.
+<div class="alert alert-info" role="alert" ng-show="isScaleMode || measureMode">
+  Click on two points to <span ng-if="measureMode">measure the distance between them.</span><span ng-if="isScaleMode">set the scale factor.</span>
+  <button type="button" class="btn btn-info pull-right" ng-click="cancelScaleMode()">
+    Cancel
+  </button>
 </div>
 <div class="alert alert-warning" role="alert" ng-show="pickScale">
   <div class="row">
@@ -59,7 +62,10 @@
     </div>
     <div class="col-sm-3">
       <button type="button" class="btn btn-warning pull-right" ng-click="calcScale()" ng-disabled="scaleForm.$invalid">
-        submit
+        Submit
+      </button>
+      <button type="button" class="btn btn-danger pull-right" ng-click="cancelScaleMode()">
+        Cancel
       </button>
     </div>
   </div>
@@ -71,16 +77,24 @@
     <span class="sr-only">Cancel</span>
   </button>
 </div>
+<div class="alert alert-success" role="alert" ng-show="justCalcDist">
+  The measure between the points you selected is: {{distance}} ft. 
+  <button type="button" class="close" ng-click="justCalcDist = false;">
+    <span aria-hidden="true">&times;</span>
+    <span class="sr-only">Cancel</span>
+  </button>
+</div>
 <div class="row">
   <div class='col-md-12 form-group'>
-    <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode || isScaling">Save Changes</button>
-    <button class="btn btn-primary" ng-click="addZone();zoneForm.$setPristine();" ng-if="!isZoneMode" ng-disabled="isDeleteMode || isScaling">Add Zone</button>
+    <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode || isScaling || measureMode">Save Changes</button>
+    <button class="btn btn-primary" ng-click="addZone();zoneForm.$setPristine();" ng-if="!isZoneMode" ng-disabled="isDeleteMode || isScaling || measureMode">Add Zone</button>
     <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-click="$digest" ng-if="isZoneMode">Confirm Zone</button>
     <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
-    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode || isScaling">Add Boundary</button>
-    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling">{{isDeleteMode ? "Exit Delete Mode" : "Delete Mode"}}</button>
-    <button class="btn btn-primary" ng-click="changeScaleFactor();scaleForm.$setPristine();" ng-disabled="isZoneMode || isDeleteMode || isScaling">Adjust Scale Factor</button>
-    <button class="btn btn-primary" ng-click="nameCheckDisabled=false;resetFixedMac();fixedMacForm.$setPristine();" data-toggle="modal" data-target="#fixedMacs" ng-disabled="isZoneMode || isDeleteMode || isScaling">Add Fixed Location Wifi Device</button>
+    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode || isScaling || measureMode">Add Boundary</button>
+    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling || measureMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete Mode"}}</button>
+    <button class="btn btn-primary" ng-click="changeScaleFactor();scaleForm.$setPristine();" ng-disabled="isZoneMode || isDeleteMode || isScaling || measureMode">Adjust Scale Factor</button>
+    <button class="btn btn-primary" ng-click="nameCheckDisabled=false;resetFixedMac();fixedMacForm.$setPristine();" data-toggle="modal" data-target="#fixedMacs" ng-disabled="isZoneMode || isDeleteMode || isScaling || measureMode">Add Fixed Location Wifi Device</button>
+    <button class="btn btn-primary" ng-click="distMeasure()" ng-disabled="isZoneMode || isDeleteMode || isScaling || measureMode">Measure Mode</button>
     <div class="checkbox">
       <label>
         <input type="checkbox" ng-click="toggleMarkers()" ng-bind="markersVisible" ng-disabled="isZoneMode"> Hide Markers
@@ -185,6 +199,12 @@
                 Invalid MAC Address.
               </small>
             </div>
+          </div>
+          <div class="form-group">
+            <label for=="channel">
+              Device Channel:
+            </label>
+            <select name="channel" class="form-control" ng-model='fixedMac.channel' required ng-options="channel for channel in channels"></select>
           </div>
           <div class="form-group">
             <label for=="macPosition">Location (lat,lng):</label> 
