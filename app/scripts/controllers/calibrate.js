@@ -12,7 +12,7 @@ angular.module('paradropApp')
     function ($scope, URLS, $http, gmapMaker, $localStorage, $window, $routeParams, $sce, $interval) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.channels = [1, 6, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165];
-      $scope.pingRates = ['Disabled', 1, 5, 10, 20];
+      $scope.pingRates = ['Disabled', 1, 5, 10];
       $scope.pingRate = $scope.pingRates[0];
       $scope.channel = $scope.channels[0];
       if($scope.group_id){
@@ -45,7 +45,7 @@ angular.module('paradropApp')
             var coordsBody = {};
             var lastSeenTS = null;
 
-            function startPing(){
+            $scope.startPing = function(){
               if($scope.pingRate !== $scope.pingRates[0]){
                 $scope.pingPoll = $interval(ping, 1000/$scope.pingRate);
                 //make sure to cancel the interval when the controller is destroyed
@@ -60,11 +60,11 @@ angular.module('paradropApp')
                 $scope.isPinging = false;
               }
               //start with new rate unless disabled
-              startPing();
+              $scope.startPing();
               console.log($scope.pingRate);
             };
 
-            function endPing(){
+            $scope.endPing = function(){
               if($scope.isPinging){
                 $interval.cancel($scope.pingPoll);
                 $scope.isPinging = false;
@@ -101,7 +101,6 @@ angular.module('paradropApp')
               console.log(startBody);
               $http.post(startURL, startBody ).then(
                 function() {
-                  startPing();
                   //create wifi network
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id +'/create';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib', channel: $scope.channel };
@@ -136,7 +135,7 @@ angular.module('paradropApp')
               mainBody.reconid = $scope.groupMaps.reconid;
               $http.post(finishURL, mainBody ).then(
                 function() {
-                  endPing();
+                  $scope.endPing();
                   var wifiURL = URLS.current + 'recon/wifi/' + $scope.group_id + '/destroy';
                   var wifiBody = { sessionToken: $scope.sessionToken(), ssid: 'pdcalib'};
                   //destroy if create network box is checked

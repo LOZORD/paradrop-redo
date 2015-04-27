@@ -32,15 +32,7 @@
   </div>
 </div>
 <div class="row">
-  <div class='col-sm-6 form-group'>
-    <button class="btn btn-primary" ng-click="start()" ng-disabled="macForm.$invalid">Start</button>
-    <button class="btn btn-primary" ng-click="finish()">Finish</button>
-    <button class="btn btn-primary" ng-click="poll()" ng-disabled="macForm.$invalid">Poll</button>
-    <button class="btn btn-primary" ng-click="sendCoord()" ng-disabled="macForm.$invalid">Send Coord</button>
-    <button type="button" class="btn btn-primary" ng-click="clear()" ng-disabled="mapData.invalid">Clear</button>
-    <button type="button" data-toggle="tooltip" data-placement="bottom" title="" class="btn btn-primary" ng-click="train()" ng-disabled="isTraining">Train</button>
-  </div>
-  <div class='col-sm-2'>
+  <div class='col-sm-2 col-sm-push-6 '>
     <div class="row">
       <div class='col-sm-12'>
         <label data-toggle="tooltip" data-placement="bottom" 
@@ -57,17 +49,29 @@
       </div>
     </div>
   </div>
-  <div class="col-sm-2 form-group">
+  <div class="col-sm-2 col-sm-push-6 form-group">
     <label for=="time">
       Channel:
     </label>
     <select name="time" class='form-control' ng-model='channel' ng-options="channel for channel in channels"></select>
   </div>
-  <div class="col-sm-2 form-group">
+  <div class="col-sm-2 col-sm-push-6 form-group">
     <label for=="rate">
       Pings/sec:
     </label>
     <select name="rate" class='form-control' ng-model='pingRate' ng-options="rate for rate in pingRates" ng-change="changePingRate()"></select>
+    <div>
+      <p ng-if="isPinging" style="color: green;">Currently Pinging...</p>
+      <p ng-if="!isPinging" style="color: red;">Not Pinging...</p>
+    </div>
+  </div>
+  <div class='col-sm-6 col-sm-pull-6 form-group'>
+    <button class="btn btn-primary" ng-click="start()" ng-disabled="macForm.$invalid">Start</button>
+    <button class="btn btn-primary" ng-click="finish()">Finish</button>
+    <button class="btn btn-primary" ng-click="poll()" ng-disabled="macForm.$invalid">Poll</button>
+    <button class="btn btn-primary" ng-click="sendCoord()" ng-disabled="macForm.$invalid">Send Coord</button>
+    <button type="button" class="btn btn-primary" ng-click="clear()" ng-disabled="mapData.invalid">Clear</button>
+    <button type="button" data-toggle="tooltip" data-placement="bottom" title="" class="btn btn-primary" ng-click="train()" ng-disabled="isTraining">Train</button>
   </div>
 </div>
     <img class="img-responsive center-block" ng-show="!mapData && !mapError" ng-src='images/spinner.gif'/>

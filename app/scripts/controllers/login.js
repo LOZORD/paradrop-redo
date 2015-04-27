@@ -77,7 +77,7 @@ angular.module('paradropApp')
               $scope.dangerAlert('Error: ' + error.data);
             }else{
               $scope.closeAlerts();
-              $scope.dangerAlert('Login Failed! This site is currently in development if you are seeing this error please visit ' + URLS.current +' and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
+              $scope.dangerAlert('<b>Error:</b>Login Failed! This site is currently in development if you are seeing this error please visit <a href="' + URLS.current +'test" class="alert-link">' + URLS.current + 'test</a> and add an exception to trust our ssl certificate. You will not be able to login and recieve data otherwise.');
             }
           }
         );
