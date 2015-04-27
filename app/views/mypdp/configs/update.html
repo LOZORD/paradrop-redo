@@ -53,7 +53,10 @@
                 <label for='channelSelect'>
                   Channel Select
                 </label>
-                {{ configUpdateData | json }}
+                <ul>
+                  <li><em>2.4GHz</em>&nbsp;Channels 1-11</li>
+                  <li><em>5GHz</em>&nbsp;Channels 36+</li>
+                </ul>
               </div>
               <div class='col-sm-6'>
                 <select
@@ -63,23 +66,8 @@
                   name='channelSelect'
                   ng-model='configUpdateData.channel'
                   ng-value='configUpdateData.channel.toString()'
-                  xxxng-options='channel.value disable when !channel.enabled for channel in CHANNELS'>
-
-                  <option ng-repeat='channel in CHANNELS' ng-disabled='!channel.enabled'>{{ channel.value }}</option>
-                <!--
-                <select
-                  class='form-control'
-                  ng-disabled='configUpdateData.isauto'
-                  ng-value='configUpdateData.channel'
-                  name='channelSelect'
-                  ng-model='configUpdateData.channel'>
-
-                  <option
-                    ng-repeat='channel in CHANNELS'
-                    ng-disabled='!channel.enabled'
-                    ng-selected='channel.value === configUpdateData.channel'>{{ channel.value }}</option>
+                  ng-options='channel.value as channel.value for channel in CHANNELS'>
                 </select>
-                -->
               </div>
             </div>
           </div>
