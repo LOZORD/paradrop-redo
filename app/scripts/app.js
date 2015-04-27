@@ -159,6 +159,11 @@ angular.module('paradropApp', [
         controller: 'MapSettingsCtrl',
         auths: { session: true}
       })
+      .when('/recon/tracking/:group_id*', {
+        templateUrl: 'views/recon/tracking.html',
+        controller: 'ReconTrackingCtrl',
+        auths: { session: true}
+      })
       .otherwise({
         redirectTo: '/',
         auths: {}

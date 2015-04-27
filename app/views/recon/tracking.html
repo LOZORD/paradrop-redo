@@ -18,12 +18,55 @@
   <ul class="nav nav-tabs" role="tablist">
     <li><a ng-href="recon/home/{{group_id}}">Overview</a></li>
     <li><a ng-href="recon/dashboard/{{group_id}}">Dashboard</a></li>
-    <li class="active"><a ng-href="recon/map/{{group_id}}">Live Tracking</a></li>
-    <li><a ng-href="recon/tracking/{{group_id}}">Historical Tracking</a></li>
+    <li><a ng-href="recon/map/{{group_id}}">Live Tracking</a></li>
+    <li class="active"><a ng-href="recon/tracking/{{group_id}}">Historical Tracking</a></li>
     <li><a ng-href="recon/settings/{{group_id}}">Advanced Settings</a></li>
   </ul>
   <!-- Tab panes -->
   <div class="tab-pane extra-wide">
+    <div class='row'>
+      <form name="macForm">
+        <div class='col-md-3 form-group'>
+          <label for=="mac">
+            MAC:
+          </label>
+          <input type='text' id='MAC' name="mac" class='form-control' ng-model='mac' pattern="([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})">
+          <div  class='error-container bg-danger'
+                ng-show='macForm.mac.$dirty && macForm.mac.$invalid'>
+            <small class='error' ng-show='macForm.mac.$error.pattern'>
+              Invalid MAC Address.
+            </small>
+          </div>
+        </div>
+        <div class='col-md-3 form-group'>
+          <label for=="start">
+            Start TS(Seconds from epoch):
+          </label>
+          <input type='number' id='start' name="start" class='form-control' ng-model='startts'>
+          <div  class='error-container bg-danger'
+                ng-show='macForm.start.$dirty && macForm.start.$invalid'>
+            <small class='error' ng-show='macForm.start.$error.number'>
+              Start time must me a number.
+            </small>
+          </div>
+        </div>
+        <div class='col-md-3 form-group'>
+          <label for=="stop">
+            Stop TS(Seconds from epoch):
+          </label>
+          <input type='number' id='stop' name="stop" class='form-control' ng-model='stopts'>
+          <div  class='error-container bg-danger'
+                ng-show='macForm.stop.$dirty && macForm.stop.$invalid'>
+            <small class='error' ng-show='macForm.stop.$error.number'>
+              Stop time must me a number.
+            </small>
+          </div>
+        </div>
+        <div class="col-md-3 form-group">
+        <button class="btn btn-primary" ng-click="getHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
+        </div>
+      </form>
+    </div>
     <div class='row'>
       <div class='col-md-12 form-group'>
         <button class="btn btn-primary" ng-click="showMarkers = !showMarkers;changeText(!showMarkers,true);" ng-disabled="!mapData">{{markerBtnText}} Paradrop Access Points</button>
