@@ -118,13 +118,14 @@
 
     <div class='form-group'>
       <label for='password'>
-        Password:
+        Password <small>(whitespace trimmed)</small>:
       </label>
       <input  type='password'
               id='password'
               name='password'
               class='form-control'
               required
+              ng-trim
               ng-maxlength=50
               ng-model='signupData.password'>
     </div>
@@ -138,6 +139,7 @@
               name='confirmation'
               class='form-control'
               required
+              ng-trim
               ng-maxlength=50
               must-match='signupData.password'
               ng-model='signupData.confirmation'>
