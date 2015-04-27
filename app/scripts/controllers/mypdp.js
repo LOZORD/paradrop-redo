@@ -34,6 +34,7 @@ angular.module('paradropApp')
               $scope.grouplessAPS.push(ap);
             }
           }
+          //TODO primary vnet is conf editable, other attrs in form
           //extend groups to entire width if no ungrouped APS
           $scope.groupWidth = 6;
           $scope.grouplessWidth = 6;

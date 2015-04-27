@@ -32,6 +32,8 @@ angular.module('paradropApp')
           qosdn:        null
         };
 
+        //TODO: have a toggle for enabling qos
+
         $scope.pristineVNet = angular.copy($scope.vnetUpdateData);
 
         var vnetFetchDataPayload = {

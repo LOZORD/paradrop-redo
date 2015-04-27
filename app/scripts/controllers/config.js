@@ -106,7 +106,10 @@ angular.module('paradropApp')
                   $scope.origConfigData = angular.copy($scope.configUpdateData);
                 }
               );
+            //used for reverting
+            $scope.origConfigData = angular.copy($scope.configUpdateData);
 
+            //TODO fix pristine toggling for auto/manl
             $scope.equalsOrig = function (data) {
               return angular.equals(data, $scope.origConfigData);
             };
@@ -141,7 +144,7 @@ angular.module('paradropApp')
 
               $http.post(updateURL, dataPackage).then(
                 function (result) {
-                  if (result.data === '') {
+                  if (!isNaN(parseInt(result.data, 10))) {
                     $location.path('/my_paradrop/configs');
                   }
                   else {
