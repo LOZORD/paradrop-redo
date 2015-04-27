@@ -62,7 +62,10 @@
                   ng-value='configUpdateData.channel'
                   name='channelSelect'
                   ng-model='configUpdateData.channel'
+                  ng-value='configUpdateData.channel.toString()'
                   xxxng-options='channel.value disable when !channel.enabled for channel in CHANNELS'>
+
+                  <option ng-repeat='channel in CHANNELS' ng-disabled='!channel.enabled'>{{ channel.value }}</option>
                 <!--
                 <select
                   class='form-control'

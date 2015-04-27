@@ -111,6 +111,15 @@ angular.module('paradropApp')
               return angular.equals(data, $scope.origConfigData);
             };
 
+            $scope.$watch('configUpdateData.channel', function (newValue, oldValue) {
+              if ($scope.configUpdateData) {
+                var newChannelNum = parseInt(newValue, 10);
+                $scope.configUpdateData.channel = newChannelNum;
+                //$scope.configUpdateForm.channel.$setViewValue(newChannelNum);
+                //$scope.configUpdateForm.$render();
+              }
+            });
+
             $scope.submitUpdate = function (data, isValid) {
               if (!isValid) {
                 return;
