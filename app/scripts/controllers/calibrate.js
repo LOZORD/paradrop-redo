@@ -71,20 +71,6 @@ angular.module('paradropApp')
               }
             }
 
-            function ping(){
-              var pingUrl = URLS.current + 'recon/maps/ping';
-              $http.get(pingUrl).then(
-                function(success){
-                  console.log('PING');
-                  console.log(success);
-                },
-                function(err){
-                  console.log('ERROR');
-                  console.log(err);
-                }
-              );
-            }
-
             $scope.start = function() {
               if(!$scope.mac){
                 $scope.closeAlerts();
@@ -416,4 +402,18 @@ angular.module('paradropApp')
           };
         }
       );
+
+    function ping(){
+      var pingUrl = URLS.current + 'recon/maps/ping';
+      $http.get(pingUrl).then(
+        function(success){
+          console.log('PING');
+          console.log(success);
+        },
+        function(err){
+          console.log('ERROR');
+          console.log(err);
+        }
+      );
+    }
   }]);
