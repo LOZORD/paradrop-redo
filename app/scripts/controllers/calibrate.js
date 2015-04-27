@@ -68,6 +68,7 @@ angular.module('paradropApp')
               if($scope.isPinging){
                 $interval.cancel($scope.pingPoll);
                 $scope.isPinging = false;
+                $scope.pingRate = $scope.pingRates[0];
               }
             }
 
@@ -163,6 +164,11 @@ angular.module('paradropApp')
               $http.post(pollURL, mainBody ).then(
                 function(result) {
                   console.log(result.data);
+                  if(!result.data.isValid){
+                    $scope.closeAlerts();
+                    $scope.warningAlert('We couldn\'t find any data for your device to make a prediction please try again in a few seconds.');
+                    return;
+                  }
                   var coords = result.data.coords;
                   $scope.isTraining = result.data.training;
                   var time = new Date(result.data.ts * 1000);

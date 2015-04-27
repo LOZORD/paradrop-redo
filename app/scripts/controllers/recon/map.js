@@ -102,9 +102,9 @@ angular.module('paradropApp')
           getHeatMapData();
         });
         if($scope.isValidMap){
-          var heatPoll = $interval(getHeatMapData, 10000);
+          $scope.heatPoll = $interval(getHeatMapData, 10000);
           //make sure to cancel the interval when the controller is destroyed
-          $scope.$on('$destroy', function(){ $interval.cancel(heatPoll);});
+          $scope.$on('$destroy', function(){ $interval.cancel($scope.heatPoll);});
         }
       };
 
@@ -453,6 +453,10 @@ angular.module('paradropApp')
 
       function heatDataError(error){
         console.log(error);
+        //cancel the interval if we get a db error 
+        $interval.cancel($scope.heatPoll);
+        $scope.closeAlerts();
+        $scope.dangerAlert('<strong>Error:</strong> Problem getting live data from DB automatic pollings has stopped please refresh page to start again.');
       };
 
       $scope.switchMap = function(index){

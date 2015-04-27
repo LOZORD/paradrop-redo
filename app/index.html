@@ -147,6 +147,13 @@
           </nav>
       <div class="container">
         <div class="header"></div>
+        <div ng-cloak class="alert alert-danger" role="alert" ng-show="showHttpErrorAlert">
+          <span ng-bind-html="httpErrorText"></span>
+          <button type="button" class="close" ng-click="closeHttpErrorAlert()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cancel</span>
+          </button>
+        </div>
         <div ng-cloak class="alert alert-success" role="alert" ng-show="showSuccessAlert">
           <span ng-bind-html="successText"></span>
           <button type="button" class="close" ng-click="closeSuccessAlert()">

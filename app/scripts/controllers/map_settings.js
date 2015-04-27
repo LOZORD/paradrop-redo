@@ -103,7 +103,7 @@ angular.module('paradropApp')
                       map: $scope.map,
                       title: 'Sync Marker',
                       draggable: true,
-                      icon: 'images/here.png',
+                      icon: 'images/double-arrow.png',
                       id: 'syncMarker'
                     });
                     $scope.map.markers.syncMarker = marker;

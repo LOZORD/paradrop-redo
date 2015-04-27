@@ -30,9 +30,13 @@
       </div>
     </form>
   </div>
+  <div class='col-xs-12 form-group'>
+    <button class="btn btn-primary" ng-click="start()" ng-disabled="macForm.$invalid">Start</button>
+    <button class="btn btn-primary" ng-click="finish()">Finish</button>
+  </div>
 </div>
 <div class="row">
-  <div class='col-sm-2 col-sm-push-6 '>
+  <div class='col-sm-2 col-sm-push-6'>
     <div class="row">
       <div class='col-sm-12'>
         <label data-toggle="tooltip" data-placement="bottom" 
@@ -66,8 +70,6 @@
     </div>
   </div>
   <div class='col-sm-6 col-sm-pull-6 form-group'>
-    <button class="btn btn-primary" ng-click="start()" ng-disabled="macForm.$invalid">Start</button>
-    <button class="btn btn-primary" ng-click="finish()">Finish</button>
     <button class="btn btn-primary" ng-click="poll()" ng-disabled="macForm.$invalid">Poll</button>
     <button class="btn btn-primary" ng-click="sendCoord()" ng-disabled="macForm.$invalid">Send Coord</button>
     <button type="button" class="btn btn-primary" ng-click="clear()" ng-disabled="mapData.invalid">Clear</button>
