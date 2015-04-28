@@ -2,25 +2,17 @@
 
 /**
  * @ngdoc function
- * @name paradropApp.controller:ReconMapCtrl
+ * @name paradropApp.controller:ReconTrackingCtrl
  * @description
- * # ReconMapCtrl
+ * # ReconTrackingCtrl
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ReconMapCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$interval', '$filter', 'Recon', 'chartBuilder',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $interval, $filter, Recon, chartBuilder) {
+  .controller('ReconTrackingCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$filter', 'Recon', 'chartBuilder', '$localStorage',
+    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $filter, Recon, chartBuilder, $localStorage) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.searchText ={};
       $scope.chartConfig = chartBuilder.buildZoneChart().chartConfig;
-      console.log($scope.chartConfig);
-      $scope.timeFilters = [
-        {name: 'Rolling', value: null},
-        {name: '10 Seconds', value: 10},
-        {name: '30 Seconds', value: 30},
-        {name: '1 Minute', value: 60},
-        {name: '5 Minutes', value: 300}
-      ];
       $scope.insideFilters = [
         {name: 'Disabled'},
         {name: 'Inside'},
@@ -47,10 +39,7 @@ angular.module('paradropApp')
           BLACK: { code:'#000000'},
       };
 
-      var entryTime = Date.now() / 1000; 
       $scope.filterType = $scope.insideFilters[0].name;
-      $scope.latest = $scope.timeFilters[0].value;
-
       $scope.authorizePage().then(commandChain);
       
 
@@ -63,6 +52,11 @@ angular.module('paradropApp')
       }
       
       function controller(){
+        //get last stored vals for mac and time search
+        $scope.startts = $localStorage.start;
+        $scope.stopts = $localStorage.stop;
+        $scope.mac = $localStorage.trackingMac;
+
         //default values
         $scope.isValidMap = true;
         $scope.showMarkers = true;
@@ -99,17 +93,8 @@ angular.module('paradropApp')
         $scope.setMap($scope.mapsArray[gmapMaker.getIndex('recon')]);
         $scope.$on('mapInitialized', function(event, map) {
           $scope.map = map;
-          getHeatMapData();
+          //getHeatMapData();
         });
-        if($scope.isValidMap){
-          $scope.heatPoll = $interval(getHeatMapData, 10000);
-          //make sure to cancel the interval when the controller is destroyed
-          $scope.$on('$destroy', function(){ $interval.cancel($scope.heatPoll);});
-        }
-      };
-
-      $scope.pausePoly = function(){
-        $scope.isPaused = !$scope.isPaused;
       };
 
       function mapError(error){
@@ -118,26 +103,24 @@ angular.module('paradropApp')
         $scope.dangerAlert('<strong>Error:</strong> There was an error retrieving the map information. Please refresh the page to try again.');
       };
 
-      function getHeatMapData(){
+      $scope.getHeatMapData = function(){
         var url = URLS.current + 'recon/coords/get/' + $scope.group_id;
-        var stop = Math.floor(Date.now()/1000);
-        var start = stop - 10;
-        var postBody = { sessionToken: $scope.sessionToken(), startts: null , stopts: null, typeid: $scope.mapData.typeid };
-        return $http.post(url, postBody ).then( heatDataRecieved, heatDataError);
-      };
-
-      var inc = 0;
-      function getOpts(){
-        inc += 10;
-        var opts = { latest: inc};//start: Math.floor(entryTime), stop: Math.floor(Date.now() / 1000)};
-        console.log($scope.latest);
-        if($scope.latest){
-          opts = {latest: $scope.latest};
+        var stop = Math.round($scope.stopts);
+        var start = Math.round($scope.startts);
+        if(!start || !stop){
+          stop = null;
+          start = null;
         }
-        return opts; 
-      };
-
-      $scope.setChartData = function(){
+        var mac = $scope.mac;
+        if(typeof mac === undefined || !mac){
+          mac = null;
+        }
+        $localStorage.trackingMac = mac;
+        $localStorage.start = start;
+        $localStorage.stop = stop;
+        var postBody = { sessionToken: $scope.sessionToken(), startts: start, stopts: stop, filtermac: mac, typeid: $scope.mapData.typeid };
+        console.log(postBody);
+        return $http.post(url, postBody ).then( heatDataRecieved, heatDataError);
       };
 
       function updateChart(data){
@@ -178,8 +161,7 @@ angular.module('paradropApp')
       function heatDataRecieved(data){
         $scope.reconInit.promise.then(
         function(){
-          Recon.today.addCoordData(data.data);
-          updateChart(Recon.today.getCoordData({latest: 10}));
+          updateChart(Recon.today.parseCoordData(data.data));
           //array indexes
           var ts = 1;
           var lat = 2;
@@ -198,9 +180,8 @@ angular.module('paradropApp')
           $scope.setHeatMap();
 
           //polymode stuff
-          var opts = getOpts();
-          if($scope.polyMode && !$scope.isPaused){
-            $scope.macData = Recon.today.getCoordData(opts);
+          if($scope.polyMode){
+            $scope.macData = Recon.today.parseCoordData(data.data);
             //Recon.today.printCoordData(coordData);
             if(!$scope.macData){
               $scope.macData = [];
@@ -396,8 +377,9 @@ angular.module('paradropApp')
       $scope.showPointInfo = function(point){
         return function(){
           var content = '<b>Mac: </b>' + point.mac + '<br>';
-          content += '<b>Type: </b>' + point.oui + '<br>';
+          content += '<b>OUI: </b>' + point.oui + '<br>';
           content += '<b>Time: </b>' + (new Date(point.ts * 1000)).toLocaleTimeString() + '<br>';
+          content += '<b>ts: </b>' + point.ts + '<br>';
           $scope.pointInfo.setContent(content);
           $scope.pointInfo.setPosition(point.loc);
           $scope.pointInfo.open($scope.map);
@@ -521,10 +503,6 @@ angular.module('paradropApp')
 
       function heatDataError(error){
         console.log(error);
-        //cancel the interval if we get a db error 
-        $interval.cancel($scope.heatPoll);
-        $scope.closeAlerts();
-        $scope.dangerAlert('<strong>Error:</strong> Problem getting live data from DB automatic pollings has stopped please refresh page to start again.');
       };
 
       $scope.switchMap = function(index){
