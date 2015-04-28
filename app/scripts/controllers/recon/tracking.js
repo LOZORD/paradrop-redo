@@ -8,19 +8,11 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ReconTrackingCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$filter', 'Recon', 'chartBuilder',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $filter, Recon, chartBuilder) {
+  .controller('ReconTrackingCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$filter', 'Recon', 'chartBuilder', '$localStorage',
+    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $filter, Recon, chartBuilder, $localStorage) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.searchText ={};
       $scope.chartConfig = chartBuilder.buildZoneChart().chartConfig;
-      console.log($scope.chartConfig);
-      $scope.timeFilters = [
-        {name: 'Rolling', value: null},
-        {name: '10 Seconds', value: 10},
-        {name: '30 Seconds', value: 30},
-        {name: '1 Minute', value: 60},
-        {name: '5 Minutes', value: 300}
-      ];
       $scope.insideFilters = [
         {name: 'Disabled'},
         {name: 'Inside'},
@@ -47,10 +39,7 @@ angular.module('paradropApp')
           BLACK: { code:'#000000'},
       };
 
-      var entryTime = Date.now() / 1000; 
       $scope.filterType = $scope.insideFilters[0].name;
-      $scope.latest = $scope.timeFilters[0].value;
-
       $scope.authorizePage().then(commandChain);
       
 
@@ -63,6 +52,11 @@ angular.module('paradropApp')
       }
       
       function controller(){
+        //get last stored vals for mac and time search
+        $scope.startts = $localStorage.start;
+        $scope.stopts = $localStorage.stop;
+        $scope.mac = $localStorage.trackingMac;
+
         //default values
         $scope.isValidMap = true;
         $scope.showMarkers = true;
@@ -103,10 +97,6 @@ angular.module('paradropApp')
         });
       };
 
-      $scope.pausePoly = function(){
-        $scope.isPaused = !$scope.isPaused;
-      };
-
       function mapError(error){
         $scope.mapError = true;
         $scope.closeAlerts();
@@ -115,25 +105,22 @@ angular.module('paradropApp')
 
       $scope.getHeatMapData = function(){
         var url = URLS.current + 'recon/coords/get/' + $scope.group_id;
-        var stop = Math.floor(Date.now()/1000);
-        var start = stop - 10;
-        var postBody = { sessionToken: $scope.sessionToken(), startts: Math.round($scope.startts) , stopts: Math.round($scope.stopts), mac: $scope.mac, typeid: $scope.mapData.typeid };
+        var stop = Math.round($scope.stopts);
+        var start = Math.round($scope.startts);
+        if(!start || !stop){
+          stop = null;
+          start = null;
+        }
+        var mac = $scope.mac;
+        if(typeof mac === undefined || !mac){
+          mac = null;
+        }
+        $localStorage.trackingMac = mac;
+        $localStorage.start = start;
+        $localStorage.stop = stop;
+        var postBody = { sessionToken: $scope.sessionToken(), startts: start, stopts: stop, filtermac: mac, typeid: $scope.mapData.typeid };
         console.log(postBody);
         return $http.post(url, postBody ).then( heatDataRecieved, heatDataError);
-      };
-
-      var inc = 0;
-      function getOpts(){
-        inc += 10;
-        var opts = { latest: inc};//start: Math.floor(entryTime), stop: Math.floor(Date.now() / 1000)};
-        console.log($scope.latest);
-        if($scope.latest){
-          opts = {latest: $scope.latest};
-        }
-        return opts; 
-      };
-
-      $scope.setChartData = function(){
       };
 
       function updateChart(data){
@@ -174,8 +161,7 @@ angular.module('paradropApp')
       function heatDataRecieved(data){
         $scope.reconInit.promise.then(
         function(){
-          Recon.today.addCoordData(data.data);
-          updateChart(Recon.today.getCoordData({latest: 10}));
+          updateChart(Recon.today.parseCoordData(data.data));
           //array indexes
           var ts = 1;
           var lat = 2;
@@ -194,16 +180,8 @@ angular.module('paradropApp')
           $scope.setHeatMap();
 
           //polymode stuff
-          var start = null;
-          var stop = null;
-          var opts = undefined;
-          if(isNaN(Math.round($scope.startts)) || isNaN(Math.round($scope.stopts))){
-            opts = {latest: 10};
-          }else{ 
-            opts = {start: Math.round($scope.startts), stop: Math.round($scope.stopts)};
-          }
-          if($scope.polyMode && !$scope.isPaused){
-            $scope.macData = Recon.today.getCoordData(opts);
+          if($scope.polyMode){
+            $scope.macData = Recon.today.parseCoordData(data.data);
             //Recon.today.printCoordData(coordData);
             if(!$scope.macData){
               $scope.macData = [];
@@ -220,6 +198,9 @@ angular.module('paradropApp')
             for(var mac in $scope.macData){
               var name = $scope.macData[mac].name;
               $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+              for(var i in $scope.polylines[name].points){
+                $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+              }
             }
             $scope.showingData = $scope.macData;
             return;
@@ -228,11 +209,17 @@ angular.module('paradropApp')
           for(var mac in dataToHide){
             var name = dataToHide[mac].name;
               $scope.polylines[name].setVisible(false);
+              for(var i in $scope.polylines[name].points){
+                $scope.polylines[name].points[i].setVisible(false);
+              }
           }
           $scope.showingData = $filter('filter')($scope.macData, newVal, false);
           for(var mac in $scope.showingData){
             var name = $scope.showingData[mac].name;
             $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+            for(var i in $scope.polylines[name].points){
+              $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+            }
           }
           for(var zone in $scope.mapData.zones){
             if(newVal[zone]){
@@ -310,6 +297,9 @@ angular.module('paradropApp')
       $scope.drawPolylines = function(){
         for(var line in $scope.polylines){
           $scope.polylines[line].setMap(null);
+          for(var i in $scope.polylines[line].points){
+            $scope.polylines[line].points[i].setMap(null);
+          }
         }
         for(var mac in $scope.macData){
           var name = $scope.macData[mac].name;
@@ -342,13 +332,57 @@ angular.module('paradropApp')
           for(var point in $scope.macData[mac].data){
             var latLng = new google.maps.LatLng($scope.macData[mac].data[point].coords[0], $scope.macData[mac].data[point].coords[1]);
             $scope.polylines[name].getPath().push(latLng);
+            if(!$scope.polylines[name].pointData){
+              $scope.polylines[name].pointData = [];
+            }
+            $scope.polylines[name].pointData.push({latLng: latLng, ts: $scope.macData[mac].data[point].ts});
           }
           if($scope.polyMode){
             $scope.polylines[name].setMap($scope.map);
+            var pointArr = $scope.polylines[name].pointData;
+            for (var point in pointArr) {
+              var pointOptions = {
+                strokeColor: $scope.polylines[name].strokeColor,
+                strokeOpacity: 1,
+                strokeWeight: 2,
+                fillColor: $scope.polylines[name].strokeColor,
+                fillOpacity: 1,
+                map: $scope.map,
+                center: pointArr[point].latLng,
+                zIndex: 100,
+                ts: pointArr[point].ts,
+                loc: pointArr[point].latLng,
+                oui: $scope.polylines[name].oui,
+                mac: $scope.polylines[name].mac,
+                radius: 30000
+              };
+              if(!$scope.pointInfo){
+                $scope.pointInfo = new google.maps.InfoWindow();
+              }
+              // Add the circle for this point to the map and store in polyline.
+              if(!$scope.polylines[name].points){
+                $scope.polylines[name].points = [];
+              }
+              var newPoint = new google.maps.Circle(pointOptions);
+              $scope.polylines[name].points.push(newPoint);
+              google.maps.event.addListener(newPoint, 'mouseover', $scope.showPointInfo(newPoint));
+            }
             if(active){
               $scope.polyDetail($scope.polylines[name]);
             }
           }
+        }
+      };
+    
+      $scope.showPointInfo = function(point){
+        return function(){
+          var content = '<b>Mac: </b>' + point.mac + '<br>';
+          content += '<b>OUI: </b>' + point.oui + '<br>';
+          content += '<b>Time: </b>' + (new Date(point.ts * 1000)).toLocaleTimeString() + '<br>';
+          content += '<b>ts: </b>' + point.ts + '<br>';
+          $scope.pointInfo.setContent(content);
+          $scope.pointInfo.setPosition(point.loc);
+          $scope.pointInfo.open($scope.map);
         }
       };
 
@@ -393,6 +427,9 @@ angular.module('paradropApp')
             if($scope.polylines[i].active){
               $scope.polylines[i].infoWindow.close();
               $scope.polylines[i].setOptions({strokeWeight: 3});
+              for(var point in $scope.polylines[i].points){
+                $scope.polylines[i].points[point].setRadius(30000);
+              }
               $scope.polylines[i].active = false;
             }
           }
@@ -400,6 +437,9 @@ angular.module('paradropApp')
             var ll = poly.getPath().getAt(0);
             var contentString = '<b>' + poly.title + '</b><br><b>' + poly.oui + '</b><br><b>' + poly.mac + '</b><br>';
             poly.setOptions({strokeWeight: 15});
+            for(var point in poly.points){
+              poly.points[point].setRadius(60000);
+            }
             poly.active = true;
             poly.infoWindow.setContent(contentString);
             poly.infoWindow.setPosition(ll);
@@ -428,8 +468,12 @@ angular.module('paradropApp')
       $scope.togglePolyMode = function(){
         $scope.polyMode = !$scope.polyMode;
         if(!$scope.polyMode){
+          $scope.pointInfo.close();
           for(var poly in $scope.polylines){
             $scope.polylines[poly].setMap(null);
+            for(var i in $scope.polylines[poly].points){
+              $scope.polylines[poly].points[i].setMap(null);
+            }
             $scope.polylines[poly].infoWindow.close();
             if($scope.polylines[poly].active){
               $scope.polyDetail($scope.polylines[poly]);
@@ -444,6 +488,9 @@ angular.module('paradropApp')
         }else{
           for(var poly in $scope.polylines){
             $scope.polylines[poly].setMap($scope.map);
+            for(var i in $scope.polylines[poly].points){
+              $scope.polylines[poly].points[i].setMap($scope.map);
+            }
           }
           if($scope.heatmap){
             $scope.heatmap.setMap(null);

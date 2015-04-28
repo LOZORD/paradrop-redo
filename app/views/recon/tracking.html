@@ -63,7 +63,6 @@
           </div>
         </div>
         <div class="col-md-3 form-group">
-        <button class="btn btn-primary" ng-click="getHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
         </div>
       </form>
     </div>
@@ -73,9 +72,7 @@
         <button class="btn btn-primary" ng-click="togglePolyMode()" ng-disabled="!mapData">
           <span ng-if="polyMode">Aggregation</span><span ng-if="!polyMode">Non-Aggregation</span> Mode
         </button>
-        <button class="btn btn-primary" ng-if="polyMode"  ng-click="pausePoly()" ng-disabled="!mapData">
-          <span ng-if="isPaused">Resume</span><span ng-if="!isPaused">Pause</span> Live Updating
-        </button>
+        <button class="btn btn-primary" ng-click="getHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
       </div>
     </div>
     <div class="row">
@@ -115,12 +112,6 @@
             MAC:
           </label>
           <input name="mac" type='text' class='form-control' ng-model='searchText.mac'>
-        </div>
-        <div class="row">
-          <label for=="time">
-            Time Range:
-          </label>
-          <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in timeFilters"></select>
         </div>
         <div class="row">
           <div class="form-group">

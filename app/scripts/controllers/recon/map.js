@@ -217,6 +217,9 @@ angular.module('paradropApp')
             for(var mac in $scope.macData){
               var name = $scope.macData[mac].name;
               $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+              for(var i in $scope.polylines[name].points){
+                $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+              }
             }
             $scope.showingData = $scope.macData;
             return;
@@ -225,11 +228,17 @@ angular.module('paradropApp')
           for(var mac in dataToHide){
             var name = dataToHide[mac].name;
               $scope.polylines[name].setVisible(false);
+              for(var i in $scope.polylines[name].points){
+                $scope.polylines[name].points[i].setVisible(false);
+              }
           }
           $scope.showingData = $filter('filter')($scope.macData, newVal, false);
           for(var mac in $scope.showingData){
             var name = $scope.showingData[mac].name;
             $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+            for(var i in $scope.polylines[name].points){
+              $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+            }
           }
           for(var zone in $scope.mapData.zones){
             if(newVal[zone]){
@@ -307,6 +316,9 @@ angular.module('paradropApp')
       $scope.drawPolylines = function(){
         for(var line in $scope.polylines){
           $scope.polylines[line].setMap(null);
+          for(var i in $scope.polylines[line].points){
+            $scope.polylines[line].points[i].setMap(null);
+          }
         }
         for(var mac in $scope.macData){
           var name = $scope.macData[mac].name;
@@ -339,13 +351,56 @@ angular.module('paradropApp')
           for(var point in $scope.macData[mac].data){
             var latLng = new google.maps.LatLng($scope.macData[mac].data[point].coords[0], $scope.macData[mac].data[point].coords[1]);
             $scope.polylines[name].getPath().push(latLng);
+            if(!$scope.polylines[name].pointData){
+              $scope.polylines[name].pointData = [];
+            }
+            $scope.polylines[name].pointData.push({latLng: latLng, ts: $scope.macData[mac].data[point].ts});
           }
           if($scope.polyMode){
             $scope.polylines[name].setMap($scope.map);
+            var pointArr = $scope.polylines[name].pointData;
+            for (var point in pointArr) {
+              var pointOptions = {
+                strokeColor: $scope.polylines[name].strokeColor,
+                strokeOpacity: 1,
+                strokeWeight: 2,
+                fillColor: $scope.polylines[name].strokeColor,
+                fillOpacity: 1,
+                map: $scope.map,
+                center: pointArr[point].latLng,
+                zIndex: 100,
+                ts: pointArr[point].ts,
+                loc: pointArr[point].latLng,
+                oui: $scope.polylines[name].oui,
+                mac: $scope.polylines[name].mac,
+                radius: 30000
+              };
+              if(!$scope.pointInfo){
+                $scope.pointInfo = new google.maps.InfoWindow();
+              }
+              // Add the circle for this point to the map and store in polyline.
+              if(!$scope.polylines[name].points){
+                $scope.polylines[name].points = [];
+              }
+              var newPoint = new google.maps.Circle(pointOptions);
+              $scope.polylines[name].points.push(newPoint);
+              google.maps.event.addListener(newPoint, 'mouseover', $scope.showPointInfo(newPoint));
+            }
             if(active){
               $scope.polyDetail($scope.polylines[name]);
             }
           }
+        }
+      };
+    
+      $scope.showPointInfo = function(point){
+        return function(){
+          var content = '<b>Mac: </b>' + point.mac + '<br>';
+          content += '<b>Type: </b>' + point.oui + '<br>';
+          content += '<b>Time: </b>' + (new Date(point.ts * 1000)).toLocaleTimeString() + '<br>';
+          $scope.pointInfo.setContent(content);
+          $scope.pointInfo.setPosition(point.loc);
+          $scope.pointInfo.open($scope.map);
         }
       };
 
@@ -390,6 +445,9 @@ angular.module('paradropApp')
             if($scope.polylines[i].active){
               $scope.polylines[i].infoWindow.close();
               $scope.polylines[i].setOptions({strokeWeight: 3});
+              for(var point in $scope.polylines[i].points){
+                $scope.polylines[i].points[point].setRadius(30000);
+              }
               $scope.polylines[i].active = false;
             }
           }
@@ -397,6 +455,9 @@ angular.module('paradropApp')
             var ll = poly.getPath().getAt(0);
             var contentString = '<b>' + poly.title + '</b><br><b>' + poly.oui + '</b><br><b>' + poly.mac + '</b><br>';
             poly.setOptions({strokeWeight: 15});
+            for(var point in poly.points){
+              poly.points[point].setRadius(60000);
+            }
             poly.active = true;
             poly.infoWindow.setContent(contentString);
             poly.infoWindow.setPosition(ll);
@@ -425,8 +486,12 @@ angular.module('paradropApp')
       $scope.togglePolyMode = function(){
         $scope.polyMode = !$scope.polyMode;
         if(!$scope.polyMode){
+          $scope.pointInfo.close();
           for(var poly in $scope.polylines){
             $scope.polylines[poly].setMap(null);
+            for(var i in $scope.polylines[poly].points){
+              $scope.polylines[poly].points[i].setMap(null);
+            }
             $scope.polylines[poly].infoWindow.close();
             if($scope.polylines[poly].active){
               $scope.polyDetail($scope.polylines[poly]);
@@ -441,6 +506,9 @@ angular.module('paradropApp')
         }else{
           for(var poly in $scope.polylines){
             $scope.polylines[poly].setMap($scope.map);
+            for(var i in $scope.polylines[poly].points){
+              $scope.polylines[poly].points[i].setMap($scope.map);
+            }
           }
           if($scope.heatmap){
             $scope.heatmap.setMap(null);
