@@ -120,17 +120,19 @@ angular.module('paradropApp')
               }
             };
 
-            $scope.$watch('configUpdateData.isauto', function (newValue, oldValue) {
+            $scope.$watch('configUpdateData.isauto', function (newValue) {
               if ($scope.configUpdateData) {
                 $scope.configUpdateData.isauto = newValue;
-                $scope.configUpdateForm && $scope.configUpdateForm.$setDirty(true);
-                if ($scope.origConfigData.isauto && newValue != $scope.origConfigData.isauto) {
+                if ($scope.configUpdateForm) {
+                  $scope.configUpdateForm.$setDirty(true);
+                }
+                if ($scope.origConfigData.isauto && newValue !== $scope.origConfigData.isauto) {
                   $scope.configUpdateForm.$setDirty(true);
                 }
               }
             });
 
-            $scope.$watch('configUpdateData.channel', function (newValue, oldValue) {
+            $scope.$watch('configUpdateData.channel', function (newValue) {
               if ($scope.configUpdateData) {
                 var newChannelNum = parseInt(newValue, 10);
                 $scope.configUpdateData.channel = newChannelNum;
@@ -166,7 +168,7 @@ angular.module('paradropApp')
                     window.alert(result.data);
                   }
                 },
-                function (err) {
+                function () {
                   window.alert('Could not update config');
                   //console.log(err);
                 }
