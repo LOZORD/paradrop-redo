@@ -162,6 +162,7 @@
                 type='password'
                 name='password'
                 ng-trim
+                ng-disabled='(vnetUpdateForm.encryption.$viewValue.toUpperCase() == "NONE")'
                 ng-model='vnetUpdateData.password'
                 ng-minlength='{{ (vnetUpdateForm.encryption.$viewValue.toUpperCase() !== "NONE") ? 8 : 0 }}'
                 ng-maxlength='30'
@@ -180,6 +181,7 @@
                 type='password'
                 name='confirmation'
                 ng-trim
+                ng-disabled='(vnetUpdateForm.encryption.$viewValue.toUpperCase() == "NONE")'
                 ng-model='vnetUpdateData.confirmation'
                 must-match='vnetUpdateData.password'>
             </div>
@@ -238,43 +240,58 @@
           </div>
 
           <hr>
-
-          <div class='row form-group'>
-            <div class='col-sm-6 row form-group'>
-              <div class='col-xs-6'>
-                <label for='qosup'>
-                  QoS Up
-                </label>
-              </div>
-              <div class='col-xs-6'>
-                <input
-                  class='form-control'
-                  type='text'
-                  name='qosup'
-                  ng-model='vnetUpdateData.qosup'
-                  ng-pattern='/^((\d)+)$/'
-                  required>
-              </div>
-            </div>
-
-            <div class='col-sm-6 row'>
-              <div class='col-xs-6'>
-                <label for='qosdn'>
-                  Qos Down
-                </label>
-              </div>
-              <div class='col-xs-6'>
-                <input
-                  class='form-control'
-                  type='text'
-                  name='qosdn'
-                  ng-model='vnetUpdateData.qosdn'
-                  ng-pattern='/^((\d)+)$/'
-                  required>
-              </div>
+          <div id='toggler' class='row btn-set'>
+            <div class='col-sm-12'>
+              <button
+                class='btn btn-large btn-default btn-block'
+                type='button'
+                ng-model='qosEnabledToggle'
+                ng-click='qosEnabledToggle = !qosEnabledToggle'>
+                QoS Options
+              </button>
             </div>
           </div>
+
           <hr>
+
+          <div id='qos_group' ng-show='qosEnabledToggle'>
+            <div class='row form-group'>
+              <div class='col-sm-6 row form-group'>
+                <div class='col-xs-6'>
+                  <label for='qosup'>
+                    QoS Up
+                  </label>
+                </div>
+                <div class='col-xs-6'>
+                  <input
+                    class='form-control'
+                    type='text'
+                    name='qosup'
+                    ng-model='vnetUpdateData.qosup'
+                    ng-pattern='/^((\d)+)$/'
+                    required>
+                </div>
+              </div>
+
+              <div class='col-sm-6 row'>
+                <div class='col-xs-6'>
+                  <label for='qosdn'>
+                    Qos Down
+                  </label>
+                </div>
+                <div class='col-xs-6'>
+                  <input
+                    class='form-control'
+                    type='text'
+                    name='qosdn'
+                    ng-model='vnetUpdateData.qosdn'
+                    ng-pattern='/^((\d)+)$/'
+                    required>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
         </div>
       </div>
 

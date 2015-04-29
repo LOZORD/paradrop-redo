@@ -32,7 +32,7 @@ angular.module('paradropApp')
           qosdn:        null
         };
 
-        //TODO: have a toggle for enabling qos
+        $scope.qosEnabledToggle = false;
 
         $scope.pristineVNet = angular.copy($scope.vnetUpdateData);
 
@@ -65,7 +65,7 @@ angular.module('paradropApp')
               qosdn:          vnetConfig.qosdown
             };
 
-            $scope.pristineVNet = angular.copy($scope.vnetUpdateData);
+            $scope.pristineVNet  = angular.copy($scope.vnetUpdateData);
 
             $scope.equals = function (newData) {
               return angular.equals(newData, $scope.pristineVNet);
