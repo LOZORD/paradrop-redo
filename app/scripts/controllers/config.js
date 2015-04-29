@@ -77,7 +77,8 @@ angular.module('paradropApp')
               apid:         $scope.deviceToUpdate.name
             };
 
-            $scope.origConfigData = null;
+            $scope.origConfigData     = null;
+            $scope.configUpdateData   = null;
 
             $http.post(radioStateURL, radioStatePackage)
               .then(
@@ -108,18 +109,38 @@ angular.module('paradropApp')
               );
             //used for reverting
             $scope.origConfigData = angular.copy($scope.configUpdateData);
+            console.log($scope.origConfigData);
 
             //TODO fix pristine toggling for auto/manl
             $scope.equalsOrig = function (data) {
-              return angular.equals(data, $scope.origConfigData);
+              console.log('yfdafsf');
+              if ($scope.origConfigData) {
+                var equals_orig = angular.equals(data, $scope.origConfigData);
+                console.log(equals_orig);
+                return equals_orig;
+              }
+              else {
+                return false;
+              }
             };
+
+            $scope.$watch('configUpdateData.isauto', function (newValue, oldValue) {
+              if ($scope.configUpdateData) {
+                console.log('toggled!');
+                console.log('new', newValue, 'old', oldValue);
+                console.log('blarg', $scope.configUpdateData);
+                $scope.configUpdateData.isauto = newValue;
+                $scope.configUpdateForm && $scope.configUpdateForm.$setDirty(true);
+                if ($scope.origConfigData.isauto && newValue != $scope.origConfigData.isauto) {
+                  $scope.configUpdateForm.$setDirty(true);
+                }
+              }
+            });
 
             $scope.$watch('configUpdateData.channel', function (newValue, oldValue) {
               if ($scope.configUpdateData) {
                 var newChannelNum = parseInt(newValue, 10);
                 $scope.configUpdateData.channel = newChannelNum;
-                //$scope.configUpdateForm.channel.$setViewValue(newChannelNum);
-                //$scope.configUpdateForm.$render();
               }
             });
 
