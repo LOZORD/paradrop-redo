@@ -23,7 +23,7 @@
           <a href=""><h4>Edit My Account</h4></a>
         </li>-->
         <li ng-if=" isAuthenticated()">
-          <a ng-href="/" ng-click="logout()"><h4>Logout</h4></a>
+          <a ng-href="" ng-click="logout()"><h4>Logout</h4></a>
         </li>
       </ul>
     </div snap-drawer>
@@ -71,7 +71,7 @@
                     </li>
                     <li class="divider"></li>
                     <li>
-                      <a ng-href="/" ng-click="logout()">
+                      <a ng-href="" ng-click="logout()">
                         Logout
                       </a>
                     </li>
@@ -94,7 +94,12 @@
                     </li>
                     <li>
                       <a href="recon/map/{{currentUser().defaultGroup}}">
-                        Location Tracking
+                        Live Tracking
+                      </a>
+                    </li>
+                    <li>
+                      <a href="recon/tracking/{{currentUser().defaultGroup}}">
+                        Historical Tracking
                       </a>
                     </li>
                     <li class="divider"></li>
@@ -147,6 +152,13 @@
           </nav>
       <div class="container">
         <div class="header"></div>
+        <div ng-cloak class="alert alert-danger" role="alert" ng-show="showHttpErrorAlert">
+          <span ng-bind-html="httpErrorText"></span>
+          <button type="button" class="close" ng-click="closeHttpErrorAlert()">
+            <span aria-hidden="true">&times;</span>
+            <span class="sr-only">Cancel</span>
+          </button>
+        </div>
         <div ng-cloak class="alert alert-success" role="alert" ng-show="showSuccessAlert">
           <span ng-bind-html="successText"></span>
           <button type="button" class="close" ng-click="closeSuccessAlert()">
@@ -263,6 +275,7 @@
     <script src="scripts/services/gmapmaker.js"></script>
     <script src="scripts/controllers/localization.js"></script>
     <script src="scripts/controllers/map_settings.js"></script>
+    <script src="scripts/controllers/recon/tracking.js"></script>
     <!-- endbuild -->
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>

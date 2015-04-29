@@ -16,6 +16,7 @@ angular.module('paradropApp')
 
     this.recon = null;
     this.nothing = function(){};
+    this.today = null;
     var self = this;
 
     $rootScope.sessionBuilt.promise.then(function(){
@@ -23,13 +24,19 @@ angular.module('paradropApp')
         var post = function(url, args){
           //Inject the session token into the args list to POST
           args.sessionToken = Session.id;
-          console.log('POST to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
+          //console.log('POST to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
           var call = $http.post(URLS.current.substr(0, URLS.current.length-4) + url, args);
           return call;
         };
 
+        var get = function(url){
+          console.log('GET to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
+          var getCall = $http.get(URLS.current.substr(0, URLS.current.length-4) + url);
+          return getCall;
+        };
 
-        self.recon = new Recon( { postFunc: post} );
+
+        self.recon = new Recon( { postFunc: post, getFunc: get} );
         //setup prev day recon dictionary
         self.storedData = {0: self.recon, 1: null , 2: null, 3: null, 4: null, 5: null, 6: null, 7: null };
         //setup opts for prefetch
@@ -82,7 +89,7 @@ angular.module('paradropApp')
             chartBuilder.buildRepeatVisitsChart(graphData);
             buildCharts();
             if(!self.storedData[currDay+1] && currDay !== 7){
-              self.storedData[currDay+1] = new Recon({postFunc: post});
+              self.storedData[currDay+1] = new Recon({postFunc: post, getFunc: get});
               self.storedData[currDay+1].myOpts = self.prevOpts(currDay+1); 
               self.storedData[currDay+1].dateString = 'on ' + 
                 (new Date(self.storedData[currDay+1].myOpts.start*1000))
@@ -130,6 +137,7 @@ angular.module('paradropApp')
         self.recon.dateString = 'so far Today';
         self.recon.prefetch(opts)
         .then(function(){
+          self.today = self.recon;
           $rootScope.reconInit.resolve();
           var stopts = $rootScope.closeTime;
           var startts = $rootScope.openTime;
@@ -143,7 +151,7 @@ angular.module('paradropApp')
           chartBuilder.chartsBuilt();
         });
 
-        self.storedData[currDay+1] = new Recon( { postFunc: post } );
+        self.storedData[currDay+1] = new Recon( { postFunc: post, getFunc: get } );
         self.storedData[currDay+1].myOpts = self.prevOpts(currDay+1); 
         self.storedData[currDay+1].dateString = 'on ' + 
           (new Date(self.storedData[currDay+1].myOpts.start*1000))

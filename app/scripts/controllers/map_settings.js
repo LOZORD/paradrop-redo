@@ -8,14 +8,15 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', 'gmapMaker', '$route','$routeParams',
-    function ($scope, URLS, $http, $sce, gmapMaker, $route, $routeParams) {
+  .controller('MapSettingsCtrl',['$scope', 'URLS', '$http', '$sce', 'gmapMaker', '$route','$routeParams', '$interval',
+    function ($scope, URLS, $http, $sce, gmapMaker, $route, $routeParams, $interval) {
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       if($scope.group_id){
         $scope.superAdmin = false;
       }else{
         $scope.superAdmin = true;
       }
+      $scope.channels = [1, 6, 11, 36, 40, 44, 48, 52, 56, 60, 64, 149, 153, 157, 161, 165];
       $scope.markersVisible = true;
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
@@ -102,7 +103,7 @@ angular.module('paradropApp')
                       map: $scope.map,
                       title: 'Sync Marker',
                       draggable: true,
-                      icon: 'images/here.png',
+                      icon: 'images/double-arrow.png',
                       id: 'syncMarker'
                     });
                     $scope.map.markers.syncMarker = marker;
@@ -171,8 +172,12 @@ angular.module('paradropApp')
         }
       };
 
-      $scope.pendingChanges = function(){
-        return !deepCompare($scope.settingsJSON, $scope.mapData);
+      var pendingChangePoll = $interval(checkForPendingChanges, 1000);
+      //make sure to cancel the interval when the controller is destroyed
+      $scope.$on('$destroy', function(){ $interval.cancel(pendingChangePoll);});
+      function checkForPendingChanges(){
+        $scope.updateMarkers();
+        $scope.pendingChanges = !deepCompare($scope.settingsJSON, $scope.mapData);
       };
 
       $scope.onClick = function(event) {
@@ -190,15 +195,47 @@ angular.module('paradropApp')
         if($scope.isScaleMode){
           $scope.scaleArr.push(ll);
         }
+        if($scope.measureMode){
+          $scope.distArr.push(ll);
+        }
       };
 
       $scope.changeScaleFactor = function(){
         $scope.isScaleMode = true;
         $scope.isScaling = true;
         $scope.scaleArr = [];
-        $scope.$watch(function(){if($scope.scaleArr){return $scope.scaleArr.length;}else{return 0;}},
+        $scope.scaleWatch = $scope.$watch(function(){if($scope.scaleArr){return $scope.scaleArr.length;}else{return 0;}},
             function(newVal){if(newVal === 2){$scope.isScaleMode = false; $scope.pickScale = true;}});
       };
+
+      $scope.cancelScaleMode = function(){
+        $scope.scaleWatch();
+        $scope.isScaleMode = false;
+        $scope.isScaling = false;
+        $scope.measureMode = false;
+        $scope.distArr = [];
+        $scope.pickScale = false;
+        $scope.scaleArr = [];
+        $scope.scaleDist = null;
+      };
+
+      $scope.distMeasure = function(){
+        $scope.measureMode = true;
+        $scope.distArr = [];
+        $scope.scaleWatch = $scope.$watch(function(){if($scope.distArr){return $scope.distArr.length;}else{return 0;}},
+            function(newVal){if(newVal === 2){$scope.measureMode = false; calcDist()}});
+      };
+
+      function calcDist(){
+        var latDelta = Math.abs($scope.distArr[0].lat() - $scope.distArr[1].lat());
+        var lngDelta = Math.abs($scope.distArr[0].lng() - $scope.distArr[1].lng());
+        if(latDelta > lngDelta){
+          $scope.distance = Math.round(($scope.settingsJSON.scale * latDelta) * 1000) / 1000;
+        }else{
+          $scope.distance = Math.round(($scope.settingsJSON.scale * lngDelta) * 1000) / 1000;
+        }
+        $scope.justCalcDist = true;
+      }
 
       $scope.calcScale = function(){
         $scope.pickScale = false;
@@ -211,6 +248,7 @@ angular.module('paradropApp')
           $scope.settingsJSON.scale = Math.round(($scope.scaleDist / lngDelta) * 1000) / 1000;
         }
         console.log($scope.settingsJSON.scale);
+        $scope.scaleWatch();
         $scope.justSetScale = true;
         $scope.isScaling = false;
         delete $scope.scaleDist;
@@ -395,7 +433,8 @@ angular.module('paradropApp')
           var arr = $scope.fixedMac.position.split(',');
           $scope.fixedMac.position = [parseFloat(arr[0]), parseFloat(arr[1])];
         }
-        $scope.settingsJSON.fixedMacs[$scope.fixedMac.name] = { mac: $scope.fixedMac.mac, position: $scope.fixedMac.position };
+        console.log($scope.fixedMac.channel);
+        $scope.settingsJSON.fixedMacs[$scope.fixedMac.name] = { mac: $scope.fixedMac.mac, position: $scope.fixedMac.position, channel: $scope.fixedMac.channel };
         $scope.addMacMarker($scope.settingsJSON.fixedMacs[$scope.fixedMac.name], $scope.fixedMac.name);
         console.log($scope.settingsJSON);
       };
@@ -559,11 +598,12 @@ angular.module('paradropApp')
         {
           position: myLatlng,
           map: $scope.map,
-          title: 'Fixed Wifi Device: ' + name + '\nMac: ' + mac.mac,
+          title: 'Fixed Wifi Device: ' + name + '\nMac: ' + mac.mac + '\nChannel: ' + mac.channel,
           draggable: true,
           icon: 'images/red-wifi.png',
           id: 'macMarker' + name,
-          mac: mac.mac
+          mac: mac.mac,
+          channel: mac.channel
         });
         $scope.map.markers['macMarker'+ name] = marker;
         $scope.updateMarkers();
@@ -644,6 +684,7 @@ angular.module('paradropApp')
             $scope.settingsJSON.fixedMacs[marker.substring(9)] = {};
             $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
             $scope.settingsJSON.fixedMacs[marker.substring(9)].mac = $scope.map.markers[marker].mac;
+            $scope.settingsJSON.fixedMacs[marker.substring(9)].channel = $scope.map.markers[marker].channel;
           }
 
         }

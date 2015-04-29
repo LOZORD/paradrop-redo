@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
-  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope', '$route', '$location', '$q',
-    function($http, Session, ipCookie, URLS, $rootScope, $route, $location, $q) {
+  .factory('AuthService', ['$http', 'Session', 'ipCookie', 'URLS', '$rootScope', '$route', '$location', '$q', '$window',
+    function($http, Session, ipCookie, URLS, $rootScope, $route, $location, $q, $window) {
       var authService = {};
 
       authService.getToken = function () {
@@ -117,6 +117,8 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
             return result;
           });
         */
+        //restart app to restart all services
+        $window.location.reload();
 
         return retData.promise;
       };

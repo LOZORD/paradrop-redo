@@ -174,6 +174,11 @@ angular.module('paradropApp', [
         controller: 'MapSettingsCtrl',
         auths: { session: true}
       })
+      .when('/recon/tracking/:group_id*', {
+        templateUrl: 'views/recon/tracking.html',
+        controller: 'ReconTrackingCtrl',
+        auths: { session: true}
+      })
       .otherwise({
         redirectTo: '/',
         auths: {}
@@ -192,6 +197,32 @@ angular.module('paradropApp', [
       $httpProvider.defaults.headers[verb] = contentType;
     }
   })
+  .config(['$httpProvider', function ($httpProvider) {
+    //intercept http erros and show alert
+    $httpProvider.interceptors.push(function ($q, $rootScope) {
+
+      $rootScope.httpErrorAlert = function(text){
+        $rootScope.httpErrorText = text;
+        $rootScope.showHttpErrorAlert = true;
+      };
+      $rootScope.closeHttpErrorAlert = function(){
+        $rootScope.showHttpErrorAlert = false;
+      };
+
+      return {
+        'response': function (response) {
+          //Will only be called for HTTP up to 300
+          return response;
+        },
+        'responseError': function (rejection) {
+          console.log(rejection);
+          $rootScope.httpErrorAlert('<strong>' + rejection.status + ' Error: ' + rejection.statusText + 
+            '</strong><br>Additional Info: ' + rejection.data); 
+          return $q.reject(rejection);
+        }
+      };
+    });
+  }])
   .run(function($rootScope, $window, $location, $q){
     //create session promise
     $rootScope.sessionBuilt = $q.defer();
