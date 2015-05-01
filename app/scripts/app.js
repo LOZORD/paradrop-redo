@@ -22,7 +22,8 @@ angular.module('paradropApp', [
     'paradropServices',
     'ipCookie',
     'ngMap',
-    'snap'
+    'snap',
+    'ui.bootstrap.datetimepicker'
   ])
   .config(function(snapRemoteProvider) {
     snapRemoteProvider.globalOptions.disable = 'right';

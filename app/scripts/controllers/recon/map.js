@@ -13,10 +13,8 @@ angular.module('paradropApp')
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.searchText ={};
       $scope.chartConfig = chartBuilder.buildZoneChart().chartConfig;
-      console.log($scope.chartConfig);
       $scope.timeFilters = [
         {name: 'Rolling', value: null},
-        {name: '10 Seconds', value: 10},
         {name: '30 Seconds', value: 30},
         {name: '1 Minute', value: 60},
         {name: '5 Minutes', value: 300}
@@ -102,7 +100,7 @@ angular.module('paradropApp')
           getHeatMapData();
         });
         if($scope.isValidMap){
-          $scope.heatPoll = $interval(getHeatMapData, 10000);
+          $scope.heatPoll = $interval(getHeatMapData, 30000);
           //make sure to cancel the interval when the controller is destroyed
           $scope.$on('$destroy', function(){ $interval.cancel($scope.heatPoll);});
         }
@@ -122,17 +120,16 @@ angular.module('paradropApp')
         var url = URLS.current + 'recon/coords/get/' + $scope.group_id;
         var stop = Math.floor(Date.now()/1000);
         var start = stop - 10;
-        var postBody = { sessionToken: $scope.sessionToken(), startts: null , stopts: null, typeid: $scope.mapData.typeid };
+        var postBody = { sessionToken: $scope.sessionToken(), startts: Math.floor((Date.now() /1000) - 30) , stopts: Math.floor(Date.now() /1000), typeid: $scope.mapData.typeid };
         return $http.post(url, postBody ).then( heatDataRecieved, heatDataError);
       };
 
       var inc = 0;
       function getOpts(){
-        inc += 10;
-        var opts = { latest: inc};//start: Math.floor(entryTime), stop: Math.floor(Date.now() / 1000)};
-        console.log($scope.latest);
+        inc += 30;
+        var opts = { latest: inc, aggregate: 30};//start: Math.floor(entryTime), stop: Math.floor(Date.now() / 1000)};
         if($scope.latest){
-          opts = {latest: $scope.latest};
+          opts = {latest: $scope.latest, aggregate: 30};
         }
         return opts; 
       };
@@ -179,7 +176,7 @@ angular.module('paradropApp')
         $scope.reconInit.promise.then(
         function(){
           Recon.today.addCoordData(data.data);
-          updateChart(Recon.today.getCoordData({latest: 10}));
+          updateChart(Recon.today.getCoordData({latest: 30}));
           //array indexes
           var ts = 1;
           var lat = 2;
@@ -189,11 +186,17 @@ angular.module('paradropApp')
           var zone = 6;
           var error = 7;
 
+          $scope.parsedData = Recon.today.parseCoordData(data.data, {aggregate: 30});
+          if(!$scope.parsedData){
+            $scope.parsedData = [];
+          }
           //heatmap stuff
           $scope.heatMapData = [];
-          for(var i in data.data){
-            var point = data.data[i];
-            $scope.heatMapData.push(new google.maps.LatLng(point[lat],point[lng]));
+          for(var i in $scope.parsedData){
+            for(var k in $scope.parsedData[i].data){
+              var point = $scope.parsedData[i].data[k].coords;
+              $scope.heatMapData.push(new google.maps.LatLng(point[0],point[1]));
+            }
           }
           $scope.setHeatMap();
 
@@ -251,7 +254,6 @@ angular.module('paradropApp')
       }
 
       $scope.inFilter = function(){
-        console.log($scope.filterType);
         if($scope.filterType === 'Disabled'){
           delete $scope.searchText.insideNow;
         }else if($scope.filterType === 'Inside'){
@@ -264,7 +266,6 @@ angular.module('paradropApp')
       $scope.createPolygon = (function(){
         var polyID = 0;
         return function(zone){
-          console.log(zone);
           if(!$scope.zones){
             $scope.zones = {};
           }
@@ -354,22 +355,28 @@ angular.module('paradropApp')
             if(!$scope.polylines[name].pointData){
               $scope.polylines[name].pointData = [];
             }
-            $scope.polylines[name].pointData.push({latLng: latLng, ts: $scope.macData[mac].data[point].ts});
+            $scope.polylines[name].pointData.push({latLng: latLng, ts: $scope.macData[mac].data[point].ts, aggPts:$scope.macData[mac].data[point].aggPts});
+            console.log($scope.macData[mac].data[point]);
           }
           if($scope.polyMode){
             $scope.polylines[name].setMap($scope.map);
             var pointArr = $scope.polylines[name].pointData;
             for (var point in pointArr) {
+              var borderColor = $scope.polylines[name].strokeColor;
+              if(point == 0 || point == (pointArr.length -1)){
+                borderColor = '#fff';
+              }
               var pointOptions = {
-                strokeColor: $scope.polylines[name].strokeColor,
+                strokeColor: borderColor,
                 strokeOpacity: 1,
-                strokeWeight: 2,
+                strokeWeight: 3,
                 fillColor: $scope.polylines[name].strokeColor,
                 fillOpacity: 1,
                 map: $scope.map,
                 center: pointArr[point].latLng,
                 zIndex: 100,
                 ts: pointArr[point].ts,
+                aggPts: pointArr[point].aggPts,
                 loc: pointArr[point].latLng,
                 oui: $scope.polylines[name].oui,
                 mac: $scope.polylines[name].mac,
@@ -384,7 +391,7 @@ angular.module('paradropApp')
               }
               var newPoint = new google.maps.Circle(pointOptions);
               $scope.polylines[name].points.push(newPoint);
-              google.maps.event.addListener(newPoint, 'mouseover', $scope.showPointInfo(newPoint));
+              google.maps.event.addListener(newPoint, 'click', $scope.polyInfo($scope.polylines[name], newPoint)/*$scope.showPointInfo(newPoint)*/);
             }
             if(active){
               $scope.polyDetail($scope.polylines[name]);
@@ -397,7 +404,9 @@ angular.module('paradropApp')
         return function(){
           var content = '<b>Mac: </b>' + point.mac + '<br>';
           content += '<b>Type: </b>' + point.oui + '<br>';
+          content += '<b>Points Used: </b>' + point.aggPts + '<br>';
           content += '<b>Time: </b>' + (new Date(point.ts * 1000)).toLocaleTimeString() + '<br>';
+          content += '<b>ts: </b>' + point.ts + '<br>';
           $scope.pointInfo.setContent(content);
           $scope.pointInfo.setPosition(point.loc);
           $scope.pointInfo.open($scope.map);
@@ -424,18 +433,21 @@ angular.module('paradropApp')
         }
 
         var poly = new google.maps.Polyline(polyOptions);
-        google.maps.event.addListener(poly, 'click', $scope.polyInfo(poly));
+        google.maps.event.addListener(poly, 'click', $scope.polyInfo(poly, false));
         return poly;
       };
 
-      $scope.polyInfo = function(poly){
-        return function(event){
+      $scope.polyInfo = function(poly, point){
+        console.log(point);
+        return function(){ $scope.polyDetail(poly); 
+          if(point){$scope.showPointInfo(point)();}};/*function(event){
           var ll = event.latLng;
-          var contentString = '<b>' + poly.title + '</b><br><b>' + poly.oui + '</b><br><b>' + poly.mac + '</b><br>';
-          poly.infoWindow.setContent(contentString);
-          poly.infoWindow.setPosition(ll);
-          poly.infoWindow.open($scope.map);
+          var contentString = '<b>' + poly.title + '</b><br><b>Type: </b>' + poly.oui + '<br><b>Mac: </b>' + poly.mac + '<br>';
+          $scope.pointInfo.setContent(contentString);
+          $scope.pointInfo.setPosition(ll);
+          $scope.pointInfo.open($scope.map);
         };
+          */
       };
 
       $scope.polyDetail = function(poly){
@@ -452,16 +464,19 @@ angular.module('paradropApp')
             }
           }
           if(!active){
-            var ll = poly.getPath().getAt(0);
-            var contentString = '<b>' + poly.title + '</b><br><b>' + poly.oui + '</b><br><b>' + poly.mac + '</b><br>';
+            $scope.showPointInfo(poly.points[0])();
             poly.setOptions({strokeWeight: 15});
             for(var point in poly.points){
               poly.points[point].setRadius(60000);
             }
             poly.active = true;
+            /*
+            var ll = poly.getPath().getAt(0);
+            var contentString = '<b>' + poly.title + '</b><br><b>Type: </b>' + poly.oui + '<br><b>Mac: </b>' + poly.mac + '<br>';
             poly.infoWindow.setContent(contentString);
             poly.infoWindow.setPosition(ll);
             poly.infoWindow.open($scope.map);
+            */
           }
       };
 
@@ -552,9 +567,7 @@ angular.module('paradropApp')
             return;
           }
         }
-        console.log(map);
         $scope.mapData = map;
-        console.log($scope.mapData);
         var builtMap = gmapMaker.buildMap($scope.mapData);
         $scope.firstFloorMapType = builtMap.mapType;
         $scope.onClick = builtMap.onClick;

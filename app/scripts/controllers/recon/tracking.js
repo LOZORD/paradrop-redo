@@ -50,6 +50,14 @@ angular.module('paradropApp')
           controller();
         }
       }
+
+      $scope.setStartTs = function(){
+        $scope.startts = Math.round($scope.datepicker.start.getTime()/1000)
+      };
+
+      $scope.setStopTs = function(){
+        $scope.stopts = Math.round($scope.datepicker.stop.getTime()/1000)
+      };
       
       function controller(){
         //get last stored vals for mac and time search
@@ -170,22 +178,25 @@ angular.module('paradropApp')
           var isinside = 5;
           var zone = 6;
           var error = 7;
+          $scope.macData = Recon.today.parseCoordData(data.data, {aggregate: 30});
+            if(!$scope.macData){
+              $scope.macData = [];
+            }
 
+            console.log($scope.macData);
           //heatmap stuff
           $scope.heatMapData = [];
-          for(var i in data.data){
-            var point = data.data[i];
-            $scope.heatMapData.push(new google.maps.LatLng(point[lat],point[lng]));
+          for(var i in $scope.macData){
+            for(var k in $scope.macData[i].data){
+              var point = $scope.macData[i].data[k].coords;
+              $scope.heatMapData.push(new google.maps.LatLng(point[0],point[1]));
+            }
           }
           $scope.setHeatMap();
 
           //polymode stuff
           if($scope.polyMode){
-            $scope.macData = Recon.today.parseCoordData(data.data);
             //Recon.today.printCoordData(coordData);
-            if(!$scope.macData){
-              $scope.macData = [];
-            }
             $scope.drawPolylines();
             filterPolylines($scope.searchText, null);
           }
@@ -335,22 +346,27 @@ angular.module('paradropApp')
             if(!$scope.polylines[name].pointData){
               $scope.polylines[name].pointData = [];
             }
-            $scope.polylines[name].pointData.push({latLng: latLng, ts: $scope.macData[mac].data[point].ts});
+            $scope.polylines[name].pointData.push({latLng: latLng, ts: $scope.macData[mac].data[point].ts, aggPts:$scope.macData[mac].data[point].aggPts});
           }
           if($scope.polyMode){
             $scope.polylines[name].setMap($scope.map);
             var pointArr = $scope.polylines[name].pointData;
             for (var point in pointArr) {
+              var borderColor = $scope.polylines[name].strokeColor;
+              if(point == 0 || point == (pointArr.length -1)){
+                borderColor = '#fff';
+              }
               var pointOptions = {
-                strokeColor: $scope.polylines[name].strokeColor,
+                strokeColor: borderColor,
                 strokeOpacity: 1,
-                strokeWeight: 2,
+                strokeWeight: 3,
                 fillColor: $scope.polylines[name].strokeColor,
                 fillOpacity: 1,
                 map: $scope.map,
                 center: pointArr[point].latLng,
                 zIndex: 100,
                 ts: pointArr[point].ts,
+                aggPts: pointArr[point].aggPts,
                 loc: pointArr[point].latLng,
                 oui: $scope.polylines[name].oui,
                 mac: $scope.polylines[name].mac,
@@ -365,7 +381,7 @@ angular.module('paradropApp')
               }
               var newPoint = new google.maps.Circle(pointOptions);
               $scope.polylines[name].points.push(newPoint);
-              google.maps.event.addListener(newPoint, 'mouseover', $scope.showPointInfo(newPoint));
+              google.maps.event.addListener(newPoint, 'click', $scope.polyInfo($scope.polylines[name], newPoint)/*$scope.showPointInfo(newPoint)*/);
             }
             if(active){
               $scope.polyDetail($scope.polylines[name]);
@@ -378,6 +394,7 @@ angular.module('paradropApp')
         return function(){
           var content = '<b>Mac: </b>' + point.mac + '<br>';
           content += '<b>OUI: </b>' + point.oui + '<br>';
+          content += '<b>Points Used: </b>' + point.aggPts + '<br>';
           content += '<b>Time: </b>' + (new Date(point.ts * 1000)).toLocaleTimeString() + '<br>';
           content += '<b>ts: </b>' + point.ts + '<br>';
           $scope.pointInfo.setContent(content);
@@ -410,14 +427,16 @@ angular.module('paradropApp')
         return poly;
       };
 
-      $scope.polyInfo = function(poly){
-        return function(event){
+      $scope.polyInfo = function(poly, point){
+        return function(){ $scope.polyDetail(poly); 
+          if(point){$scope.showPointInfo(point)();}};/*function(event){
           var ll = event.latLng;
-          var contentString = '<b>' + poly.title + '</b><br><b>' + poly.oui + '</b><br><b>' + poly.mac + '</b><br>';
-          poly.infoWindow.setContent(contentString);
-          poly.infoWindow.setPosition(ll);
-          poly.infoWindow.open($scope.map);
+          var contentString = '<b>' + poly.title + '</b><br><b>Type: </b>' + poly.oui + '<br><b>Mac: </b>' + poly.mac + '<br>';
+          $scope.pointInfo.setContent(contentString);
+          $scope.pointInfo.setPosition(ll);
+          $scope.pointInfo.open($scope.map);
         };
+        */
       };
 
       $scope.polyDetail = function(poly){
@@ -434,16 +453,19 @@ angular.module('paradropApp')
             }
           }
           if(!active){
-            var ll = poly.getPath().getAt(0);
-            var contentString = '<b>' + poly.title + '</b><br><b>' + poly.oui + '</b><br><b>' + poly.mac + '</b><br>';
+            $scope.showPointInfo(poly.points[0])();
             poly.setOptions({strokeWeight: 15});
             for(var point in poly.points){
               poly.points[point].setRadius(60000);
             }
             poly.active = true;
+            /*
+            var ll = poly.getPath().getAt(0);
+            var contentString = '<b>' + poly.title + '</b><br><b>Type: </b>' + poly.oui + '<br><b>Mac: </b>' + poly.mac + '<br>';
             poly.infoWindow.setContent(contentString);
             poly.infoWindow.setPosition(ll);
             poly.infoWindow.open($scope.map);
+            */
           }
       };
 

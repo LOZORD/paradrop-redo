@@ -26,43 +26,49 @@
   <div class="tab-pane extra-wide">
     <div class='row'>
       <form name="macForm">
-        <div class='col-md-3 form-group'>
-          <label for=="mac">
-            MAC:
-          </label>
-          <input type='text' id='MAC' name="mac" class='form-control' ng-model='mac' pattern="([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})">
-          <div  class='error-container bg-danger'
-                ng-show='macForm.mac.$dirty && macForm.mac.$invalid'>
-            <small class='error' ng-show='macForm.mac.$error.pattern'>
-              Invalid MAC Address.
-            </small>
+        <div class="row">
+          <div class='col-md-4 form-group'>
+            <label for=="mac">
+              MAC:
+            </label>
+            <input type='text' id='MAC' name="mac" class='form-control' ng-model='mac' pattern="([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})">
+            <div  class='error-container bg-danger'
+                  ng-show='macForm.mac.$dirty && macForm.mac.$invalid'>
+              <small class='error' ng-show='macForm.mac.$error.pattern'>
+                Invalid MAC Address.
+              </small>
+            </div>
           </div>
         </div>
-        <div class='col-md-3 form-group'>
-          <label for=="start">
-            Start TS(Seconds from epoch):
-          </label>
-          <input type='number' id='start' name="start" class='form-control' ng-model='startts'>
-          <div  class='error-container bg-danger'
-                ng-show='macForm.start.$dirty && macForm.start.$invalid'>
-            <small class='error' ng-show='macForm.start.$error.number'>
-              Start time must me a number.
-            </small>
+        <div class="row">
+          <div class='col-md-6 form-group'>
+            <div class="dropdown">
+              <label for=="start">
+                Start Time: <span style="color: green">{{datepicker.start.toString()}}</span>
+              </label>
+              <a class="dropdown-toggle" id="start-picker" role="button" data-toggle="dropdown" href="">
+                <div class="input-group"><input type="number" name="start" class="form-control" data-ng-model="startts"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                </div>
+              </a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <datetimepicker data-ng-model="datepicker.start" on-set-time="setStartTs()" data-datetimepicker-config="{ dropdownSelector: '#start-picker', minuteStep: 1 }"/>
+              </ul>
+            </div>
           </div>
-        </div>
-        <div class='col-md-3 form-group'>
-          <label for=="stop">
-            Stop TS(Seconds from epoch):
-          </label>
-          <input type='number' id='stop' name="stop" class='form-control' ng-model='stopts'>
-          <div  class='error-container bg-danger'
-                ng-show='macForm.stop.$dirty && macForm.stop.$invalid'>
-            <small class='error' ng-show='macForm.stop.$error.number'>
-              Stop time must me a number.
-            </small>
+          <div class='col-md-6 form-group'>
+            <div class="dropdown">
+              <label for=="stop">
+                Stop Time: <span style="color: green">{{datepicker.stop.toString()}}</span>
+              </label>
+              <a class="dropdown-toggle" id="stop-picker" role="button" data-toggle="dropdown" href="">
+                <div class="input-group"><input type="number" name="stop" class="form-control" data-ng-model="stopts"><span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                </div>
+              </a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <datetimepicker data-ng-model="datepicker.stop" on-set-time="setStopTs()" data-datetimepicker-config="{ dropdownSelector: '#stop-picker', minuteStep: 1 }"/>
+              </ul>
+            </div>
           </div>
-        </div>
-        <div class="col-md-3 form-group">
         </div>
       </form>
     </div>
