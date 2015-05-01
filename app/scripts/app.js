@@ -321,7 +321,7 @@ angular.module('paradropApp', [
   })
   .constant('URLS', {
     //Change the current url to change all calls globally
-    current: 1 ? 'http://paradrop.wings.cs.wisc.edu:20330/v1/' : 'https://dev.dbapi.paradrop.io'
+    current: 'https://dbapi.paradrop.io/v1/'//1 ? 'http://paradrop.wings.cs.wisc.edu:20330/v1/' : 'https://dev.dbapi.paradrop.io'
   })
   .constant('MODES', {
     restrictedSignup: true
