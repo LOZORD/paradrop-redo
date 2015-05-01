@@ -11,6 +11,17 @@ angular.module('paradropApp')
   .controller('NewUserCtrl', ['$scope', '$location', '$http', 'URLS', '$routeParams', 'AuthService', 'MODES',
     function ($scope, $location, $http, URLS, $routeParams, AuthService, MODES) {
 
+      $scope.validatedInputNames = [
+        'username',
+        'password',
+        'fullname',
+        'public',
+        'email',
+        'contact',
+      ];
+
+      $scope.MODES = MODES;
+
       $scope.create = function (data, isValid) {
         if (isValid !== true) {
           return;
@@ -26,14 +37,12 @@ angular.module('paradropApp')
           isDeveloper:  data.isDeveloper
         };
 
-        $scope.MODES = MODES;
-
-        if (MODES.restrictedSignup) {
-          $scope.signupData.question = null;
-        }
 
         if (MODES.restrictedSignup) {
           payload.reg_code = data.question;
+        }
+        else {
+          $scope.signupData.question = null;
         }
 
         var signupURL = URLS.current + 'user/new';
