@@ -113,7 +113,7 @@ angular.module('paradropApp', [
       })
       .when('/recon/map/:group_id*', {
         templateUrl: 'views/recon/map.html',
-        controller: 'ReconMapCtrl',
+        controller: 'ReconTrackingCtrl',
         auths: {group: true, session: true}
       })
       .when('/recon/home/:group_id*', {
@@ -163,7 +163,7 @@ angular.module('paradropApp', [
       .when('/recon/tracking/:group_id*', {
         templateUrl: 'views/recon/tracking.html',
         controller: 'ReconTrackingCtrl',
-        auths: { session: true}
+        auths: { group: true, session: true}
       })
       .otherwise({
         redirectTo: '/',

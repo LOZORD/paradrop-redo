@@ -79,6 +79,8 @@
           <span ng-if="polyMode">Aggregation</span><span ng-if="!polyMode">Non-Aggregation</span> Mode
         </button>
         <button class="btn btn-primary" ng-click="getHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
+        <button class="btn btn-primary" ng-click="prevPoint()" ng-disabled="noneActive">Previous Point</button>
+        <button class="btn btn-primary" ng-click="nextPoint()" ng-disabled="noneActive">Next Point</button>
       </div>
     </div>
     <div class="row">
@@ -95,7 +97,7 @@
             >
             <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
             </map-type>
-            <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
+            <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{currentUser().apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
             <!-- ngRepeat: pos in positions -->
         </map>
       </div>

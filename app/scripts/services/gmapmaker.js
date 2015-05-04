@@ -11,6 +11,16 @@ angular.module('paradropApp')
   .factory('gmapMaker', function () {
     // Service logic
     // ...
+    var colorNames = {
+        BLUE: { code:'#0000FF'},
+        YELLOW: { code:'#FFFF00'},
+        RED: { code:'#FF0000'},
+        GREEN: { code:'#008000'},
+        PURPLE: { code:'#800080'},
+        ORANGE: { code:'#FFA500'},
+        LIME: { code:'#00FF00'},
+        BLACK: { code:'#000000'},
+    };
 
     var gmapFuncs = {};
 
@@ -120,6 +130,65 @@ angular.module('paradropApp')
     gmapFuncs.getIndex = function(page){
       return storedIndex[page];
     };
+
+    gmapFuncs.buildZone = function(zone, infoFunc){
+      var colorName = '';
+      var color = '';
+      var name = '';
+      var type = '';
+      var tmpPoly = gmapFuncs.newPoly();
+      for(var i in zone.bounds){
+        tmpPoly.getPath().push(new google.maps.LatLng(zone.bounds[i][0], zone.bounds[i][1]));
+      }
+      colorName = zone.color;
+      color = colorNames[zone.color].code;
+      name = zone.name;
+      type = zone.type;
+      var paths = tmpPoly.getPath();
+      // Construct the polygon.
+      var polygon = new google.maps.Polygon({
+        paths: paths,
+        strokeColor: color,
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: color,
+        fillOpacity: 0.35,
+        clickable: true,
+        type: type,
+        colorName: colorName,
+        title: name
+      });
+      if(infoFunc){
+        polygon.infoWindow = new google.maps.InfoWindow();
+        google.maps.event.addListener(polygon, 'click', infoFunc(polygon));
+      }
+
+      return polygon;
+    };
+
+    gmapFuncs.newPoly = function(color, info){
+        if(!color){
+          //random color
+          color = '#'+ ('000000' + (Math.random()*0xFFFFFF<<0).toString(16)).slice(-6);
+        }
+        var polyOptions = {
+          strokeColor: color,
+          strokeOpacity: 1.0,
+          strokeWeight: 5,
+          clickable: true,
+          draggable: false,
+          //infoWindow: new google.maps.InfoWindow()
+        };
+        if(info){
+          for(var key in info){
+            polyOptions[key] = info[key];
+          }
+        }
+
+        var poly = new google.maps.Polyline(polyOptions);
+        //google.maps.event.addListener(poly, 'click', $scope.polyInfo(poly));
+        return poly;
+      };
 
     return gmapFuncs;
   });
