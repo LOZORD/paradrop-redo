@@ -28,16 +28,6 @@ angular.module('paradropApp')
           {name:'LIME', code:'#00FF00'},
           {name:'BLACK', code:'#000000'},
       ];
-      $scope.colorName = {
-          BLUE: { code:'#0000FF'},
-          YELLOW: { code:'#FFFF00'},
-          RED: { code:'#FF0000'},
-          GREEN: { code:'#008000'},
-          PURPLE: { code:'#800080'},
-          ORANGE: { code:'#FFA500'},
-          LIME: { code:'#00FF00'},
-          BLACK: { code:'#000000'},
-      };
       $scope.types = [
           {name:'Customer'},
           {name:'Employee'},
@@ -80,7 +70,7 @@ angular.module('paradropApp')
                   $scope.map = map;
                   $scope.infobox = new google.maps.InfoWindow();
                   $scope.map.setCenter(new google.maps.LatLng($scope.mapData.centerX, $scope.mapData.centerY));
-                  $scope.boundPoly = $scope.newPoly('#FF0000');
+                  $scope.boundPoly = gmapMaker.newPoly('#FF0000');
                   for(var boundary in $scope.mapData.boundary){
                     $scope.addBoundary($scope.mapData.boundary[boundary]);
                   }
@@ -89,7 +79,7 @@ angular.module('paradropApp')
                   }
                   $scope.updatePoly();
                   for(var zone in $scope.mapData.zones){
-                    $scope.createPolygon($scope.mapData.zones[zone]);
+                    $scope.createZones($scope.mapData.zones[zone]);
                   }
                   for(var mac in $scope.mapData.fixedMacs){
                     $scope.addMacMarker($scope.mapData.fixedMacs[mac], mac);
@@ -123,7 +113,7 @@ angular.module('paradropApp')
           $scope.minMaxPoly.setMap(null);
           $scope.minMaxPoly = null;
         }
-        $scope.minMaxPoly = $scope.newPoly('#191970');
+        $scope.minMaxPoly = gmapMaker.newPoly('#191970');
         $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.minCoords[0],$scope.mapData.minCoords[1]));
         $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.maxCoords[0],$scope.mapData.minCoords[1]));
         $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.maxCoords[0],$scope.mapData.maxCoords[1]));
@@ -160,6 +150,7 @@ angular.module('paradropApp')
         $scope.groupMaps = map;
         $scope.group_id = $scope.groupMaps.groupname;
         $scope.apNameMap = $scope.groupMaps.map;
+        console.log($scope.apNameMap);
         $scope.revApNameMap = {};
         for(var key in $scope.apNameMap){
           $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
@@ -329,7 +320,7 @@ angular.module('paradropApp')
       $scope.confirmZone = function(){
         $scope.isZoneMode = false;
         if(!$scope.isIntersecting()){
-          $scope.createPolygon();
+          $scope.createZones();
           $scope.updateZones();
         }else{
           $scope.closeAlerts();
@@ -338,56 +329,34 @@ angular.module('paradropApp')
         $scope.abortZone();
       };
 
-      $scope.createPolygon = (function(){
-        var polyID = 0;
-        return function(opts){
-          if(!$scope.map.polygons){
-            $scope.map.polygons = {};
+      $scope.createZones = function(opts){
+        if(!$scope.map.polygons){
+          $scope.map.polygons = {};
+        }
+        var polygon = null;
+        if(opts){
+          polygon = gmapMaker.buildZone(opts, $scope.polyInfo);
+          console.log(opts.bounds);
+        }else{
+          var opts = {};
+          opts.name = $scope.zone.color.name;
+          opts.color = $scope.zone.color.name;
+          opts.name = $scope.zone.name;
+          opts.type = $scope.zone.type.name;
+          opts.bounds = [];
+          var array = $scope.poly.getPath().getArray();
+          for(var i in array){
+            opts.bounds.push([array[i].A, array[i].F]);
           }
-          var colorName = '';
-          var color = '';
-          var name = '';
-          var type = '';
-          if(opts){
-            $scope.resetPoly();
-            for(var i in opts.bounds){
-              $scope.poly.getPath().push(new google.maps.LatLng(opts.bounds[i][0], opts.bounds[i][1]));
-            }
-            colorName = opts.color;
-            color = $scope.colorName[opts.color].code;
-            name = opts.name;
-            type = opts.type;
-          }else{
-            colorName = $scope.zone.color.name;
-            color = $scope.colorName[$scope.zone.color.name].code;
-            name = $scope.zone.name;
-            type = $scope.zone.type.name;
-          }
-          var paths = $scope.poly.getPath();
-          // Construct the polygon.
-          var polygon = new google.maps.Polygon({
-            paths: paths,
-            strokeColor: color,
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: color,
-            fillOpacity: 0.35,
-            clickable: true,
-            type: type,
-            colorName: colorName,
-            title: name,
-            id: polyID,
-            infoWindow: new google.maps.InfoWindow()
-          });
-          google.maps.event.addListener(polygon, 'click', $scope.polyInfo(polygon));
+          polygon = gmapMaker.buildZone(opts, $scope.polyInfo);
+        }
 
-          polygon.setMap($scope.map);
-          $scope.map.polygons['polygon' + polyID] = polygon;
-          polyID++;
-          $scope.resetPoly();
-          return polygon;
-        };
-      }());
+        polygon.setMap($scope.map);
+        $scope.map.polygons[polygon.title] = polygon;
+        console.log($scope.map.polygons);
+        $scope.resetPoly();
+        return polygon;
+      };
 
       $scope.updateZones = function(){
         delete $scope.settingsJSON.zones;
@@ -458,7 +427,8 @@ angular.module('paradropApp')
       $scope.polyInfo = function(poly){
         return function(event){
           var ll = event.latLng;
-          var contentString = '<b>' + poly.title + '</b><br>Type: '+  poly.type + '<br><a data-toggle="modal" data-target="#deleteZone'+ poly.id +'">Delete This Zone</a><br>';
+          console.log(poly);
+          var contentString = '<b>' + poly.title + '</b><br>Type: '+  poly.type + '<br><a data-toggle="modal" data-target="#deleteZone'+ poly.title +'">Delete This Zone</a><br>';
           poly.infoWindow.setContent(contentString);
           poly.infoWindow.setPosition(ll);
           poly.infoWindow.open($scope.map);
@@ -520,21 +490,6 @@ angular.module('paradropApp')
         };
       }());
 
-      $scope.newPoly = function(color){
-        if(!color){
-          color = '#00CCFF';
-        }
-        var polyOptions = {
-          strokeColor: color,
-          strokeOpacity: 1.0,
-          strokeWeight: 3,
-          clickable: false
-        };
-
-        var poly = new google.maps.Polyline(polyOptions);
-        return poly;
-      };
-
       $scope.addBoundPoint = function(event){
         var ll = event.latLng;
         $scope.poly.getPath().push(ll);
@@ -545,7 +500,7 @@ angular.module('paradropApp')
           $scope.poly.setMap(null);
           delete $scope.poly;
         }
-        $scope.poly = $scope.newPoly();
+        $scope.poly = gmapMaker.newPoly('#00CCFF');
         $scope.poly.setMap($scope.map);
       };
 
@@ -563,7 +518,7 @@ angular.module('paradropApp')
           $scope.boundPoly.setMap(null);
           delete $scope.boundPoly;
         }
-        $scope.boundPoly = $scope.newPoly('#FF0000');
+        $scope.boundPoly = gmapMaker.newPoly('#FF0000');
         $scope.boundPoly.setMap($scope.map);
       };
 
