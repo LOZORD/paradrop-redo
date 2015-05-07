@@ -150,7 +150,6 @@ angular.module('paradropApp')
         $scope.groupMaps = map;
         $scope.group_id = $scope.groupMaps.groupname;
         $scope.apNameMap = $scope.groupMaps.map;
-        console.log($scope.apNameMap);
         $scope.revApNameMap = {};
         for(var key in $scope.apNameMap){
           $scope.revApNameMap[$scope.apNameMap[key].apid] = $scope.apNameMap[key].name;
@@ -230,7 +229,6 @@ angular.module('paradropApp')
 
       $scope.calcScale = function(){
         $scope.pickScale = false;
-        console.log($scope.settingsJSON.scale);
         var latDelta = Math.abs($scope.scaleArr[0].lat() - $scope.scaleArr[1].lat());
         var lngDelta = Math.abs($scope.scaleArr[0].lng() - $scope.scaleArr[1].lng());
         if(latDelta > lngDelta){
@@ -238,7 +236,6 @@ angular.module('paradropApp')
         }else{
           $scope.settingsJSON.scale = Math.round(($scope.scaleDist / lngDelta) * 1000) / 1000;
         }
-        console.log($scope.settingsJSON.scale);
         $scope.scaleWatch();
         $scope.justSetScale = true;
         $scope.isScaling = false;
@@ -279,10 +276,8 @@ angular.module('paradropApp')
 
       $scope.resetMapSettings = function(){
         for(var i in $scope.mapSettingsFields){
-          console.log($scope.settingsJSON[i]);
           $scope.mapSettingsFields[i] = angular.copy($scope.settingsJSON[i]);
         }
-        console.log($scope.mapSettingsFields);
       };
 
       $scope.saveMapSettings = function(){
@@ -297,7 +292,6 @@ angular.module('paradropApp')
           var arr2 = $scope.settingsJSON.maxCoords.split(',');
           $scope.settingsJSON.maxCoords = [parseFloat(arr2[0]), parseFloat(arr2[1])];
         }
-        console.log($scope.mapSettingsFields);
       };
 
       $scope.addZone = function(){
@@ -336,7 +330,6 @@ angular.module('paradropApp')
         var polygon = null;
         if(opts){
           polygon = gmapMaker.buildZone(opts, $scope.polyInfo);
-          console.log(opts.bounds);
         }else{
           var opts = {};
           opts.name = $scope.zone.color.name;
@@ -353,7 +346,6 @@ angular.module('paradropApp')
 
         polygon.setMap($scope.map);
         $scope.map.polygons[polygon.title] = polygon;
-        console.log($scope.map.polygons);
         $scope.resetPoly();
         return polygon;
       };
@@ -365,9 +357,9 @@ angular.module('paradropApp')
           for(var zone in $scope.map.polygons){
             zone = $scope.map.polygons[zone];
             var boundaries = [];
-            var arr = zone.getPath().j;
+            var arr = zone.getPath().getArray();
             for(var i in arr){
-              boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
+              boundaries.push([Math.round(arr[i].lat() * 100) / 100, Math.round(arr[i].lng() * 100) / 100]);
             }
             $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type};
           }
@@ -402,10 +394,8 @@ angular.module('paradropApp')
           var arr = $scope.fixedMac.position.split(',');
           $scope.fixedMac.position = [parseFloat(arr[0]), parseFloat(arr[1])];
         }
-        console.log($scope.fixedMac.channel);
         $scope.settingsJSON.fixedMacs[$scope.fixedMac.name] = { mac: $scope.fixedMac.mac, position: $scope.fixedMac.position, channel: $scope.fixedMac.channel };
         $scope.addMacMarker($scope.settingsJSON.fixedMacs[$scope.fixedMac.name], $scope.fixedMac.name);
-        console.log($scope.settingsJSON);
       };
 
       $scope.resetFixedMac = function(){
@@ -427,7 +417,6 @@ angular.module('paradropApp')
       $scope.polyInfo = function(poly){
         return function(event){
           var ll = event.latLng;
-          console.log(poly);
           var contentString = '<b>' + poly.title + '</b><br>Type: '+  poly.type + '<br><a data-toggle="modal" data-target="#deleteZone'+ poly.title +'">Delete This Zone</a><br>';
           poly.infoWindow.setContent(contentString);
           poly.infoWindow.setPosition(ll);
@@ -625,7 +614,6 @@ angular.module('paradropApp')
         $scope.settingsJSON.boundary = [];
         $scope.settingsJSON.fixedMacs = {};
         for(var marker in $scope.map.markers){
-        console.log($scope.map.markers[marker].getPosition().lat());
           if(marker.indexOf('boundary') > -1 ){
             //boundary marker
             var boundary = [Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
@@ -644,9 +632,6 @@ angular.module('paradropApp')
           }
 
         }
-        console.log('**************************');
-        console.log($scope.settingsJSON);
-        console.log('**************************');
       };
 
       $scope.submitChanges = function(){
@@ -674,9 +659,9 @@ angular.module('paradropApp')
 
       $scope.isIntersecting = function(){
         var boundaries = [];
-        var arr = $scope.poly.getPath().j;
+        var arr = $scope.poly.getPath().getArray();
         for(var i in arr){
-          boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
+          boundaries.push([Math.round(arr[i].lat() * 100) / 100, Math.round(arr[i].lng() * 100) / 100]);
         }
         if($scope.settingsJSON.zones){
           for(var zone in $scope.settingsJSON.zones){
