@@ -481,7 +481,7 @@ angular.module('paradropApp')
           });
           $scope.map.markers[id] = marker;
           if(!noPoly){
-            $scope.poly.getPath().push($scope.map.markers[id].position);
+            $scope.poly.getPath().push($scope.map.markers[id].getPosition());
             google.maps.event.addListener(marker, 'drag', $scope.updatePoly);
             google.maps.event.addListener(marker, 'dragend', $scope.updatePoly);
           }
@@ -508,7 +508,7 @@ angular.module('paradropApp')
         $scope.resetPoly();
         for(var i in $scope.map.markers){
           if(i.indexOf('zone') > -1){
-            $scope.poly.getPath().push($scope.map.markers[i].position);
+            $scope.poly.getPath().push($scope.map.markers[i].getPosition());
           }
         }
       };
@@ -526,7 +526,7 @@ angular.module('paradropApp')
         $scope.resetBoundPoly();
         for(var i in $scope.map.markers){
           if(i.indexOf('boundary') > -1){
-            $scope.boundPoly.getPath().push($scope.map.markers[i].position);
+            $scope.boundPoly.getPath().push($scope.map.markers[i].getPosition());
           }
         }
       };
@@ -587,7 +587,7 @@ angular.module('paradropApp')
             id: 'boundary' + boundID
           });
           $scope.map.markers['boundary'+ boundID] = marker;
-          $scope.boundPoly.getPath().push($scope.map.markers['boundary' + boundID].position);
+          $scope.boundPoly.getPath().push($scope.map.markers['boundary' + boundID].getPosition());
           google.maps.event.addListener(marker, 'drag', $scope.updateBoundPoly);
           google.maps.event.addListener(marker, 'dragend', $scope.updateBoundPoly);
           $scope.updateMarkers();
@@ -625,24 +625,28 @@ angular.module('paradropApp')
         $scope.settingsJSON.boundary = [];
         $scope.settingsJSON.fixedMacs = {};
         for(var marker in $scope.map.markers){
+        console.log($scope.map.markers[marker].getPosition().lat());
           if(marker.indexOf('boundary') > -1 ){
             //boundary marker
-            var boundary = [Math.round($scope.map.markers[marker].position.k * 100) /100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
+            var boundary = [Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
             $scope.settingsJSON.boundary.push(boundary);
           }else if(marker.indexOf('apid') > -1){
             //ap marker
-            marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].position.k * 100) /100, lng: Math.round($scope.map.markers[marker].position.D * 100) /100 };
+            marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, lng: Math.round($scope.map.markers[marker].getPosition().lng() * 100) /100 };
             $scope.settingsJSON.aps.push(marker);
           }else if(marker === 'syncMarker'){
-            $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
+            $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
           }else if(marker.indexOf('macMarker') > -1){
             $scope.settingsJSON.fixedMacs[marker.substring(9)] = {};
-            $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
+            $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
             $scope.settingsJSON.fixedMacs[marker.substring(9)].mac = $scope.map.markers[marker].mac;
             $scope.settingsJSON.fixedMacs[marker.substring(9)].channel = $scope.map.markers[marker].channel;
           }
 
         }
+        console.log('**************************');
+        console.log($scope.settingsJSON);
+        console.log('**************************');
       };
 
       $scope.submitChanges = function(){
