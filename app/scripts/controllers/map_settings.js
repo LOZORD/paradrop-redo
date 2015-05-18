@@ -613,24 +613,26 @@ angular.module('paradropApp')
         $scope.settingsJSON.aps = [];
         $scope.settingsJSON.boundary = [];
         $scope.settingsJSON.fixedMacs = {};
-        for(var marker in $scope.map.markers){
-          if(marker.indexOf('boundary') > -1 ){
-            //boundary marker
-            var boundary = [Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
-            $scope.settingsJSON.boundary.push(boundary);
-          }else if(marker.indexOf('apid') > -1){
-            //ap marker
-            marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, lng: Math.round($scope.map.markers[marker].getPosition().lng() * 100) /100 };
-            $scope.settingsJSON.aps.push(marker);
-          }else if(marker === 'syncMarker'){
-            $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
-          }else if(marker.indexOf('macMarker') > -1){
-            $scope.settingsJSON.fixedMacs[marker.substring(9)] = {};
-            $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
-            $scope.settingsJSON.fixedMacs[marker.substring(9)].mac = $scope.map.markers[marker].mac;
-            $scope.settingsJSON.fixedMacs[marker.substring(9)].channel = $scope.map.markers[marker].channel;
-          }
+        if($scope.map){
+          for(var marker in $scope.map.markers){
+            if(marker.indexOf('boundary') > -1 ){
+              //boundary marker
+              var boundary = [Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
+              $scope.settingsJSON.boundary.push(boundary);
+            }else if(marker.indexOf('apid') > -1){
+              //ap marker
+              marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, lng: Math.round($scope.map.markers[marker].getPosition().lng() * 100) /100 };
+              $scope.settingsJSON.aps.push(marker);
+            }else if(marker === 'syncMarker'){
+              $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
+            }else if(marker.indexOf('macMarker') > -1){
+              $scope.settingsJSON.fixedMacs[marker.substring(9)] = {};
+              $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
+              $scope.settingsJSON.fixedMacs[marker.substring(9)].mac = $scope.map.markers[marker].mac;
+              $scope.settingsJSON.fixedMacs[marker.substring(9)].channel = $scope.map.markers[marker].channel;
+            }
 
+          }
         }
       };
 

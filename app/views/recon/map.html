@@ -78,9 +78,9 @@
         </div>
         <div class="row">
           <label for=="time">
-            Time Range:
+            Time Range(latest #seconds):
           </label>
-          <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in timeFilters"></select>
+          <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in $parent.timeFilters"></select>
         </div>
         <div class="row">
           <div class="form-group">

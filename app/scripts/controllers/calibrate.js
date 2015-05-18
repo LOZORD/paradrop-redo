@@ -28,7 +28,7 @@ angular.module('paradropApp')
       .then(
         function(authorized){
           if(authorized){
-            console.log($localStorage.calibrateIndex);
+            //console.log($localStorage.calibrateIndex);
             if(!$localStorage.calibrateIndex){
               $localStorage.calibrateIndex = 0;
             }
@@ -85,7 +85,7 @@ angular.module('paradropApp')
               startBody.channel = $scope.channel;
               startBody.groupname = $scope.groupMaps.groupname;
               $localStorage.mac = $scope.mac;
-              console.log(startBody);
+              //console.log(startBody);
               $http.post(startURL, startBody ).then(
                 function() {
                   //create wifi network
@@ -151,7 +151,7 @@ angular.module('paradropApp')
             };
 
             $scope.poll = function() {
-              console.log($scope.mac);
+              //console.log($scope.mac);
               if(!$scope.mac){
                 $scope.closeAlerts();
                 $scope.dangerAlert('<strong>Error:</strong> Please enter a MAC.');
@@ -160,7 +160,7 @@ angular.module('paradropApp')
               mainBody.sessionToken = $scope.sessionToken();
               mainBody.mac = $scope.mac;
               mainBody.reconid = $scope.groupMaps.reconid;
-              console.log(mainBody);
+              //console.log(mainBody);
               $http.post(pollURL, mainBody ).then(
                 function(result) {
                   console.log(result.data);
@@ -175,7 +175,7 @@ angular.module('paradropApp')
                   $scope.successString = '<h3>Success</h3>';
                   $scope.successString += '<b>Time:</b> ' + time.toLocaleTimeString() + ' (' + result.data.ts + ')<br>';
                   $scope.successString += '<b>Map:</b> ' + coords.mapid + '<br><b>Zone Guess:</b> ' + 
-                    coords.zone + '<br><b>Inside?:</b> ' + coords.isinside + '<br><b>Error:</b> ' + coords.err + '<br>';
+                    coords.zone + '<br><b>Inside?:</b> ' + coords.isInside + '<br><b>Error:</b> ' + coords.err + '<br>';
                   for(var key in result.data.signals){
                     if(result.data.signals[key]){
                       $scope.successString += '<b>' + $scope.apNameMap[key].name + '(rssi):</b> ' + result.data.signals[key] + '<br>';
@@ -290,7 +290,7 @@ angular.module('paradropApp')
                 rate = 0;
               }
               coordsBody.extras = {channel: $scope.channel, ping: rate};
-              console.log(coordsBody);
+              //console.log(coordsBody);
               $http.post(coordsURL, coordsBody ).then(
                 function() {
                   $scope.closeAlerts();
@@ -360,7 +360,7 @@ angular.module('paradropApp')
                 if(!$scope.mapData.invalid){
                   $scope.onClick = function(event) {
                     var ll = event.latLng;
-                    console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
+                    //console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
                     $scope.showLocation = true;
                     $scope.coords = { lat: ll.lat(), lng: ll.lng() };
                   };
@@ -386,20 +386,20 @@ angular.module('paradropApp')
           };
 
           $scope.setMap = function(map){
-            console.log(map);
+            //console.log(map);
             $scope.groupMaps = map;
             mainBody.reconid = $scope.groupMaps.reconid;
             mainBody.groupname = $scope.groupMaps.groupname;
             $scope.group_id = $scope.groupMaps.groupname;
             mainBody.typeid = $scope.groupMaps.data.typeid;
             $scope.apNameMap = $scope.groupMaps.map;
-            console.log($scope.apNameMap);
+            //console.log($scope.apNameMap);
             //add to mappings
             for(var key in $scope.apNameMap){
               $scope.apNameMap[$scope.apNameMap[key].apid] = {name: $scope.apNameMap[key].name, rid: key};
               $scope.apNameMap[$scope.apNameMap[key].name] = {apid: $scope.apNameMap[key].apid, rid: key};
             }
-            console.log($scope.apNameMap);
+            //console.log($scope.apNameMap);
             $scope.mapData = $scope.groupMaps.data;
             if(!$scope.mapData.invalid){
               var builtMap = gmapMaker.buildMap($scope.mapData);
@@ -413,12 +413,12 @@ angular.module('paradropApp')
       var pingUrl = URLS.current + 'recon/maps/ping';
       $http.get(pingUrl).then(
         function(success){
-          console.log('PING');
-          console.log(success);
+          //console.log('PING');
+          //console.log(success);
         },
         function(err){
-          console.log('ERROR');
-          console.log(err);
+          //console.log('ERROR');
+          //console.log(err);
         }
       );
     }

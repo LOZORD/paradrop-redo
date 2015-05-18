@@ -27,6 +27,7 @@ angular.module('paradropApp')
     // Public API here
     gmapFuncs.buildMap = function(mapData) {
       var gotMap = false;
+      var currMapTile = '';
 
       function getNormalizedCoord(coord, zoom) {
         var y = coord.y;
@@ -36,6 +37,7 @@ angular.module('paradropApp')
         // tile range in one direction range is dependent on zoom level
         // 0 = 1 tile, 1 = 2 tiles, 2 = 4 tiles, 3 = 8 tiles, etc
         var tileRange = 1 << zoom;
+        console.log(tileRange);
 
         // don't repeat across y-axis (vertically)
         if (y < 0 || y >= tileRange) {
@@ -59,27 +61,31 @@ angular.module('paradropApp')
           //$scope.positions.push({lat: ll.lat(), lng: ll.lng()});
           //$scope.map.markers[$scope.markers.length].setMap($scope.map);
       };
-      //The PNG image itself is 2104 x 1641
-      //center of bookstore: center="[43.074675, -89.397898]" 
 
       //Create the Options required to change the MapType
       var TypeOptions = {
             getTileUrl: function(coord, zoom) {
-                var normalizedCoord = getNormalizedCoord(coord, zoom);
-                if (!normalizedCoord) {
-                  return null;
-                }
+                //var normalizedCoord = getNormalizedCoord(coord, zoom);
+                //console.log(normalizedCoord);
+                //if (!normalizedCoord) {
+                //  return null;
+                //}
                 if(gotMap === false) {
                   //console.log('Returning one map');
                   gotMap = true;
+                  currMapTile = coord.toString()
                   return mapData.url;
-                } else {
+                } else if(coord.toString() ===  currMapTile) {
+                  console.log('getting original map tile');
+                  console.log(coord.toString());
+                  return mapData.url;;
+                }else{
                   return null;
                 }
             },
             tileSize: new google.maps.Size(mapData.tileSizeX, mapData.tileSizeY),
-            maxZoom: mapData.maxZoom,
-            minZoom: mapData.minZoom,
+            maxZoom: 5,//mapData.maxZoom,
+            minZoom: 3,//mapData.minZoom,
             radius: mapData.radius,
             name: mapData.name
       };

@@ -13,17 +13,18 @@ angular.module('paradropApp')
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.searchText ={};
       $scope.chartConfig = chartBuilder.buildZoneChart().chartConfig;
-      $scope.timeFilters = [
-        {name: 'Rolling', value: null},
-        {name: '30 Seconds', value: 30},
-        {name: '1 Minute', value: 60},
-        {name: '5 Minutes', value: 300}
-      ];
       $scope.insideFilters = [
         {name: 'Disabled'},
         {name: 'Inside'},
         {name: 'Outside'},
       ];
+      $scope.timeFilters = [
+        {name: 'Rolling', value: null},
+        {name: '30 Seconds', value: 30},
+        {name: '1 Minute', value: 60},
+        {name: '5 Minutes', value: 300},
+      ];
+      
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
           {name:'YELLOW', code:'#FFFF00'},

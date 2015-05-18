@@ -19,6 +19,14 @@ angular.module('paradropApp')
         {name: 'Inside'},
         {name: 'Outside'},
       ];
+      $scope.timeFilters = [
+        {name: '30 Seconds', value: 30},
+        {name: '1 Minute', value: 60},
+        {name: '2 Minutes', value: 120},
+        {name: '3 Minutes', value: 180},
+        {name: '4 Minutes', value: 240},
+        {name: '5 Minutes', value: 300},
+      ];
       $scope.colors = [
           {name:'BLUE', code:'#0000FF'},
           {name:'YELLOW', code:'#FFFF00'},
@@ -31,6 +39,7 @@ angular.module('paradropApp')
       ];
 
       $scope.filterType = $scope.insideFilters[0].name;
+      $scope.latest = $scope.timeFilters[0].value;
       $scope.authorizePage().then(commandChain);
       
 
