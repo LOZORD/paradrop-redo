@@ -28,16 +28,6 @@ angular.module('paradropApp')
           {name:'LIME', code:'#00FF00'},
           {name:'BLACK', code:'#000000'},
       ];
-      $scope.colorName = {
-          BLUE: { code:'#0000FF'},
-          YELLOW: { code:'#FFFF00'},
-          RED: { code:'#FF0000'},
-          GREEN: { code:'#008000'},
-          PURPLE: { code:'#800080'},
-          ORANGE: { code:'#FFA500'},
-          LIME: { code:'#00FF00'},
-          BLACK: { code:'#000000'},
-      };
       $scope.types = [
           {name:'Customer'},
           {name:'Employee'},
@@ -80,7 +70,7 @@ angular.module('paradropApp')
                   $scope.map = map;
                   $scope.infobox = new google.maps.InfoWindow();
                   $scope.map.setCenter(new google.maps.LatLng($scope.mapData.centerX, $scope.mapData.centerY));
-                  $scope.boundPoly = $scope.newPoly('#FF0000');
+                  $scope.boundPoly = gmapMaker.newPoly('#FF0000');
                   for(var boundary in $scope.mapData.boundary){
                     $scope.addBoundary($scope.mapData.boundary[boundary]);
                   }
@@ -89,10 +79,16 @@ angular.module('paradropApp')
                   }
                   $scope.updatePoly();
                   for(var zone in $scope.mapData.zones){
-                    $scope.createPolygon($scope.mapData.zones[zone]);
+                    $scope.createZones($scope.mapData.zones[zone]);
                   }
                   for(var mac in $scope.mapData.fixedMacs){
                     $scope.addMacMarker($scope.mapData.fixedMacs[mac], mac);
+                  }
+                  if($scope.mapData.walls){
+                    $scope.walls = gmapMaker.buildWalls($scope.mapData.walls);
+                    for(var wall in $scope.walls){
+                      $scope.walls[wall].setMap($scope.map);
+                    }
                   }
                   if($scope.mapData.syncCoords){
                     var lat = $scope.mapData.syncCoords[0];
@@ -123,7 +119,7 @@ angular.module('paradropApp')
           $scope.minMaxPoly.setMap(null);
           $scope.minMaxPoly = null;
         }
-        $scope.minMaxPoly = $scope.newPoly('#191970');
+        $scope.minMaxPoly = gmapMaker.newPoly('#191970');
         $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.minCoords[0],$scope.mapData.minCoords[1]));
         $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.maxCoords[0],$scope.mapData.minCoords[1]));
         $scope.minMaxPoly.getPath().push(new google.maps.LatLng($scope.mapData.maxCoords[0],$scope.mapData.maxCoords[1]));
@@ -198,6 +194,107 @@ angular.module('paradropApp')
         if($scope.measureMode){
           $scope.distArr.push(ll);
         }
+        if($scope.wallMode){
+          $scope.wallArr.getPath().push(ll);
+        }
+      };
+
+      $scope.enterWallMode = function(){
+        if($scope.markersVisible){
+          $scope.turnMarkersOff();
+        }
+        $scope.toggleZones('hide');
+        if($scope.boundPoly){
+          $scope.boundPoly.setVisible(false);
+        }
+        if($scope.minMaxPoly){
+          $scope.minMaxPoly.setVisible(false);
+        }
+        $scope.wallArr = gmapMaker.newPoly('#FFFFFF');
+        $scope.wallArr.setMap($scope.map);
+        $scope.addWallMarkers();
+        $scope.wallModeWatch = $scope.$watch(
+          function(){
+            if($scope.wallArr){
+              return $scope.wallArr.getPath().getArray().length;
+            }else{
+              return 0;
+            }
+          },
+          function(newVal){
+            if(newVal === 2){
+              $scope.exitWallMode(true);
+            }
+          }
+        );
+        $scope.wallMode = true;
+      };
+
+      $scope.exitWallMode = function(successful){
+        if($scope.markersVisible){
+          $scope.turnMarkersOn();
+        }
+        $scope.toggleZones('show');
+        if($scope.boundPoly){
+          $scope.boundPoly.setVisible(true);
+        }
+        if($scope.minMaxPoly){
+          $scope.minMaxPoly.setVisible(true);
+        }
+        if(successful){
+          $scope.updateWalls();
+        }
+        $scope.wallModeWatch();
+        $scope.wallArr = null;
+        $scope.removeWallMarkers();
+        $scope.wallMode = false;
+      };
+
+      $scope.updateWalls = function(){
+        var wall = $scope.wallArr.getPath().getArray();
+        if(wall.length !== 2){
+          return;
+        }else{
+          if(!$scope.walls){
+            $scope.walls = [];
+          }
+          $scope.walls.push($scope.wallArr);
+          $scope.updateMarkers();
+        }
+      };
+
+      $scope.addWallMarkers = function(){
+        $scope.wallMarkers = [];
+        for(var i in $scope.walls){
+          var wallPoints = $scope.walls[i].getPath().getArray();
+          for(var p in wallPoints){
+            var marker = new google.maps.Marker({
+              position: wallPoints[p],
+              map: $scope.map,
+              title: 'Wall Marker',
+              draggable: false,
+              icon: 'images/here.png',
+            });
+            google.maps.event.addListener(marker, 'click', $scope.addWallPoint);
+            $scope.wallMarkers.push(marker);
+          }
+        }
+      };
+
+      $scope.removeWallMarkers = function(){
+        for(var marker in $scope.wallMarkers){
+          $scope.wallMarkers[marker].setMap(null);
+        }
+        delete $scope.wallMarkers;
+      };
+
+      $scope.addWallPoint = function(event){
+        var ll = event.latLng;
+        $scope.wallArr.getPath().push(ll);
+      };
+       
+      $scope.disableButtons = function(){
+        return $scope.wallMode || $scope.measureMode || $scope.isScaling || $scope.isDeleteMode || $scope.isZoneMode;
       };
 
       $scope.changeScaleFactor = function(){
@@ -239,7 +336,6 @@ angular.module('paradropApp')
 
       $scope.calcScale = function(){
         $scope.pickScale = false;
-        console.log($scope.settingsJSON.scale);
         var latDelta = Math.abs($scope.scaleArr[0].lat() - $scope.scaleArr[1].lat());
         var lngDelta = Math.abs($scope.scaleArr[0].lng() - $scope.scaleArr[1].lng());
         if(latDelta > lngDelta){
@@ -247,7 +343,6 @@ angular.module('paradropApp')
         }else{
           $scope.settingsJSON.scale = Math.round(($scope.scaleDist / lngDelta) * 1000) / 1000;
         }
-        console.log($scope.settingsJSON.scale);
         $scope.scaleWatch();
         $scope.justSetScale = true;
         $scope.isScaling = false;
@@ -266,10 +361,20 @@ angular.module('paradropApp')
 
       $scope.toggleZones = (function(){
         var zonesVisible = true;
-        return function(){
-          zonesVisible = !zonesVisible;
-          for(var zone in $scope.map.polygons){
-            $scope.map.polygons[zone].setVisible(zonesVisible);
+        return function(hideZones){
+          if(!hideZones){
+            zonesVisible = !zonesVisible;
+            for(var zone in $scope.map.polygons){
+              $scope.map.polygons[zone].setVisible(zonesVisible);
+            }
+          }else if(hideZones === 'show'){
+            for(var zone in $scope.map.polygons){
+              $scope.map.polygons[zone].setVisible(zonesVisible);
+            }
+          }else if (hideZones === 'hide'){
+            for(var zone in $scope.map.polygons){
+              $scope.map.polygons[zone].setVisible(false);
+            }
           }
         };
       }());
@@ -288,10 +393,8 @@ angular.module('paradropApp')
 
       $scope.resetMapSettings = function(){
         for(var i in $scope.mapSettingsFields){
-          console.log($scope.settingsJSON[i]);
           $scope.mapSettingsFields[i] = angular.copy($scope.settingsJSON[i]);
         }
-        console.log($scope.mapSettingsFields);
       };
 
       $scope.saveMapSettings = function(){
@@ -306,7 +409,6 @@ angular.module('paradropApp')
           var arr2 = $scope.settingsJSON.maxCoords.split(',');
           $scope.settingsJSON.maxCoords = [parseFloat(arr2[0]), parseFloat(arr2[1])];
         }
-        console.log($scope.mapSettingsFields);
       };
 
       $scope.addZone = function(){
@@ -329,7 +431,7 @@ angular.module('paradropApp')
       $scope.confirmZone = function(){
         $scope.isZoneMode = false;
         if(!$scope.isIntersecting()){
-          $scope.createPolygon();
+          $scope.createZones();
           $scope.updateZones();
         }else{
           $scope.closeAlerts();
@@ -338,56 +440,32 @@ angular.module('paradropApp')
         $scope.abortZone();
       };
 
-      $scope.createPolygon = (function(){
-        var polyID = 0;
-        return function(opts){
-          if(!$scope.map.polygons){
-            $scope.map.polygons = {};
+      $scope.createZones = function(opts){
+        if(!$scope.map.polygons){
+          $scope.map.polygons = {};
+        }
+        var polygon = null;
+        if(opts){
+          polygon = gmapMaker.buildZone(opts, $scope.polyInfo);
+        }else{
+          var opts = {};
+          opts.name = $scope.zone.color.name;
+          opts.color = $scope.zone.color.name;
+          opts.name = $scope.zone.name;
+          opts.type = $scope.zone.type.name;
+          opts.bounds = [];
+          var array = $scope.poly.getPath().getArray();
+          for(var i in array){
+            opts.bounds.push([array[i].A, array[i].F]);
           }
-          var colorName = '';
-          var color = '';
-          var name = '';
-          var type = '';
-          if(opts){
-            $scope.resetPoly();
-            for(var i in opts.bounds){
-              $scope.poly.getPath().push(new google.maps.LatLng(opts.bounds[i][0], opts.bounds[i][1]));
-            }
-            colorName = opts.color;
-            color = $scope.colorName[opts.color].code;
-            name = opts.name;
-            type = opts.type;
-          }else{
-            colorName = $scope.zone.color.name;
-            color = $scope.colorName[$scope.zone.color.name].code;
-            name = $scope.zone.name;
-            type = $scope.zone.type.name;
-          }
-          var paths = $scope.poly.getPath();
-          // Construct the polygon.
-          var polygon = new google.maps.Polygon({
-            paths: paths,
-            strokeColor: color,
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: color,
-            fillOpacity: 0.35,
-            clickable: true,
-            type: type,
-            colorName: colorName,
-            title: name,
-            id: polyID,
-            infoWindow: new google.maps.InfoWindow()
-          });
-          google.maps.event.addListener(polygon, 'click', $scope.polyInfo(polygon));
+          polygon = gmapMaker.buildZone(opts, $scope.polyInfo);
+        }
 
-          polygon.setMap($scope.map);
-          $scope.map.polygons['polygon' + polyID] = polygon;
-          polyID++;
-          $scope.resetPoly();
-          return polygon;
-        };
-      }());
+        polygon.setMap($scope.map);
+        $scope.map.polygons[polygon.title] = polygon;
+        $scope.resetPoly();
+        return polygon;
+      };
 
       $scope.updateZones = function(){
         delete $scope.settingsJSON.zones;
@@ -396,9 +474,9 @@ angular.module('paradropApp')
           for(var zone in $scope.map.polygons){
             zone = $scope.map.polygons[zone];
             var boundaries = [];
-            var arr = zone.getPath().j;
+            var arr = zone.getPath().getArray();
             for(var i in arr){
-              boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
+              boundaries.push([Math.round(arr[i].lat() * 100) / 100, Math.round(arr[i].lng() * 100) / 100]);
             }
             $scope.settingsJSON.zones[zone.title] = {name: zone.title, color: zone.colorName, bounds: boundaries, type: zone.type};
           }
@@ -433,10 +511,8 @@ angular.module('paradropApp')
           var arr = $scope.fixedMac.position.split(',');
           $scope.fixedMac.position = [parseFloat(arr[0]), parseFloat(arr[1])];
         }
-        console.log($scope.fixedMac.channel);
         $scope.settingsJSON.fixedMacs[$scope.fixedMac.name] = { mac: $scope.fixedMac.mac, position: $scope.fixedMac.position, channel: $scope.fixedMac.channel };
         $scope.addMacMarker($scope.settingsJSON.fixedMacs[$scope.fixedMac.name], $scope.fixedMac.name);
-        console.log($scope.settingsJSON);
       };
 
       $scope.resetFixedMac = function(){
@@ -458,7 +534,7 @@ angular.module('paradropApp')
       $scope.polyInfo = function(poly){
         return function(event){
           var ll = event.latLng;
-          var contentString = '<b>' + poly.title + '</b><br>Type: '+  poly.type + '<br><a data-toggle="modal" data-target="#deleteZone'+ poly.id +'">Delete This Zone</a><br>';
+          var contentString = '<b>' + poly.title + '</b><br>Type: '+  poly.type + '<br><a data-toggle="modal" data-target="#deleteZone'+ poly.title +'">Delete This Zone</a><br>';
           poly.infoWindow.setContent(contentString);
           poly.infoWindow.setPosition(ll);
           poly.infoWindow.open($scope.map);
@@ -511,7 +587,7 @@ angular.module('paradropApp')
           });
           $scope.map.markers[id] = marker;
           if(!noPoly){
-            $scope.poly.getPath().push($scope.map.markers[id].position);
+            $scope.poly.getPath().push($scope.map.markers[id].getPosition());
             google.maps.event.addListener(marker, 'drag', $scope.updatePoly);
             google.maps.event.addListener(marker, 'dragend', $scope.updatePoly);
           }
@@ -519,21 +595,6 @@ angular.module('paradropApp')
           zoneID++;
         };
       }());
-
-      $scope.newPoly = function(color){
-        if(!color){
-          color = '#00CCFF';
-        }
-        var polyOptions = {
-          strokeColor: color,
-          strokeOpacity: 1.0,
-          strokeWeight: 3,
-          clickable: false
-        };
-
-        var poly = new google.maps.Polyline(polyOptions);
-        return poly;
-      };
 
       $scope.addBoundPoint = function(event){
         var ll = event.latLng;
@@ -545,7 +606,7 @@ angular.module('paradropApp')
           $scope.poly.setMap(null);
           delete $scope.poly;
         }
-        $scope.poly = $scope.newPoly();
+        $scope.poly = gmapMaker.newPoly('#00CCFF');
         $scope.poly.setMap($scope.map);
       };
 
@@ -553,7 +614,7 @@ angular.module('paradropApp')
         $scope.resetPoly();
         for(var i in $scope.map.markers){
           if(i.indexOf('zone') > -1){
-            $scope.poly.getPath().push($scope.map.markers[i].position);
+            $scope.poly.getPath().push($scope.map.markers[i].getPosition());
           }
         }
       };
@@ -563,7 +624,7 @@ angular.module('paradropApp')
           $scope.boundPoly.setMap(null);
           delete $scope.boundPoly;
         }
-        $scope.boundPoly = $scope.newPoly('#FF0000');
+        $scope.boundPoly = gmapMaker.newPoly('#FF0000');
         $scope.boundPoly.setMap($scope.map);
       };
 
@@ -571,7 +632,7 @@ angular.module('paradropApp')
         $scope.resetBoundPoly();
         for(var i in $scope.map.markers){
           if(i.indexOf('boundary') > -1){
-            $scope.boundPoly.getPath().push($scope.map.markers[i].position);
+            $scope.boundPoly.getPath().push($scope.map.markers[i].getPosition());
           }
         }
       };
@@ -632,7 +693,7 @@ angular.module('paradropApp')
             id: 'boundary' + boundID
           });
           $scope.map.markers['boundary'+ boundID] = marker;
-          $scope.boundPoly.getPath().push($scope.map.markers['boundary' + boundID].position);
+          $scope.boundPoly.getPath().push($scope.map.markers['boundary' + boundID].getPosition());
           google.maps.event.addListener(marker, 'drag', $scope.updateBoundPoly);
           google.maps.event.addListener(marker, 'dragend', $scope.updateBoundPoly);
           $scope.updateMarkers();
@@ -649,8 +710,26 @@ angular.module('paradropApp')
               google.maps.event.addListener($scope.map.markers[marker], 'click', removeMarkerFnc($scope.map.markers[marker]));
             }
           }
+          for(var wall in $scope.walls){
+            google.maps.event.addListener($scope.walls[wall], 'click', removeWallFnc($scope.walls[wall]));
+          }
         }
       };
+
+      function removeWallFnc(wall){
+
+       return function(){
+                if($scope.isDeleteMode){
+                  wall.setMap(null);
+                  for(var i in $scope.walls){
+                    if($scope.walls[i] === wall){
+                     $scope.walls.splice(i,1);
+                    }
+                  }
+                  $scope.updateMarkers();
+                }
+              };
+      }
 
       function removeMarkerFnc(marker){
 
@@ -669,24 +748,37 @@ angular.module('paradropApp')
         $scope.settingsJSON.aps = [];
         $scope.settingsJSON.boundary = [];
         $scope.settingsJSON.fixedMacs = {};
-        for(var marker in $scope.map.markers){
-          if(marker.indexOf('boundary') > -1 ){
-            //boundary marker
-            var boundary = [Math.round($scope.map.markers[marker].position.k * 100) /100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
-            $scope.settingsJSON.boundary.push(boundary);
-          }else if(marker.indexOf('apid') > -1){
-            //ap marker
-            marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].position.k * 100) /100, lng: Math.round($scope.map.markers[marker].position.D * 100) /100 };
-            $scope.settingsJSON.aps.push(marker);
-          }else if(marker === 'syncMarker'){
-            $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
-          }else if(marker.indexOf('macMarker') > -1){
-            $scope.settingsJSON.fixedMacs[marker.substring(9)] = {};
-            $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].position.k * 100) / 100, Math.round($scope.map.markers[marker].position.D * 100) / 100 ];
-            $scope.settingsJSON.fixedMacs[marker.substring(9)].mac = $scope.map.markers[marker].mac;
-            $scope.settingsJSON.fixedMacs[marker.substring(9)].channel = $scope.map.markers[marker].channel;
-          }
+        $scope.settingsJSON.walls = [];
+        if($scope.map){
+          for(var marker in $scope.map.markers){
+            if(marker.indexOf('boundary') > -1 ){
+              //boundary marker
+              var boundary = [Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
+              $scope.settingsJSON.boundary.push(boundary);
+            }else if(marker.indexOf('apid') > -1){
+              //ap marker
+              marker = {apid: marker.substring(4), lat: Math.round($scope.map.markers[marker].getPosition().lat() * 100) /100, lng: Math.round($scope.map.markers[marker].getPosition().lng() * 100) /100 };
+              $scope.settingsJSON.aps.push(marker);
+            }else if(marker === 'syncMarker'){
+              $scope.settingsJSON.syncCoords = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
+            }else if(marker.indexOf('macMarker') > -1){
+              $scope.settingsJSON.fixedMacs[marker.substring(9)] = {};
+              $scope.settingsJSON.fixedMacs[marker.substring(9)].position = [ Math.round($scope.map.markers[marker].getPosition().lat() * 100) / 100, Math.round($scope.map.markers[marker].getPosition().lng() * 100) / 100 ];
+              $scope.settingsJSON.fixedMacs[marker.substring(9)].mac = $scope.map.markers[marker].mac;
+              $scope.settingsJSON.fixedMacs[marker.substring(9)].channel = $scope.map.markers[marker].channel;
+            }
 
+          }
+          for(var i in $scope.walls){
+            var wall = $scope.walls[i].getPath().getArray();
+            var newWall = [];
+            newWall.push([Math.round(wall[0].lat() * 100) / 100, Math.round(wall[0].lng()*100)/100]);
+            newWall.push([Math.round(wall[1].lat() * 100) / 100, Math.round(wall[1].lng()*100)/100]);
+            if(!$scope.settingsJSON.walls){
+              $scope.settingsJSON.walls = [];
+            }
+            $scope.settingsJSON.walls.push(newWall);
+          }
         }
       };
 
@@ -715,9 +807,9 @@ angular.module('paradropApp')
 
       $scope.isIntersecting = function(){
         var boundaries = [];
-        var arr = $scope.poly.getPath().j;
+        var arr = $scope.poly.getPath().getArray();
         for(var i in arr){
-          boundaries.push([Math.round(arr[i].k * 100) / 100, Math.round(arr[i].D * 100) / 100]);
+          boundaries.push([Math.round(arr[i].lat() * 100) / 100, Math.round(arr[i].lng() * 100) / 100]);
         }
         if($scope.settingsJSON.zones){
           for(var zone in $scope.settingsJSON.zones){

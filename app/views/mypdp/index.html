@@ -1,5 +1,5 @@
 <div ng-if='currentUser()'>
-  <h1>Welcome, {{ currentUser().fullname }}!</h1>
+  <h1>Welcome, {{ currentUser().username }}!</h1>
 </div>
 
 <div ng-if='currentUser().isAdmin || currentUser().isDeveloper'>You're a 
@@ -16,13 +16,16 @@
       <div ng-repeat="(key, ap) in grouplessAPS" class="panel panel-default">
         <div class="panel-heading accordion-toggle" data-toggle="collapse" data-target="#collapse{{key}}" ng-click="collapse{{key}}.open =!collapse{{key}}.open">
           <h4 class="panel-title">
-            {{ap.name}} ({{ap.type}}) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': collapse{{key}}.open, 'glyphicon-chevron-right': !collapse{{key}}.open}"></i>
+            {{ ap.name }} ({{ ap.type }}) <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': collapse{{key}}.open, 'glyphicon-chevron-right': !collapse{{key}}.open}"></i>
           </h4>
         </div>
         <div id="collapse{{key}}" class="panel-collapse collapse">
           <div class="panel-body">
-            <a data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>
+            <!--<a data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>-->
+            <a ng-if='ap.type === "owner"' ng-href='/my_paradrop/configs/{{ ap.name }}/update'>Configure this Access Point</a>
+            <a ng-if='ap.type !== "owner"' data-toggle="modal" data-target="#modal{{key}}">Configure this Access Point</a>
             <p>Location: {{ap.devinfo.location}}</p>
+            <a ng-href='/my_paradrop/configs/{{ ap.name }}/chutes/'>Chutes on this AP</a>
             <p>List apps here!</p>
           </div>
         </div>
@@ -54,10 +57,10 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">{{ap.name}}</h4>
+        <h4 class="modal-title" id="myModalLabel">{{ ap.name }}</h4>
       </div>
       <div class="modal-body">
-        In this area you will be able to configure {{ap.name}}!!
+        In this area you will be able to configure {{ ap.name }}!!
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -78,7 +81,7 @@
         <p>In this area you will be able to configure Access Points in this group!!</p>
         <p>This includes these Access Points:</p>
         <ul>
-          <li ng-repeat="ap in group.aps">{{ap.name}}</li>
+          <li ng-repeat="ap in group.aps">{{ ap.name }}</li>
         </ul>
       </div>
       <div class="modal-footer">

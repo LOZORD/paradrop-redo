@@ -1,0 +1,107 @@
+<div ng-controller='MyParadropCtrl'>
+  <div ng-controller='ConfigCtrl'>
+    <h1><strong>{{ deviceToUpdate.name }}</strong>: Configuration Update</h1>
+    <div ng-if='!deviceToUpdate.ispending'>
+      <form name='configUpdateForm'
+            method='post'
+            novalidate
+            ng-controller='ConfigCtrl'
+            ng-submit='submitUpdate(configUpdateData, configUpdateForm.$valid)'
+            novalidate form-autofill-fix>
+
+        <div class='container row'
+          ng-if='!configUpdateData.isauto && usingSlowChannel(configUpdateData.channel)'>
+          <div class='alert alert-warning'>
+            <ul>
+              <li>
+                Channel
+                <ul>
+                  <li>
+                    You chose a channel that is not optimal for performance! Try using 1, 6, or a channel greater than 10.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class='row'>
+
+          <div class='form-group col-md-6 row'>
+            <div class='col-sm-6'>
+              <strong>Operating Mode</strong>
+            </div>
+            <div class='col-sm-6 btn-group'>
+              <div class='btn btn-default'
+                ng-model='configUpdateData.isauto'
+                ng-class='{ active:  configUpdateData.isauto }'
+                ng-click='configUpdateData.isauto = 1'>
+                Automatic
+              </div>
+              <div class='btn btn-default'
+                ng-model='configUpdateData.isauto'
+                ng-class='{ active: !configUpdateData.isauto }'
+                ng-click='configUpdateData.isauto = 0'>
+                Manual
+              </div>
+            </div>
+          </div>
+
+          <div ng-if='!configUpdateData.isauto'>
+            <div class='form-group col-md-6 row' ng-show='!configUpdateData.isauto'>
+              <div class='col-sm-6'>
+                <label for='channelSelect'>
+                  Channel Select
+                </label>
+                <ul>
+                  <li><em>2.4GHz</em>&nbsp;Channels 1-11</li>
+                  <li><em>5GHz</em>&nbsp;Channels 36+</li>
+                </ul>
+              </div>
+              <div class='col-sm-6'>
+                <select
+                  class='form-control'
+                  ng-disabled='configUpdateData.isauto'
+                  ng-value='configUpdateData.channel'
+                  name='channelSelect'
+                  ng-model='configUpdateData.channel'
+                  ng-value='configUpdateData.channel.toString()'
+                  ng-options='channel.value as channel.value for channel in CHANNELS'>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class='form-group col-md-6' ng-if='configUpdateData.isauto'>
+            <small ng-show='configUpdateData.isauto'>
+              Channel selection is disabled when in Automatic mode.
+            </small>
+          </div>
+        </div>
+        <br>
+        <div class='row btn-set'>
+          <div class='col-md-4'>
+            <button type='submit' class='btn btn-primary btn-block'
+              ng-disabled='configUpdateForm.$invalid || configUpdateForm.$pristine || equalsOrig(configUpdateData)'>
+              Submit Update
+            </button>
+          </div>
+          <div class='col-md-4'>
+            <button type='button' class='btn btn-warning btn-block'
+              ng-disabled='configUpdateForm.$pristine || equalsOrig(configUpdateData)' ng-click='revertConfig()'>
+              Revert
+            </button>
+          </div>
+          <div class='col-md-4'>
+            <a class='btn btn-danger btn-block' ng-href='my_paradrop/configs' role='button' style='font-family: sans-serif;'>
+              Cancel
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div ng-if='deviceToUpdate.ispending'>
+      There are updates currently pending. Please check back later.
+    </div>
+    <br>
+  </div>
+</div>

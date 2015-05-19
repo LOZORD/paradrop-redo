@@ -192,8 +192,7 @@ body {
 @media screen and (max-width: 768px) and (-webkit-min-device-pixel-ratio:0) { 
   select:focus,
   textarea:focus,
-  input:focus,
-  input:hover {
+  input:focus {
     font-size: 16px;
   }
 }

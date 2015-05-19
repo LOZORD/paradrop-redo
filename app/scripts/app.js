@@ -88,9 +88,24 @@ angular.module('paradropApp', [
         controller: 'ConfigCtrl',
         auths: { session: true }
       })
-      .when('/my_paradrop/configs/:cDeviceID/update', {
+      .when('/my_paradrop/configs/:apName/update', {
         templateUrl: 'views/mypdp/configs/update.html',
         controller: 'ConfigCtrl',
+        auths: { session: true }
+      })
+      .when('/my_paradrop/configs/:apName/chutes', {
+        templateUrl: 'views/mypdp/configs/chutes/index.html',
+        controller: 'ChuteCtrl',
+        auths: { session: true }
+      })
+      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid', {
+        templateUrl: 'views/mypdp/configs/chutes/vnets/show.html',
+        controller: 'ChuteCtrl',
+        auths: { session: true }
+      })
+      .when('/my_paradrop/configs/:apName/chutes/vnets/:chuteid/update', {
+        templateUrl: 'views/mypdp/configs/chutes/vnets/update.html',
+        controller: 'ChuteCtrl',
         auths: { session: true }
       })
       .when('/user/new', {
@@ -113,7 +128,7 @@ angular.module('paradropApp', [
       })
       .when('/recon/map/:group_id*', {
         templateUrl: 'views/recon/map.html',
-        controller: 'ReconMapCtrl',
+        controller: 'ReconTrackingCtrl',
         auths: {group: true, session: true}
       })
       .when('/recon/home/:group_id*', {
@@ -163,7 +178,7 @@ angular.module('paradropApp', [
       .when('/recon/tracking/:group_id*', {
         templateUrl: 'views/recon/tracking.html',
         controller: 'ReconTrackingCtrl',
-        auths: { session: true}
+        auths: { group: true, session: true}
       })
       .otherwise({
         redirectTo: '/',
@@ -306,7 +321,7 @@ angular.module('paradropApp', [
   })
   .constant('URLS', {
     //Change the current url to change all calls globally
-    current: 'https://dbapi.paradrop.io/v1/'
+    current: 'https://dbapi.paradrop.io/v1/'//1 ? 'http://paradrop.wings.cs.wisc.edu:20330/v1/' : 'https://dev.dbapi.paradrop.io'
   })
   .constant('MODES', {
     restrictedSignup: true

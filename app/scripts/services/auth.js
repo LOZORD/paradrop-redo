@@ -199,6 +199,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
       this.isDeveloper = null;
       this.isAdmin = null;
       this.aps = null;
+      this.apNameMap = null;
       this.fullname = null;
       this.defaultGroup = null;
 
@@ -211,11 +212,13 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isAdmin = parseInt(isAdmin, 2)         || 0;
         //array of AP objects
         this.aps = aps;
+        this.apNameMap = {};
         for(var i = 0; i < aps.length; i++){
           if(aps[i].groupname){
             this.defaultGroup = aps[i].groupname;
-            break;
           }
+          this.apNameMap[aps[i].guid] = aps[i].name;
+          this.apNameMap[aps[i].name] = aps[i].guid;
         }
 
         return this;
@@ -227,6 +230,7 @@ angular.module('paradropServices', ['ngResource', 'ngCookies', 'ipCookie'])
         this.isDeveloper = null;
         this.isAdmin = null;
         this.aps = null;
+        this.apNameMap = null;
         this.fullname = null;
         this.defaultGroup = null;
       };

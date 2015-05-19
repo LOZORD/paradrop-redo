@@ -1,0 +1,325 @@
+<div ng-controller='VNetCtrl'>
+  <div class='container'>
+    <span style='overflow-wrap:break-word;'>
+      <h1>
+        <strong>{{ specificChute.name }}</strong>: Virtual Network Update
+      </h1>
+    </span>
+  </div>
+  <br>
+  <div ng-if='!specificChute.ispending'>
+    <form name='vnetUpdateForm'
+    method='post'
+    novalidate
+    ng-controller='VNetCtrl'
+    ng-submit='submitUpdate(vnetUpdateData, vnetUpdateForm.$valid)'
+    form-autofill-fix>
+
+      <!-- Validation messages -->
+      <div class='container row' ng-if='!vnetUpdateForm.$valid && vnetUpdateForm.$dirty'>
+        <div class='alert alert-danger'>
+          <ul>
+            <li ng-if='vnetUpdateForm.ssid.$invalid'>
+              SSID
+              <ul>
+                <li ng-if='vnetUpdateForm.ssid.$error.required'>
+                  Please provide an SSID
+                </li>
+                <li ng-if='vnetUpdateForm.ssid.$error.maxlength'>
+                  Please provide a shorter SSID
+                </li>
+              </ul>
+            </li>
+            <li ng-if='vnetUpdateForm.encryption.$invalid'>
+              Encryption
+              <ul>
+                <li ng-if='vnetUpdateForm.encryption.$error.required'>
+                  Please select an encryption setting
+                </li>
+              </ul>
+            </li>
+            <li ng-if='vnetUpdateForm.password.$invalid'>
+              Password
+              <ul>
+                <li ng-if='vnetUpdateForm.password.$error.required'>
+                  Please provide a password
+                </li>
+                <li ng-if='vnetUpdateForm.password.$viewValue !== "" && vnetUpdateForm.password.$error.minlength'>
+                  Please provide a longer password (8 character minimum, 30 character maximum)
+                </li>
+                <li ng-if='vnetUpdateForm.password.$error.maxlength'>
+                  Please provide a shorter password (8 character minimum, 30 character maximum)
+                </li>
+              </ul>
+            </li>
+            <li ng-if='vnetUpdateForm.confirmation.$invalid'>
+              Confirmation
+              <ul>
+                <li ng-if='vnetUpdateForm.confirmation.$error.mustMatch'>
+                  Please match the confirmation with the password
+                </li>
+              </ul>
+            </li>
+            <li ng-if='vnetUpdateForm.subnet.$invalid'>
+              Subnet
+              <ul>
+                <li ng-if='vnetUpdateForm.subnet.$error.required'>
+                  Please provide a subnet address
+                </li>
+                <li ng-if='vnetUpdateForm.subnet.$error.maxlength'>
+                  Please provide a shorter address
+                </li>
+                <li ng-if='vnetUpdateForm.subnet.$error.pattern'>
+                  Please provide a valid address
+                </li>
+              </ul>
+            </li>
+            <li ng-if='vnetUpdateForm.radioid.$invalid'>
+              Radio ID
+              <ul>
+                <li ng-if='vnetUpdateForm.radioid.$error.required'>
+                  Please provide a Radio ID
+                </li>
+                <li ng-if='vnetUpdateForm.radioid.$error.pattern'>
+                  Please provide a valid non-negative integer for a Radio ID
+                </li>
+              </ul>
+            </li>
+            <li ng-if='vnetUpdateForm.qosup.$invalid'>
+              Qos Up
+              <ul>
+                <li ng-if='vnetUpdateForm.qosup.$error.required'>
+                  Please provide a QoS Up speed
+                </li>
+                <li ng-if='vnetUpdateForm.qosup.$error.pattern'>
+                  Please provide a valid positive integer for a Qos Up speed
+                </li>
+              </ul>
+            </li>
+            <li ng-if='vnetUpdateForm.qosdn.$invalid'>
+              Qos Down
+              <ul>
+                <li ng-if='vnetUpdateForm.qosdn.$error.required'>
+                  Please provide a QoS Down speed
+                </li>
+                <li ng-if='vnetUpdateForm.qosdn.$error.pattern'>
+                  Please provide a valid positive integer for a QoS Down speed
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Form inputs -->
+      <div class='container'>
+        <div class='row form-group'>
+          <div class='col-sm-6 row form-group'>
+            <div class='col-xs-6'>
+              <label for='ssid'>
+                Network Name (SSID)
+              </label>
+            </div>
+            <div class='col-xs-6 input-group'>
+              <input
+                class='form-control'
+                type='text'
+                name='ssid'
+                ng-model='vnetUpdateData.ssid'
+                autofocus
+                ng-maxlength='32'
+                required>
+            </div>
+          </div>
+          <div class='col-sm-6 row form-group'>
+            <div class='col-xs-6'>
+              <label for='encryption'>
+                Encryption
+              </label>
+            </div>
+            <div class='col-xs-6 input-group'>
+              <select
+                class='form-control'
+                name='encryption'
+                ng-options='encrType for encrType in ENCRYPTION_TYPES'
+                ng-model='vnetUpdateData.encryption'
+                required>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class='row form-group'>
+          <div class='col-sm-6 row form-group'>
+            <div class='col-xs-6'>
+              <label for='password'>
+                Password <small>(whitespace-trimmed)</small>
+              </label>
+            </div>
+            <div class='input-group col-xs-6'>
+              <input
+                class='form-control'
+                type='password'
+                name='password'
+                ng-trim
+                ng-disabled='(vnetUpdateForm.encryption.$viewValue.toUpperCase() == "NONE")'
+                ng-model='vnetUpdateData.password'
+                ng-minlength='{{ (vnetUpdateForm.encryption.$viewValue.toUpperCase() !== "NONE") ? 8 : 0 }}'
+                ng-maxlength='30'
+                ng-required='{{ vnetUpdateForm.encryption.$viewValue.toUpperCase() !== "NONE" }}'>
+            </div>
+          </div>
+          <div class='col-sm-6 row form-group'>
+            <div class='col-xs-6'>
+              <label for='confirmation'>
+                Confirm Password
+              </label>
+            </div>
+            <div class='col-xs-6 input-group'>
+              <input
+                class='form-control'
+                type='password'
+                name='confirmation'
+                ng-trim
+                ng-disabled='(vnetUpdateForm.encryption.$viewValue.toUpperCase() == "NONE")'
+                ng-model='vnetUpdateData.confirmation'
+                must-match='vnetUpdateData.password'>
+            </div>
+          </div>
+        </div>
+
+        <hr>
+
+        <div id='toggler' class='row btn-set'>
+          <div class='col-sm-12'>
+            <button
+              class='btn btn-large btn-default btn-block'
+              type='button'
+              ng-model='togglerBtn'
+              ng-click='togglerBtn = !togglerBtn'>
+              Advanced Options
+            </button>
+          </div>
+        </div>
+
+        <hr>
+
+        <div id='advanced_opts' ng-show='togglerBtn'>
+
+          <div class='row form-group'>
+            <div class='form-group col-sm-6 row'>
+              <div class='col-xs-6'>
+                <label for='subnet'>
+                  Subnet
+                </label>
+              </div>
+              <div class='col-xs-6'>
+                <input class='form-control' type='text' name='subnet'
+                  ng-maxlength='30'
+                  ng-pattern='/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/'
+                  required ng-model='vnetUpdateData.subnet'>
+              </div>
+            </div>
+
+            <div class='form-group row col-sm-6'>
+              <div class='col-xs-6'>
+                <label for='radioid'>
+                  Radio ID
+                </label>
+              </div>
+              <div class='col-xs-6'>
+                <input
+                  class='form-control'
+                  type='text'
+                  name='radioid'
+                  ng-model='vnetUpdateData.radioid'
+                  ng-pattern='/^((\d)+)$/'
+                  required>
+              </div>
+            </div>
+          </div>
+
+          <hr>
+          <div id='toggler' class='row btn-set'>
+            <div class='col-sm-12'>
+              <button
+                class='btn btn-large btn-default btn-block'
+                type='button'
+                ng-model='qosEnabledToggle'
+                ng-click='qosEnabledToggle = !qosEnabledToggle'>
+                QoS Options
+              </button>
+            </div>
+          </div>
+
+          <hr>
+
+          <div id='qos_group' ng-show='qosEnabledToggle'>
+            <div class='row form-group'>
+              <div class='col-sm-6 row form-group'>
+                <div class='col-xs-6'>
+                  <label for='qosup'>
+                    QoS Up
+                  </label>
+                </div>
+                <div class='col-xs-6'>
+                  <input
+                    class='form-control'
+                    type='text'
+                    name='qosup'
+                    ng-model='vnetUpdateData.qosup'
+                    ng-pattern='/^((\d)+)$/'
+                    required>
+                </div>
+              </div>
+
+              <div class='col-sm-6 row'>
+                <div class='col-xs-6'>
+                  <label for='qosdn'>
+                    Qos Down
+                  </label>
+                </div>
+                <div class='col-xs-6'>
+                  <input
+                    class='form-control'
+                    type='text'
+                    name='qosdn'
+                    ng-model='vnetUpdateData.qosdn'
+                    ng-pattern='/^((\d)+)$/'
+                    required>
+                </div>
+              </div>
+            </div>
+            <hr>
+          </div>
+        </div>
+      </div>
+
+      <div class='row btn-set'>
+        <div class='col-sm-4'>
+          <button type='submit' class='btn btn-primary btn-block'
+            ng-disabled='vnetUpdateForm.$pristine || vnetUpdateForm.$invalid'>
+            Submit Update
+          </button>
+        </div>
+        <div class='col-sm-4'>
+          <button type='button' class='btn btn-warning btn-block'
+            ng-disabled='vnetUpdateForm.$pristine || equals(vnetUpdateData)'
+            ng-click='revert(pristineVNet)'>
+            Revert
+          </button>
+        </div>
+        <div class='col-sm-4'>
+          <a class='btn btn-danger btn-block' style='font-family: sans-serif;'
+            ng-href='my_paradrop/configs/{{ apName }}/chutes/vnets/{{ chuteid }}'>
+            Cancel
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div ng-if='specificChute.ispending'>
+    There are updates currently pending. Please check back later.
+  </div>
+</div>

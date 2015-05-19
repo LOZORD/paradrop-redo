@@ -18,94 +18,151 @@ angular.module('paradropApp')
             return device.type.toLowerCase() === 'owner';
           });
 
-          //console.log($scope.configurableDevices);
+          var pendingURL = URLS.current + 'ap/pendingOperations';
 
-          /*
-          //XXX update later
-          var pendingUrl = 'http://paradrop.wings.cs.wisc.edu:30330/v1/ap/pendingOperations';
-          //'https://dbapi.paradrop.io:30333/v1' + 'ap/pendingOperations';
-
-          console.log($scope.currentUser().id);
-          $http.post(pendingUrl, { sessionToken: $scope.currentUser().id})
+          $http.post(pendingURL, { sessionToken: $scope.currentUser().id})
             .then(
               function(pendingDevices) {
-                console.log(pendingDevices);
                 $scope.configurableDevices.forEach(function (device) {
                   device.ispending = pendingDevices.hasOwnProperty(device.guid);
                 });
               },
               function () {
-                console.log('could not get pending devices');
+                //do nothing
               });
-          */
 
 
           /* UPDATING */
           //if we were routed here for updating a config
-          if ($routeParams.cDeviceID) {
+          if ($routeParams.apName) {
+            $scope.apName = $routeParams.apName;
             $scope.deviceToUpdate = null;
-            $scope.CHANNELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 36, 40, 44, 48, 149, 153, 157, 161, 165];
-            //TODO, use http to get default values
-            $scope.configUpdateData = {
-              isauto : true,
-              channel: 1,
-              radioid: null
-            };
+            $scope.CHANNELS = [
+              //{ value: '2.4Ghz options',  disabled: true },
+              { value: 1,       disabled: false },
+              { value: 2,       disabled: false },
+              { value: 3,       disabled: false },
+              { value: 4,       disabled: false },
+              { value: 5,       disabled: false },
+              { value: 6,       disabled: false },
+              { value: 7,       disabled: false },
+              { value: 8,       disabled: false },
+              { value: 9,       disabled: false },
+              { value: 10,      disabled: false },
+              { value: 11,      disabled: false },
+              //{ value: '5Ghz options',    disabled: true },
+              { value: 36,      disabled: false },
+              { value: 40,      disabled: false },
+              { value: 44,      disabled: false },
+              { value: 48,      disabled: false },
+              { value: 149,     disabled: false },
+              { value: 153,     disabled: false },
+              { value: 157,     disabled: false },
+              { value: 161,     disabled: false },
+              { value: 165,     disabled: false }
+            ];
 
             for (var i = 0, len = $scope.configurableDevices.length; i < len; i++) {
-              if ($scope.configurableDevices[i].guid === $routeParams.cDeviceID) {
+              if ($scope.configurableDevices[i].name === $scope.apName) {
                 $scope.deviceToUpdate = $scope.configurableDevices[i];
                 break;
               }
             }
 
-            /*
             //attempt to get live data
-            var radioStateURL = 'http://paradrop.wings.cs.wisc.edu:30330/v1/ap/radioState';
-            //URLS.current + 'ap/radioState';
+            var radioStateURL = URLS.current + 'ap/radioState';
 
             var radioStatePackage = {
               sessionToken: $scope.currentUser().id,
-              apid:         $scope.deviceToUpdate.guid
+              apid:         $scope.deviceToUpdate.name
             };
 
+            $scope.origConfigData   = null;
+            $scope.configUpdateData = null;
+
             $http.post(radioStateURL, radioStatePackage)
-              .success(
-                function (data) {
-                  $scope.configUpdateData = data;
+              .then(
+                function (result) {
+                  if (!result.data[0]) {
+                    $scope.configUpdateData = {
+                      isauto:   1,
+                      channel:  1,
+                      radioid:  1
+                    };
+                  }
+                  else {
+                    $scope.configUpdateData = angular.copy(result.data[0]);
+                  }
+
+                  //used for reverting
+                  $scope.origConfigData = angular.copy($scope.configUpdateData);
+                },
+                function () {
+                  $scope.configUpdateData = {
+                    isauto:   1,
+                    channel:  1,
+                    radioid:  1
+                  };
+                  //used for reverting
+                  $scope.origConfigData = angular.copy($scope.configUpdateData);
                 }
               );
-              */
-
             //used for reverting
             $scope.origConfigData = angular.copy($scope.configUpdateData);
+
+            $scope.equalsOrig = function (data) {
+              if ($scope.origConfigData) {
+                var dataEqualsOrig = angular.equals(data, $scope.origConfigData);
+                return dataEqualsOrig;
+              }
+              else {
+                return false;
+              }
+            };
+
+            $scope.$watch('configUpdateData.isauto', function (newValue) {
+              if ($scope.configUpdateData) {
+                $scope.configUpdateData.isauto = newValue;
+                if ($scope.configUpdateForm) {
+                  $scope.configUpdateForm.$setDirty(true);
+                }
+                if ($scope.origConfigData.isauto && newValue !== $scope.origConfigData.isauto) {
+                  $scope.configUpdateForm.$setDirty(true);
+                }
+              }
+            });
+
+            $scope.$watch('configUpdateData.channel', function (newValue) {
+              if ($scope.configUpdateData) {
+                var newChannelNum = parseInt(newValue, 10);
+                $scope.configUpdateData.channel = newChannelNum;
+              }
+            });
 
             $scope.submitUpdate = function (data, isValid) {
               if (!isValid) {
                 return;
               }
 
+              //force channel to 1 if we are in automatic mode
               if (data.isauto) {
                 data.channel = 1;
               }
 
-              data.radioid = -1; //TODO do something with radioid
-
-              console.log($scope.currentUser());
-              console.log($scope.deviceToUpdate);
+              //XXX I'm not doing anything with radioid
 
               var dataPackage = {
                 sessionToken: $scope.currentUser().id,
-                apid:         $scope.deviceToUpdate.guid,
+                apid:         $scope.deviceToUpdate.name,
                 payload:      data
               };
 
-              var updateURL = URLS.current + '/ap/vnet/radioChangeRequest';
+              var updateURL = URLS.current + 'ap/vnet/radioChangeRequest';
 
               $http.post(updateURL, dataPackage).then(
                 function (result) {
-                  if (result.data === '') {
-                    $location.path('/mypdp/configs');
+                  if (!isNaN(parseInt(result.data, 10))) {
+                    $location.path('/my_paradrop/configs');
                   }
                   else {
                     window.alert(result.data);
@@ -113,6 +170,7 @@ angular.module('paradropApp')
                 },
                 function () {
                   window.alert('Could not update config');
+                  //console.log(err);
                 }
               );
             };
@@ -123,7 +181,7 @@ angular.module('paradropApp')
             };
 
             $scope.usingSlowChannel = function (val) {
-              return (val < 11) && ([1, 6, 11].indexOf(val) === -1);
+              return (val < 11) && (val !== 1) && (val !== 6);
             };
           }
         }

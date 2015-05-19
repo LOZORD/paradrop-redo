@@ -30,9 +30,12 @@
         <button class="btn btn-primary" ng-click="togglePolyMode()" ng-disabled="!mapData">
           <span ng-if="polyMode">Aggregation</span><span ng-if="!polyMode">Non-Aggregation</span> Mode
         </button>
+        <button class="btn btn-primary" ng-click="getLiveHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
         <button class="btn btn-primary" ng-if="polyMode"  ng-click="pausePoly()" ng-disabled="!mapData">
           <span ng-if="isPaused">Resume</span><span ng-if="!isPaused">Pause</span> Live Updating
         </button>
+        <button class="btn btn-primary" ng-click="prevPoint()" ng-disabled="noneActive">Previous Point</button>
+        <button class="btn btn-primary" ng-click="nextPoint()" ng-disabled="noneActive">Next Point</button>
       </div>
     </div>
     <div class="row">
@@ -49,7 +52,7 @@
             >
             <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
             </map-type>
-            <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
+            <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{currentUser().apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
             <!-- ngRepeat: pos in positions -->
         </map>
       </div>
@@ -75,9 +78,9 @@
         </div>
         <div class="row">
           <label for=="time">
-            Time Range:
+            Time Range(latest #seconds):
           </label>
-          <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in timeFilters"></select>
+          <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in $parent.timeFilters"></select>
         </div>
         <div class="row">
           <div class="form-group">

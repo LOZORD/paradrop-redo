@@ -11,7 +11,7 @@
         <li ng-repeat="map in mapsArray" ng-if="!map.data.invalid"><a ng-click="switchMap($index)">{{map.groupname}}-{{map.data.name}}</a></li>
       </ul>
     </div>
-    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings();mapSettingsForm.$setPristine();" data-target="#settings" ng-disabled="isDeleteMode || isZoneMode || isScaling || measureMode">Map Settings</button>
+    <button class="btn btn-primary" data-toggle="modal" ng-click="resetMapSettings();mapSettingsForm.$setPristine();" data-target="#settings" ng-disabled="disableButtons()">Map Settings</button>
   </div>
 </div>
   <!-- Tab panes -->
@@ -22,8 +22,9 @@
     <h1 ng-if="mapError">Error loading map</h1>
     <img class="img-responsive center-block" ng-show="!(mapData || mapError)" ng-src='images/spinner.gif'/>
     <map ng-if="mapData" style="height: 700px;" 
+        zoom="5"
         street-view-control="false" 
-        zoom-control="false" 
+        zoom-control="true" 
         pan-control="false" 
         map-type-id="{{mapData.typeid}}" 
         map-type-control-options="{mapTypeIds: ['{{mapData.typeid}}']}"
@@ -86,21 +87,23 @@
 </div>
 <div class="row">
   <div class='col-md-12 form-group'>
-    <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="isDeleteMode || isZoneMode || isScaling || measureMode">Save Changes</button>
-    <button class="btn btn-primary" ng-click="addZone();zoneForm.$setPristine();" ng-if="!isZoneMode" ng-disabled="isDeleteMode || isScaling || measureMode">Add Zone</button>
+    <button class="btn btn-primary"  data-toggle="modal" data-target="#saveChanges" ng-disabled="disableButtons()">Save Changes</button>
+    <button class="btn btn-primary" ng-click="addZone();zoneForm.$setPristine();" ng-if="!isZoneMode" ng-disabled="disableButtons()">Add Zone</button>
     <button class="btn btn-primary" data-toggle="modal" data-target="#zones" ng-click="$digest" ng-if="isZoneMode">Confirm Zone</button>
     <button class="btn btn-primary" ng-click="abortZone()" ng-if="isZoneMode">Cancel</button>
-    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="isDeleteMode || isZoneMode || isScaling || measureMode">Add Boundary</button>
-    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling || measureMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete Mode"}}</button>
-    <button class="btn btn-primary" ng-click="changeScaleFactor();scaleForm.$setPristine();" ng-disabled="isZoneMode || isDeleteMode || isScaling || measureMode">Adjust Scale Factor</button>
-    <button class="btn btn-primary" ng-click="nameCheckDisabled=false;resetFixedMac();fixedMacForm.$setPristine();" data-toggle="modal" data-target="#fixedMacs" ng-disabled="isZoneMode || isDeleteMode || isScaling || measureMode">Add Fixed Location Wifi Device</button>
-    <button class="btn btn-primary" ng-click="distMeasure()" ng-disabled="isZoneMode || isDeleteMode || isScaling || measureMode">Measure Mode</button>
+    <button class="btn btn-primary" ng-click="addBoundary()" ng-disabled="disableButtons()">Add Boundary</button>
+    <button class="btn btn-primary" ng-click="toggleDeleteMode()" ng-disabled="isZoneMode || isScaling || measureMode || wallMode">{{isDeleteMode ? "Exit Delete Mode" : "Delete Mode"}}</button>
+    <button class="btn btn-primary" ng-click="changeScaleFactor();scaleForm.$setPristine();" ng-disabled="disableButtons()">Adjust Scale Factor</button>
+    <button class="btn btn-primary" ng-click="nameCheckDisabled=false;resetFixedMac();fixedMacForm.$setPristine();" data-toggle="modal" data-target="#fixedMacs" ng-disabled="disableButtons()">Add Fixed Location Wifi Device</button>
+    <button class="btn btn-primary" ng-click="enterWallMode()" ng-disabled="disableButtons()">Add Wall</button>
+    <button class="btn btn-primary" ng-click="exitWallMode()" ng-if="wallMode">Cancel</button>
+    <button class="btn btn-primary" ng-click="distMeasure()" ng-disabled="disableButtons()">Measure Mode</button>
     <div class="checkbox">
       <label>
-        <input type="checkbox" ng-click="toggleMarkers()" ng-bind="markersVisible" ng-disabled="isZoneMode"> Hide Markers
+        <input type="checkbox" ng-click="toggleMarkers()" ng-bind="markersVisible" ng-disabled="isZoneMode || wallMode"> Hide Markers
       </label>
       <label>
-        <input type="checkbox" ng-click="toggleZones()"> Hide Zones
+        <input type="checkbox" ng-click="toggleZones()" ng-disabled="wallMode"> Hide Zones
       </label>
     </div>
   </div>
@@ -250,7 +253,7 @@
   </div>
 </div>
 
-<div ng-if="map.polygons" ng-repeat="zone in map.polygons" class="modal fade" id="deleteZone{{zone.id}}" tabindex="-1" role="dialog" aria-labelledby="deleteZone" aria-hidden="true">
+<div ng-if="map.polygons" ng-repeat="zone in map.polygons" class="modal fade" id="deleteZone{{zone.title}}" tabindex="-1" role="dialog" aria-labelledby="deleteZone" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
