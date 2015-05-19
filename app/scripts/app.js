@@ -30,7 +30,7 @@ angular.module('paradropApp', [
     snapRemoteProvider.globalOptions.tapToClose = true;
     snapRemoteProvider.globalOptions.touchToDrag = false;
   })
-  .config(function ($routeProvider) {
+  .config(['$routeProvider', function ($routeProvider) {
     $routeProvider
       .when('/', {
         templateUrl: 'views/main.html',
@@ -169,7 +169,7 @@ angular.module('paradropApp', [
         redirectTo: '/',
         auths: {}
       });
-  })
+  }])
   .config(function($locationProvider) {
     //setup urls for crawler to get static html
       $locationProvider
