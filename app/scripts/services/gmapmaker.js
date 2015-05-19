@@ -84,8 +84,8 @@ angular.module('paradropApp')
                 }
             },
             tileSize: new google.maps.Size(mapData.tileSizeX, mapData.tileSizeY),
-            maxZoom: 5,//mapData.maxZoom,
-            minZoom: 3,//mapData.minZoom,
+            maxZoom: mapData.maxZoom,
+            minZoom: mapData.minZoom,
             radius: mapData.radius,
             name: mapData.name
       };
@@ -195,6 +195,17 @@ angular.module('paradropApp')
         //google.maps.event.addListener(poly, 'click', $scope.polyInfo(poly));
         return poly;
       };
+
+    gmapFuncs.buildWalls = function(walls){
+      var wallPolys = [];
+      for(var wall in walls){
+        var newWall = gmapFuncs.newPoly('#FFFFFF');
+        newWall.getPath().push(new google.maps.LatLng(walls[wall][0][0],walls[wall][0][1]));
+        newWall.getPath().push(new google.maps.LatLng(walls[wall][1][0],walls[wall][1][1]));
+        wallPolys.push(newWall);
+      }
+      return wallPolys;
+    };
 
     return gmapFuncs;
   });

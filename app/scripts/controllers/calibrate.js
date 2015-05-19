@@ -15,6 +15,7 @@ angular.module('paradropApp')
       $scope.pingRates = ['Disabled', 1, 5, 10];
       $scope.pingRate = $scope.pingRates[0];
       $scope.channel = $scope.channels[0];
+      $scope.isTraining = true;
       if($scope.group_id){
         $scope.superAdmin = false;
       }else{
@@ -164,13 +165,13 @@ angular.module('paradropApp')
               $http.post(pollURL, mainBody ).then(
                 function(result) {
                   console.log(result.data);
+                  $scope.isTraining = result.data.training;
                   if(!result.data.isValid){
                     $scope.closeAlerts();
                     $scope.warningAlert('We couldn\'t find any data for your device to make a prediction please try again in a few seconds.');
                     return;
                   }
                   var coords = result.data.coords;
-                  $scope.isTraining = result.data.training;
                   var time = new Date(result.data.ts * 1000);
                   $scope.successString = '<h3>Success</h3>';
                   $scope.successString += '<b>Time:</b> ' + time.toLocaleTimeString() + ' (' + result.data.ts + ')<br>';

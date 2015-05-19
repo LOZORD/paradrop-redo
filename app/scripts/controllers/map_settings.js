@@ -84,6 +84,12 @@ angular.module('paradropApp')
                   for(var mac in $scope.mapData.fixedMacs){
                     $scope.addMacMarker($scope.mapData.fixedMacs[mac], mac);
                   }
+                  if($scope.mapData.walls){
+                    $scope.walls = gmapMaker.buildWalls($scope.mapData.walls);
+                    for(var wall in $scope.walls){
+                      $scope.walls[wall].setMap($scope.map);
+                    }
+                  }
                   if($scope.mapData.syncCoords){
                     var lat = $scope.mapData.syncCoords[0];
                     var lng = $scope.mapData.syncCoords[1];
@@ -188,6 +194,107 @@ angular.module('paradropApp')
         if($scope.measureMode){
           $scope.distArr.push(ll);
         }
+        if($scope.wallMode){
+          $scope.wallArr.getPath().push(ll);
+        }
+      };
+
+      $scope.enterWallMode = function(){
+        if($scope.markersVisible){
+          $scope.turnMarkersOff();
+        }
+        $scope.toggleZones('hide');
+        if($scope.boundPoly){
+          $scope.boundPoly.setVisible(false);
+        }
+        if($scope.minMaxPoly){
+          $scope.minMaxPoly.setVisible(false);
+        }
+        $scope.wallArr = gmapMaker.newPoly('#FFFFFF');
+        $scope.wallArr.setMap($scope.map);
+        $scope.addWallMarkers();
+        $scope.wallModeWatch = $scope.$watch(
+          function(){
+            if($scope.wallArr){
+              return $scope.wallArr.getPath().getArray().length;
+            }else{
+              return 0;
+            }
+          },
+          function(newVal){
+            if(newVal === 2){
+              $scope.exitWallMode(true);
+            }
+          }
+        );
+        $scope.wallMode = true;
+      };
+
+      $scope.exitWallMode = function(successful){
+        if($scope.markersVisible){
+          $scope.turnMarkersOn();
+        }
+        $scope.toggleZones('show');
+        if($scope.boundPoly){
+          $scope.boundPoly.setVisible(true);
+        }
+        if($scope.minMaxPoly){
+          $scope.minMaxPoly.setVisible(true);
+        }
+        if(successful){
+          $scope.updateWalls();
+        }
+        $scope.wallModeWatch();
+        $scope.wallArr = null;
+        $scope.removeWallMarkers();
+        $scope.wallMode = false;
+      };
+
+      $scope.updateWalls = function(){
+        var wall = $scope.wallArr.getPath().getArray();
+        if(wall.length !== 2){
+          return;
+        }else{
+          if(!$scope.walls){
+            $scope.walls = [];
+          }
+          $scope.walls.push($scope.wallArr);
+          $scope.updateMarkers();
+        }
+      };
+
+      $scope.addWallMarkers = function(){
+        $scope.wallMarkers = [];
+        for(var i in $scope.walls){
+          var wallPoints = $scope.walls[i].getPath().getArray();
+          for(var p in wallPoints){
+            var marker = new google.maps.Marker({
+              position: wallPoints[p],
+              map: $scope.map,
+              title: 'Wall Marker',
+              draggable: false,
+              icon: 'images/here.png',
+            });
+            google.maps.event.addListener(marker, 'click', $scope.addWallPoint);
+            $scope.wallMarkers.push(marker);
+          }
+        }
+      };
+
+      $scope.removeWallMarkers = function(){
+        for(var marker in $scope.wallMarkers){
+          $scope.wallMarkers[marker].setMap(null);
+        }
+        delete $scope.wallMarkers;
+      };
+
+      $scope.addWallPoint = function(event){
+        var ll = event.latLng;
+        $scope.wallArr.getPath().push(ll);
+      };
+       
+      $scope.disableButtons = function(){
+        return $scope.wallMode || $scope.measureMode || $scope.isScaling || $scope.isDeleteMode || $scope.isZoneMode;
       };
 
       $scope.changeScaleFactor = function(){
@@ -254,10 +361,20 @@ angular.module('paradropApp')
 
       $scope.toggleZones = (function(){
         var zonesVisible = true;
-        return function(){
-          zonesVisible = !zonesVisible;
-          for(var zone in $scope.map.polygons){
-            $scope.map.polygons[zone].setVisible(zonesVisible);
+        return function(hideZones){
+          if(!hideZones){
+            zonesVisible = !zonesVisible;
+            for(var zone in $scope.map.polygons){
+              $scope.map.polygons[zone].setVisible(zonesVisible);
+            }
+          }else if(hideZones === 'show'){
+            for(var zone in $scope.map.polygons){
+              $scope.map.polygons[zone].setVisible(zonesVisible);
+            }
+          }else if (hideZones === 'hide'){
+            for(var zone in $scope.map.polygons){
+              $scope.map.polygons[zone].setVisible(false);
+            }
           }
         };
       }());
@@ -593,8 +710,26 @@ angular.module('paradropApp')
               google.maps.event.addListener($scope.map.markers[marker], 'click', removeMarkerFnc($scope.map.markers[marker]));
             }
           }
+          for(var wall in $scope.walls){
+            google.maps.event.addListener($scope.walls[wall], 'click', removeWallFnc($scope.walls[wall]));
+          }
         }
       };
+
+      function removeWallFnc(wall){
+
+       return function(){
+                if($scope.isDeleteMode){
+                  wall.setMap(null);
+                  for(var i in $scope.walls){
+                    if($scope.walls[i] === wall){
+                     $scope.walls.splice(i,1);
+                    }
+                  }
+                  $scope.updateMarkers();
+                }
+              };
+      }
 
       function removeMarkerFnc(marker){
 
@@ -613,6 +748,7 @@ angular.module('paradropApp')
         $scope.settingsJSON.aps = [];
         $scope.settingsJSON.boundary = [];
         $scope.settingsJSON.fixedMacs = {};
+        $scope.settingsJSON.walls = [];
         if($scope.map){
           for(var marker in $scope.map.markers){
             if(marker.indexOf('boundary') > -1 ){
@@ -632,6 +768,16 @@ angular.module('paradropApp')
               $scope.settingsJSON.fixedMacs[marker.substring(9)].channel = $scope.map.markers[marker].channel;
             }
 
+          }
+          for(var i in $scope.walls){
+            var wall = $scope.walls[i].getPath().getArray();
+            var newWall = [];
+            newWall.push([Math.round(wall[0].lat() * 100) / 100, Math.round(wall[0].lng()*100)/100]);
+            newWall.push([Math.round(wall[1].lat() * 100) / 100, Math.round(wall[1].lng()*100)/100]);
+            if(!$scope.settingsJSON.walls){
+              $scope.settingsJSON.walls = [];
+            }
+            $scope.settingsJSON.walls.push(newWall);
           }
         }
       };
