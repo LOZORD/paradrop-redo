@@ -18,14 +18,14 @@
   <ul class="nav nav-tabs" role="tablist">
     <li><a ng-href="recon/home/{{group_id}}">Overview</a></li>
     <li><a ng-href="recon/dashboard/{{group_id}}">Dashboard</a></li>
-    <li><a ng-href="recon/map/{{group_id}}">Live Tracking</a></li>
-    <li class="active"><a ng-href="recon/tracking/{{group_id}}">Historical Tracking</a></li>
+    <li ng-class="{active : liveTracking}"><a ng-href="recon/map/{{group_id}}">Live Tracking</a></li>
+    <li ng-class="{active : !liveTracking}"><a ng-href="recon/tracking/{{group_id}}">Historical Tracking</a></li>
     <li><a ng-href="recon/settings/{{group_id}}">Advanced Settings</a></li>
   </ul>
   <!-- Tab panes -->
   <div class="tab-pane extra-wide">
     <div class='row'>
-      <form name="macForm">
+      <form ng-if="!liveTracking" name="macForm">
         <div class="row">
           <div class='col-md-4 form-group'>
             <label for=="mac">
@@ -78,9 +78,17 @@
         <button class="btn btn-primary" ng-click="togglePolyMode()" ng-disabled="!mapData">
           <span ng-if="polyMode">Aggregation</span><span ng-if="!polyMode">Non-Aggregation</span> Mode
         </button>
-        <button class="btn btn-primary" ng-click="getHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
-        <button class="btn btn-primary" ng-click="prevPoint()" ng-disabled="noneActive">Previous Point</button>
-        <button class="btn btn-primary" ng-click="nextPoint()" ng-disabled="noneActive">Next Point</button>
+        <button ng-if="!liveTracking" class="btn btn-primary" ng-click="getHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
+        <button ng-if="liveTracking" class="btn btn-primary" ng-click="getLiveHeatMapData()" ng-disabled="macForm.$invalid">Get Data</button>
+        <button ng-if="liveTracking" class="btn btn-primary" ng-if="polyMode"  ng-click="pausePoly()" ng-disabled="!mapData">
+          <span ng-if="isPaused">Resume</span><span ng-if="!isPaused">Pause</span> Live Updating
+        </button>
+        <button class="btn btn-primary" ng-click="prevPoint()" ng-disabled="noneActive || mostRecent">Previous Point</button>
+        <button class="btn btn-primary" ng-click="nextPoint()" ng-disabled="noneActive || mostRecent">Next Point</button>
+        <label>
+          <input type="checkbox" ng-disabled="!polyMode" ng-model="mostRecent" ng-click="showMostRecent()"> Show Most Recent Point Only
+          </input>
+        </label>
       </div>
     </div>
     <div class="row">
@@ -120,6 +128,12 @@
             MAC:
           </label>
           <input name="mac" type='text' class='form-control' ng-model='searchText.mac'>
+        </div>
+        <div ng-if="liveTracking" class="row">
+          <label for=="time">
+            Time Range(latest #seconds):
+          </label>
+          <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in $parent.timeFilters"></select>
         </div>
         <div class="row">
           <div class="form-group">

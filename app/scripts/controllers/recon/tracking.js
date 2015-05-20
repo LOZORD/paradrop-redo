@@ -8,8 +8,11 @@
  * Controller of the paradropApp
  */
 angular.module('paradropApp')
-  .controller('ReconTrackingCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$filter', 'Recon', 'chartBuilder', '$localStorage', '$interval', '$timeout',
-    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $filter, Recon, chartBuilder, $localStorage, $interval, $timeout) {
+  .controller('ReconTrackingCtrl',['$scope', 'URLS', '$http', '$sce', '$routeParams', 'gmapMaker', '$route', '$filter', 'Recon', 'chartBuilder', '$localStorage', '$interval', '$timeout', '$location',
+    function ($scope, URLS, $http, $sce, $routeParams, gmapMaker, $route, $filter, Recon, chartBuilder, $localStorage, $interval, $timeout, $location) {
+      if($location.path().indexOf('/recon/map/') != -1){
+        $scope.liveTracking = true;
+      }
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
       $scope.searchText ={};
       $scope.noneActive = true;
@@ -98,7 +101,7 @@ angular.module('paradropApp')
         $scope.$on('mapInitialized', function(event, map) {
           $scope.map = map;
           //if we're in live tracking fire that chain
-          if($route.current.templateUrl === 'views/recon/map.html'){
+          if($scope.liveTracking){
             $scope.getLiveHeatMapData();
             if($scope.isValidMap){
               $scope.heatPoll = $interval($scope.getLiveHeatMapData, 30000);
@@ -283,9 +286,17 @@ angular.module('paradropApp')
           if(!newVal){
             for(var mac in $scope.macData){
               var name = $scope.macData[mac].name;
-              $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+              if(!$scope.mostRecent){
+                $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+              }
               for(var i in $scope.polylines[name].points){
-                $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+                if(!$scope.mostRecent){
+                  $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+                }else{
+                  if(Number(i) === $scope.polylines[name].points.length -1){
+                    $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+                  }
+                }
               }
             }
             $scope.showingData = $scope.macData;
@@ -302,9 +313,17 @@ angular.module('paradropApp')
           $scope.showingData = $filter('filter')($scope.macData, newVal, false);
           for(var mac in $scope.showingData){
             var name = $scope.showingData[mac].name;
-            $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+            if(!$scope.mostRecent){
+              $scope.polylines[name].setVisible(!$scope.polylines[name].hidden);
+            }
             for(var i in $scope.polylines[name].points){
-              $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+              if(!$scope.mostRecent){
+                $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+              }else{
+                if(Number(i) === $scope.polylines[name].points.length -1){
+                  $scope.polylines[name].points[i].setVisible(!$scope.polylines[name].hidden);
+                }
+              }
             }
           }
           for(var zone in $scope.mapData.zones){
@@ -500,8 +519,8 @@ angular.module('paradropApp')
                 }
               }
             }else{
-              $scope.showPointInfo(poly.points[0])();
-              $scope.setDetail(poly.points, 0);
+              $scope.showPointInfo(poly.points[poly.points.length - 1])();
+              $scope.setDetail(poly.points, poly.points.length - 1);
             }
             poly.setOptions({strokeWeight: 15});
             for(var point in poly.points){
@@ -531,10 +550,16 @@ angular.module('paradropApp')
         }
       };
       
+      $scope.showMostRecent = function(){
+        filterPolylines($scope.searchText, null);
+      };
+
       $scope.togglePolyMode = function(){
         $scope.polyMode = !$scope.polyMode;
         if(!$scope.polyMode){
-          $scope.pointInfo.close();
+          if($scope.pointInfo){
+            $scope.pointInfo.close();
+          }
           for(var poly in $scope.polylines){
             $scope.polylines[poly].setMap(null);
             for(var i in $scope.polylines[poly].points){

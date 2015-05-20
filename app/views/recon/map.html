@@ -34,8 +34,12 @@
         <button class="btn btn-primary" ng-if="polyMode"  ng-click="pausePoly()" ng-disabled="!mapData">
           <span ng-if="isPaused">Resume</span><span ng-if="!isPaused">Pause</span> Live Updating
         </button>
-        <button class="btn btn-primary" ng-click="prevPoint()" ng-disabled="noneActive">Previous Point</button>
-        <button class="btn btn-primary" ng-click="nextPoint()" ng-disabled="noneActive">Next Point</button>
+        <button class="btn btn-primary" ng-click="prevPoint()" ng-disabled="noneActive || mostRecent">Previous Point</button>
+        <button class="btn btn-primary" ng-click="nextPoint()" ng-disabled="noneActive || mostRecent">Next Point</button>
+        <label>
+          <input type="checkbox" ng-disabled="!polyMode" ng-model="mostRecent" ng-click="showMostRecent()"> Show Most Recent Point Only
+          </input>
+        </label>
       </div>
     </div>
     <div class="row">
@@ -103,7 +107,7 @@
                   <th>Name</th>
                   <th>Brand</th>
                   <th>MAC</th>
-                  <th>Hide</th>
+                  <!--<th>Hide</th>-->
                 </tr>
               </thead>
               <tbody>
@@ -115,12 +119,14 @@
                   <td>
                     {{value.mac}}
                   </td> 
+                  <!--
                   <td>
                     <label>
                       <input type="checkbox" ng-model="polylines[value.name].hidden" ng-click="polylines[value.name].setVisible(!polylines[value.name].hidden)"> Hide {{value.name}}
                       </input>
                     </label>
                   </td> 
+                  -->
                 </tr>
               </tbody>
             </table>
