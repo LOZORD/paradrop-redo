@@ -126,12 +126,15 @@ angular.module('paradropApp')
       };
 
       //flow for live tracking
-      var startTime = Date.now();
+      var startTime = Math.floor(Date.now() / 1000);
       function getOpts(){
-        var inc = Math.floor((Date.now() - startTime)/1000);
+        var stopTime = Math.floor(Date.now() / 1000);
         //console.log(inc);
-        var opts = { latest: inc, aggregate: 30};
-        if($scope.latest){
+        var opts = { startts: startTime, stopts: stopTime, aggregate: 30};
+        console.log(stopTime - startTime);
+        console.log($scope.latest);
+        if($scope.latest && $scope.latest < (stopTime - startTime)){
+          console.log('*******here*******');
           opts = {latest: $scope.latest, aggregate: 30};
         }
         return opts; 
@@ -177,6 +180,7 @@ angular.module('paradropApp')
 
           //polymode stuff
           var opts = getOpts();
+          console.log(opts);
           if($scope.polyMode && !$scope.isPaused){
             $scope.macData = Recon.today.getCoordData(opts);
             //Recon.today.printCoordData(coordData);
