@@ -33,7 +33,7 @@
             </label>
             <input type='text' id='MAC' name="mac" class='form-control' ng-model='mac' pattern="([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})">
             <div  class='error-container bg-danger'
-                  ng-show='macForm.mac.$dirty && macForm.mac.$invalid'>
+              ng-show='macForm.mac.$dirty && macForm.mac.$invalid'>
               <small class='error' ng-show='macForm.mac.$error.pattern'>
                 Invalid MAC Address.
               </small>
@@ -92,100 +92,132 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-sm-8">
+      <div class="col-sm-12">
         <img class="img-responsive center-block" ng-show="!mapData && !mapError && isValidMap" ng-src='images/spinner.gif'/>
-        <map ng-if="mapData" style="height: 700px;" zoom="15" 
+        <map ng-if="mapData" 
+          ng-style="mapStyle" 
+          zoom="5" 
           center="{{mapData.centerX}}, {{mapData.centerY}}" 
-            street-view-control="false" 
-            zoom-control="false" 
-            pan-control="false" 
-            map-type-id="{{mapData.typeid}}" 
-            map-type-control-options="{mapTypeIds: ['{{mapData.typeid}}']}"
-            on-click="onClick()" 
-            >
-            <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
-            </map-type>
-            <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{currentUser().apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
-            <!-- ngRepeat: pos in positions -->
+          street-view-control="false" 
+          zoom-control="false" 
+          pan-control="false" 
+          map-type-id="{{mapData.typeid}}" 
+          map-type-control-options="{mapTypeIds: ['{{mapData.typeid}}']}"
+          on-click="onClick()" 
+          >
+          <map-type name="{{mapData.typeid}}" object="firstFloorMapType">
+          </map-type>
+          <marker ng-if="showMarkers" ng-repeat="ap in mapData.aps" position="{{ap.lat}},{{ap.lng}}" title="{{currentUser().apNameMap[ap.apid]}}" id="{{ap.apid}}" icon="images/wifi.png"></marker>
+          <!-- ngRepeat: pos in positions -->
         </map>
       </div>
-      <div class="col-sm-4" ng-if="polyMode">
-        <h2>Filters:</h2>
-        <div class="row">
-          <label for=="name">
-            Name:
-          </label>
-          <input name="name" type='text' class='form-control' ng-model='searchText.name'>
-        </div>
-        <div class="row">
-          <label for=="oui">
-            Brand:
-          </label>
-          <input name="oui" type='text' class='form-control' ng-model='searchText.oui'>
-        </div>
-        <div class="row">
-          <label for=="mac">
-            MAC:
-          </label>
-          <input name="mac" type='text' class='form-control' ng-model='searchText.mac'>
-        </div>
-        <div ng-if="liveTracking" class="row">
-          <label for=="time">
-            Time Range(latest #seconds):
-          </label>
-          <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in $parent.timeFilters"></select>
-        </div>
-        <div class="row">
-          <div class="form-group">
-            <label for=="inside">Inside Filter:</label> 
-             <select ng-model="$parent.filterType" ng-change="inFilter()" class="form-control" name="inside" ng-options="filter.name as filter.name for filter in insideFilters"></select>
-          </div>
-        </div>
-        <b>Zones:</b>
-        <div>
-          <label ng-repeat="(key, value) in mapData.zones">
-            <input type="checkbox" ng-model="searchText[key]" ng-click="zoneFilter()"> {{key}} 
-            </input>
-          </label>
-        </div>
-        <div class="row max-height">
-          <div class="table-responsive">
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Brand</th>
-                  <th>MAC</th>
-                  <!--<th>Hide</th>-->
-                </tr>
-              </thead>
-              <tbody>
-              <tr ng-repeat="(key, value) in showingData | orderBy : 'name'" ng-click="polyDetail(polylines[value.name])" ng-mouseleave="" ng-class="{active: polylines[value.name].active}">
-                  <td>
-                    {{value.name}}
-                  </td>
-                  <td>{{value.oui}}</td> 
-                  <td>
-                    {{value.mac}}
-                  </td> 
-                <!--
-                  <td>
-                    <label>
-                      <input type="checkbox" ng-model="polylines[value.name].hidden" ng-click="polylines[value.name].setVisible(!polylines[value.name].hidden)"> Hide {{value.name}}
-                      </input>
-                    </label>
-                  </td> 
-                -->
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-4" ng-if="!polyMode">
+    </div>
+    <div class="row">
+      <div class="col-sm-12" ng-if="!polyMode">
         <highchart id="zoneChart" config="chartConfig"></highchart>
       </div>
+      <div class="col-sm-5" ng-if="polyMode">
+        <div class="panel panel-primary" style="margin-top: 20px;">
+          <div class="panel-heading accordion-toggle" data-toggle="collapse" data-target="#filters" ng-click="collapse.open =!collapse.open">
+            <h2 class="panel-title">
+              Filters <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': collapse.open, 'glyphicon-chevron-right': !collapse.open}"></i>
+            </h4>
+          </div>
+          <div id="filters" class="panel-collapse collapse">
+            <div class="panel-body">
+              <div class="row">
+                <label for=="name">
+                  Name:
+                </label>
+                <input name="name" type='text' class='form-control' ng-model='searchText.name'>
+              </div>
+              <div class="row">
+                <label for=="oui">
+                  Brand:
+                </label>
+                <input name="oui" type='text' class='form-control' ng-model='searchText.oui'>
+              </div>
+              <div class="row">
+                <label for=="mac">
+                  MAC:
+                </label>
+                <input name="mac" type='text' class='form-control' ng-model='searchText.mac'>
+              </div>
+              <div ng-if="liveTracking" class="row">
+                <label for=="time">
+                  Time Range(latest #seconds):
+                </label>
+                <select name="time" class='form-control' ng-model='$parent.latest' ng-options="filter.value as filter.name for filter in $parent.timeFilters"></select>
+              </div>
+              <div class="row">
+                <div class="form-group">
+                  <label for=="inside">Inside Filter:</label> 
+                  <select ng-model="$parent.filterType" ng-change="inFilter()" class="form-control" name="inside" ng-options="filter.name as filter.name for filter in insideFilters"></select>
+                </div>
+              </div>
+              <b>Zones:</b>
+              <div>
+                <label ng-repeat="(key, value) in mapData.zones">
+                  <input type="checkbox" ng-model="searchText[key]" ng-click="zoneFilter()"> {{key}} 
+                  </input>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+    <div ng-if="polyMode" class="row max-height">
+      <div class="col-xs-12">
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th ng-click="predicate === 'name' ? predicate = '-name': predicate = 'name'">Name
+                  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': predicate !== 'name', 'glyphicon-chevron-up': predicate === 'name'}"></i>
+                </th>
+                <th ng-click="predicate === 'oui' ? predicate = '-oui' : predicate = 'oui'">Brand
+                  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': predicate !== 'oui', 'glyphicon-chevron-up': predicate === 'oui'}"></i>
+                </th>
+                <th ng-click="predicate === 'mac' ? predicate = '-mac' : predicate = 'mac'">MAC
+                  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': predicate !== 'mac', 'glyphicon-chevron-up': predicate === 'mac'}"></i>
+                </th>
+                <th ng-click="predicate === 'duration' ? predicate = '-duration' : predicate = 'duration'">Duration
+                  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': predicate !== 'duration', 'glyphicon-chevron-up': predicate === 'duration'}"></i>
+                </th>
+                <th ng-click="predicate === 'zoneNow' ? predicate = '-zoneNow' : predicate = 'zoneNow'">Current Zone
+                  <i class="pull-right glyphicon" ng-class="{'glyphicon-chevron-down': predicate !== 'zoneNow', 'glyphicon-chevron-up': predicate === 'zoneNow'}"></i>
+                </th>
+                <!--<th>Hide</th>-->
+              </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="(key, value) in showingData | orderBy : predicate " ng-click="polyDetail(polylines[value.name])" ng-mouseleave="" ng-class="{active: polylines[value.name].active}">
+              <td>
+                {{value.name}}
+              </td>
+              <td>{{value.oui}}</td> 
+              <td>
+                {{value.mac}}
+              </td> 
+              <td>
+                {{value.duration}}
+              </td> 
+              <td>
+                {{value.zoneNow}}
+              </td> 
+              <!--
+                <td>
+                  <label>
+                    <input type="checkbox" ng-model="polylines[value.name].hidden" ng-click="polylines[value.name].setVisible(!polylines[value.name].hidden)"> Hide {{value.name}}
+                    </input>
+                  </label>
+                </td> 
+              -->
+            </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

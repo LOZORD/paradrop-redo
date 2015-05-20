@@ -9,8 +9,8 @@
  * Included in the <body> tag, this controller has global scope
  */
 angular.module('paradropApp')
-  .controller('ApplicationCtrl', ['snapRemote', '$q', '$scope', '$location', 'AuthService', 'DEV_MODE', 'URLS', '$rootScope',
-    function (snapRemote, $q, $scope, $location, AuthService, DEV_MODE, URLS, $rootScope) {
+  .controller('ApplicationCtrl', ['snapRemote', '$q', '$scope', '$location', 'AuthService', 'DEV_MODE', 'URLS', '$rootScope', '$routeParams',
+    function (snapRemote, $q, $scope, $location, AuthService, DEV_MODE, URLS, $rootScope, $routeParams) {
       $scope.DEV_MODE = DEV_MODE;
       $scope.URL = URLS.current;
       $scope.currentUser = AuthService.getSession;
@@ -35,6 +35,14 @@ angular.module('paradropApp')
       $scope.logout = AuthService.logout;
 
       $scope.isLoginPage = ($location.path().indexOf('/login') !== -1);
+
+      $scope.containerStyle = function(){
+        if($routeParams.height && $routeParams.width){
+          return {margin: '0 0 0 50px'};
+        }else{
+          return {};
+        }
+      };
 
       /*
       XXX be sure to add rootScope in the params if you want to use it!

@@ -44,7 +44,8 @@ angular.module('paradropApp')
         tileSizeX: null,
         tileSizeY: null,
         minCoords: null,
-        maxCoords: null
+        maxCoords: null,
+        imageTile: null,
       };
 
       $scope.settingsJSON = {};
@@ -138,6 +139,7 @@ angular.module('paradropApp')
       };
 
       $scope.setMap = function(map){
+        console.log(map);
         if(map.data.invalid){
           for(var i in $scope.mapsArray){
             if($scope.mapsArray[i].data.invalid){

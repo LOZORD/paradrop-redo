@@ -70,12 +70,16 @@ angular.module('paradropApp')
                 //if (!normalizedCoord) {
                 //  return null;
                 //}
+                //
+                /*
                 if(gotMap === false) {
                   //console.log('Returning one map');
                   gotMap = true;
                   currMapTile = coord.toString()
                   return mapData.url;
-                } else if(coord.toString() ===  currMapTile) {
+                } else 
+                */
+                if(coord.toString() ===  mapData.imageTile) {
                   console.log('getting original map tile');
                   console.log(coord.toString());
                   return mapData.url;;
@@ -84,7 +88,7 @@ angular.module('paradropApp')
                 }
             },
             tileSize: new google.maps.Size(mapData.tileSizeX, mapData.tileSizeY),
-            maxZoom: mapData.maxZoom,
+            maxZoom: 7,//mapData.maxZoom,
             minZoom: mapData.minZoom,
             radius: mapData.radius,
             name: mapData.name

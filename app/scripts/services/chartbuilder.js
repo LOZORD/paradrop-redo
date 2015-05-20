@@ -259,7 +259,7 @@ angular.module('paradropApp')
           //This is the Main Highcharts chart config. Any Highchart options are valid here.
           //will be ovverriden by values specified below.
           chart: {
-            type: 'bar'
+            type: 'column'
           },
           tooltip: {
             style: {
@@ -296,9 +296,9 @@ angular.module('paradropApp')
         },
         //Whether to use HighStocks instead of HighCharts (optional). Defaults to false.
         useHighStocks: false,
-        size: {
-         height: 700
-        },
+        //size: {
+        // height: 700
+        //},
         //size (optional) if left out the chart will default to size of the div or something sensible.
         //function (optional)
         func: function (chart) {

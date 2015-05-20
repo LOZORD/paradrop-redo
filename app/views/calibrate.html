@@ -78,7 +78,7 @@
 </div>
     <img class="img-responsive center-block" ng-show="!mapData && !mapError" ng-src='images/spinner.gif'/>
     <div ng-if="mapData && mapData.invalid"> <h1> Invalid Map for {{mapData.name}}. </h1><div ng-bind-html="successString"></div> </div>
-    <map ng-if="mapData && !mapData.invalid" style="height: 700px;" zoom="15" 
+    <map ng-if="mapData && !mapData.invalid" style="height: 700px;" zoom="5" 
       center="{{mapData.centerX}}, {{mapData.centerY}}" 
         street-view-control="false" 
         zoom-control="false" 

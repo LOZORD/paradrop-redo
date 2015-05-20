@@ -14,6 +14,12 @@ angular.module('paradropApp')
         $scope.liveTracking = true;
       }
       $scope.group_id = $sce.trustAsResourceUrl($routeParams.group_id);
+      if($routeParams.height && $routeParams.width){
+        $scope.mapStyle = {height: $routeParams.height+'px',width: $routeParams.width+'px'};
+      }else{
+        $scope.mapStyle = {height: '700px'};
+      }
+      console.log();
       $scope.searchText ={};
       $scope.noneActive = true;
       $scope.chartConfig = chartBuilder.buildZoneChart().chartConfig;
@@ -137,8 +143,6 @@ angular.module('paradropApp')
 
       $scope.getLiveHeatMapData = function(){
         var url = URLS.current + 'recon/coords/get/' + $scope.group_id;
-        var stop = Math.floor(Date.now()/1000);
-        var start = stop - 10;
         var postBody = { sessionToken: $scope.sessionToken(), startts: Math.floor((Date.now() /1000) - 30) , stopts: Math.floor(Date.now() /1000), typeid: $scope.mapData.typeid };
         return $http.post(url, postBody ).then( liveHeatDataRecieved, heatDataError);
       };

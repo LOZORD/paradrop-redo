@@ -126,7 +126,12 @@ angular.module('paradropApp', [
         controller:   'NewUserCtrl',
         auths: {}
       })
-      .when('/recon/map/:group_id*', {
+      .when('/recon/map/:group_id', {
+        templateUrl: 'views/recon/tracking.html',
+        controller: 'ReconTrackingCtrl',
+        auths: {group: true, session: true}
+      })
+      .when('/recon/map/:group_id/:height/:width', {
         templateUrl: 'views/recon/tracking.html',
         controller: 'ReconTrackingCtrl',
         auths: {group: true, session: true}
@@ -175,7 +180,12 @@ angular.module('paradropApp', [
         controller: 'MapSettingsCtrl',
         auths: { session: true}
       })
-      .when('/recon/tracking/:group_id*', {
+      .when('/recon/tracking/:group_id', {
+        templateUrl: 'views/recon/tracking.html',
+        controller: 'ReconTrackingCtrl',
+        auths: { group: true, session: true}
+      })
+      .when('/recon/tracking/:group_id/:height/:width', {
         templateUrl: 'views/recon/tracking.html',
         controller: 'ReconTrackingCtrl',
         auths: { group: true, session: true}
