@@ -11,9 +11,13 @@
 angular.module('paradropApp')
   .controller('ApplicationCtrl', ['snapRemote', '$q', '$scope', '$location', 'AuthService', 'DEV_MODE', 'URLS', '$rootScope', '$routeParams',
     function (snapRemote, $q, $scope, $location, AuthService, DEV_MODE, URLS, $rootScope, $routeParams) {
-      $scope.DEV_MODE = DEV_MODE;
       $scope.URL = URLS.current;
       $scope.currentUser = AuthService.getSession;
+      if($location.absUrl().indexOf('paradrop.io') != -1){
+        $scope.DEV_MODE = false;
+      }else{
+        $scope.DEV_MODE = true;
+      }
 
       //collapse dropdown on page changes
       $scope.$on('$routeChangeStart',

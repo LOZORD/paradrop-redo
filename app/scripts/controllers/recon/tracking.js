@@ -19,7 +19,6 @@ angular.module('paradropApp')
       }else{
         $scope.mapStyle = {height: '700px'};
       }
-      console.log();
       $scope.searchText ={};
       $scope.noneActive = true;
       $scope.chartConfig = chartBuilder.buildZoneChart().chartConfig;
@@ -129,12 +128,8 @@ angular.module('paradropApp')
       var startTime = Math.floor(Date.now() / 1000);
       function getOpts(){
         var stopTime = Math.floor(Date.now() / 1000);
-        //console.log(inc);
-        var opts = { startts: startTime, stopts: stopTime, aggregate: 30};
-        console.log(stopTime - startTime);
-        console.log($scope.latest);
-        if($scope.latest && $scope.latest < (stopTime - startTime)){
-          console.log('*******here*******');
+        var opts = { start: startTime, stop: stopTime, aggregate: 30};
+        if($scope.latest){// && $scope.latest < (stopTime - startTime)){
           opts = {latest: $scope.latest, aggregate: 30};
         }
         return opts; 
@@ -154,7 +149,11 @@ angular.module('paradropApp')
         $scope.reconInit.promise.then(
         function(){
           Recon.today.addCoordData(data.data);
-          updateChart(Recon.today.getCoordData({latest: 30}));
+          $scope.parsedData = Recon.today.parseCoordData(data.data, {aggregate: 30});
+          if(!$scope.parsedData){
+            $scope.parsedData = [];
+          }
+          updateChart($scope.parsedData);
           //array indexes
           var ts = 1;
           var lat = 2;
@@ -164,11 +163,8 @@ angular.module('paradropApp')
           var zone = 6;
           var error = 7;
 
-          $scope.parsedData = Recon.today.parseCoordData(data.data, {aggregate: 30});
-          if(!$scope.parsedData){
-            $scope.parsedData = [];
-          }
           //heatmap stuff
+          console.log($scope.parsedData);
           $scope.heatMapData = [];
           for(var i in $scope.parsedData){
             for(var k in $scope.parsedData[i].data){
@@ -210,14 +206,12 @@ angular.module('paradropApp')
         $localStorage.start = start;
         $localStorage.stop = stop;
         var postBody = { sessionToken: $scope.sessionToken(), startts: start, stopts: stop, filtermac: mac, typeid: $scope.mapData.typeid };
-        //console.log(postBody);
         return $http.post(url, postBody ).then( heatDataRecieved, heatDataError);
       };
 
       function heatDataRecieved(data){
         $scope.reconInit.promise.then(
         function(){
-          updateChart(Recon.today.parseCoordData(data.data));
           //array indexes
           var ts = 1;
           var lat = 2;
@@ -227,15 +221,14 @@ angular.module('paradropApp')
           var zone = 6;
           var error = 7;
           $scope.macData = Recon.today.parseCoordData(data.data, {aggregate: 30});
-            if(!$scope.macData){
-              $scope.macData = [];
-            }
+          if(!$scope.macData){
+            $scope.macData = [];
+          }
+          updateChart($scope.macData);
 
-            //console.log($scope.macData);
           //heatmap stuff
-          console.log(data.data.length);
+          console.log($scope.macData);
           $scope.heatMapData = [];
-          console.log($scope.macData.length);
           for(var i in $scope.macData){
             for(var k in $scope.macData[i].data){
               var point = $scope.macData[i].data[k].coords;
@@ -345,7 +338,6 @@ angular.module('paradropApp')
       }
 
       $scope.inFilter = function(){
-        //console.log($scope.filterType);
         if($scope.filterType === 'Disabled'){
           delete $scope.searchText.insideNow;
         }else if($scope.filterType === 'Inside'){
@@ -463,6 +455,9 @@ angular.module('paradropApp')
       $scope.nextPoint = function(){
         if($scope.detailIndex < $scope.detail.length -1){
           $scope.detail[$scope.detailIndex].setOptions({fillColor: $scope.detail[$scope.detailIndex].strokeColor, zIndex: 100});
+          if($scope.detailIndex === 0){
+            $scope.detail[$scope.detailIndex].setOptions({strokeColor: '#FFFFFF'});
+          }
           $scope.detailIndex++;
           var point = $scope.detail[$scope.detailIndex];
           //point.setZIndex(150);
@@ -474,6 +469,9 @@ angular.module('paradropApp')
       $scope.prevPoint = function(){
         if($scope.detailIndex > 0){
           $scope.detail[$scope.detailIndex].setOptions({fillColor: $scope.detail[$scope.detailIndex].strokeColor, zIndex: 100});
+          if($scope.detailIndex == $scope.detail.length -1){
+            $scope.detail[$scope.detailIndex].setOptions({strokeColor: '#FFFFFF'});
+          }
           $scope.detailIndex--;
           var point = $scope.detail[$scope.detailIndex];
           //point.setZIndex(150);
@@ -484,8 +482,7 @@ angular.module('paradropApp')
 
       $scope.showPointInfo = function(point){
         return function(){
-          //console.log(point);
-          point.setOptions({fillColor: '#FFFFFF', zIndex: 150});
+          point.setOptions({fillColor: '#FFFFFF', strokeColor: point.fillColor, zIndex: 150});
           var content = '<b>Mac: </b>' + point.mac + '<br>';
           content += '<b>OUI: </b>' + point.oui + '<br>';
           content += '<b>Points Used: </b>' + point.aggPts + '<br>';
@@ -510,6 +507,9 @@ angular.module('paradropApp')
               for(var k in $scope.polylines[i].points){
                 $scope.polylines[i].points[k].setRadius(30000);
                 $scope.polylines[i].points[k].setOptions({fillColor: $scope.polylines[i].strokeColor, zIndex: 100});
+                if( Number(k) === 0 || Number(k) === $scope.polylines[i].points.length -1){
+                  $scope.polylines[i].points[k].setOptions({strokeColor: '#FFFFFF'});
+                }
               }
               $scope.polylines[i].active = false;
             }
@@ -554,7 +554,7 @@ angular.module('paradropApp')
         }
         $scope.heatmap = new google.maps.visualization.HeatmapLayer({radius: 40, data: $scope.heatMapData});
         if(!$scope.polyMode){
-        $scope.heatmap.setMap($scope.map);
+          $scope.heatmap.setMap($scope.map);
         }
       };
       
@@ -600,7 +600,6 @@ angular.module('paradropApp')
       };
 
       function heatDataError(error){
-        //console.log(error);
         if($scope.heatPoll){
           $interval.cancel($scope.heatPoll);
           $scope.closeAlerts();

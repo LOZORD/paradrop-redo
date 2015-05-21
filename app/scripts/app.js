@@ -335,5 +335,4 @@ angular.module('paradropApp', [
   })
   .constant('MODES', {
     restrictedSignup: true
-  })
-  .constant('DEV_MODE', false);
+  });
