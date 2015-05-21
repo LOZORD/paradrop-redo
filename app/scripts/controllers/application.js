@@ -9,14 +9,31 @@
  * Included in the <body> tag, this controller has global scope
  */
 angular.module('paradropApp')
-  .controller('ApplicationCtrl', ['snapRemote', '$q', '$scope', '$location', 'AuthService', 'DEV_MODE', 'URLS', '$rootScope', '$routeParams',
-    function (snapRemote, $q, $scope, $location, AuthService, DEV_MODE, URLS, $rootScope, $routeParams) {
+  .controller('ApplicationCtrl', ['snapRemote', '$q', '$scope', '$location', 'AuthService', 'URLS', '$rootScope', '$routeParams', 'ipCookie', '$window', '$sce',
+    function (snapRemote, $q, $scope, $location, AuthService, URLS, $rootScope, $routeParams, ipCookie, $window, $sce) {
       $scope.URL = URLS.current;
       $scope.currentUser = AuthService.getSession;
-      if($location.absUrl().indexOf('paradrop.io') != -1){
-        $scope.DEV_MODE = false;
+      if(ipCookie('DEV_MODE') === undefined){
+        if($location.absUrl().indexOf('paradrop.io') != -1){
+          $scope.DEV_MODE = false;
+        }else{
+          $scope.DEV_MODE = true;
+        }
       }else{
-        $scope.DEV_MODE = true;
+        $scope.DEV_MODE = ipCookie('DEV_MODE');
+      }
+
+      $scope.toggleDevMode = function(){
+        if($scope.currentUser().isAdmin){
+          $scope.DEV_MODE = !$scope.DEV_MODE;
+          ipCookie('DEV_MODE', $scope.DEV_MODE, { expires: 7, path: '/' });
+          $window.location.reload();
+        }
+      };
+      if($scope.DEV_MODE){
+        $scope.reconURL = $sce.trustAsResourceUrl('https://www.paradrop.io/storage/recon.js');
+      }else{
+        $scope.reconURL = $sce.trustAsResourceUrl('https://www.paradrop.io/storage/recon.min.js');
       }
 
       //collapse dropdown on page changes

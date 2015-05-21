@@ -142,6 +142,11 @@
                         Admin Map Settings
                       </a>
                     </li>
+                    <li>
+                      <a ng-click="toggleDevMode()">
+                        Turn Dev Mode {{DEV_MODE ? 'Off' : 'On'}}
+                      </a>
+                    </li>
                   </ul>
                 </li>
                 <li ng-if="!isAuthenticated()"><a ng-href="/">Home</a></li>
@@ -282,8 +287,7 @@
     <!-- endbuild -->
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>
-    <script ng-if="DEV_MODE" src='https://www.paradrop.io/storage/recon.js'></script>
-    <script ng-if="!DEV_MODE" src='https://www.paradrop.io/storage/recon.min.js'></script>
+    <script ng-src="{{reconURL}}"></script>
 
     <div login-dialog ng-if="!isLoginPage"></div>
 </body>

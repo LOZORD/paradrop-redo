@@ -8,7 +8,7 @@
  * Factory in the paradropApp.
  */
 angular.module('paradropApp')
-  .factory('gmapMaker', function () {
+  .factory('gmapMaker',[function () {
     // Service logic
     // ...
     var colorNames = {
@@ -82,13 +82,39 @@ angular.module('paradropApp')
                 if(coord.toString() ===  mapData.imageTile) {
                   console.log('getting original map tile');
                   console.log(coord.toString());
-                  return mapData.url;;
+                  gotMap = true;
+                  return mapData.url;
+                }else if(mapData.imageTile === 'INIT' && gotMap === false){
+                  gotMap = true;
+                  console.log('******Initialize Map Tile to "' + coord.toString() + '".********');
+                  return mapData.url;
+                  /*
+                  var initTile = coord.toString();
+                  var url = URLS.current + 'recon/maps/update';
+                  var body = {
+                    sessionToken: AuthService.getToken(),
+                    reconid: $scope.groupMaps.reconid,
+                    typeid: $scope.groupMaps.data.typeid,
+                    newdata: $scope.settingsJSON
+                  };
+                  $http.post(url, body).then(
+                      //success
+                      function(){
+                        $window.location.reload();
+                      },
+                      //error
+                      function(){
+                        $rootScope.closeAlerts();
+                        $rootScope.dangerAlert('Error saving imageTile to DB.');
+                      }
+                  );
+                  */
                 }else{
                   return null;
                 }
             },
             tileSize: new google.maps.Size(mapData.tileSizeX, mapData.tileSizeY),
-            maxZoom: 7,//mapData.maxZoom,
+            maxZoom: mapData.maxZoom,
             minZoom: mapData.minZoom,
             radius: mapData.radius,
             name: mapData.name
@@ -212,4 +238,4 @@ angular.module('paradropApp')
     };
 
     return gmapFuncs;
-  });
+  }]);
