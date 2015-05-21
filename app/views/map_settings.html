@@ -37,7 +37,13 @@
 </div>
 <br>
 <div class="alert alert-info" role="alert" ng-show="isScaleMode || measureMode">
-  Click on two points to <span ng-if="measureMode">measure the distance between them.</span><span ng-if="isScaleMode">set the scale factor.</span>
+  Click on two points to 
+  <span ng-if="measureMode">measure the distance between them.</span>
+  <span ng-if="isScaleMode">set the scale factor.
+      <label>
+        <input type="checkbox" ng-model="$parent.euclideanScale"> Euclidean Measure
+      </label>
+  </span>
   <button type="button" class="btn btn-info pull-right" ng-click="cancelScaleMode()">
     Cancel
   </button>

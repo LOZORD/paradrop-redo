@@ -328,11 +328,7 @@ angular.module('paradropApp')
       function calcDist(){
         var latDelta = Math.abs($scope.distArr[0].lat() - $scope.distArr[1].lat());
         var lngDelta = Math.abs($scope.distArr[0].lng() - $scope.distArr[1].lng());
-        if(latDelta > lngDelta){
-          $scope.distance = Math.round(($scope.settingsJSON.scale * latDelta) * 1000) / 1000;
-        }else{
-          $scope.distance = Math.round(($scope.settingsJSON.scale * lngDelta) * 1000) / 1000;
-        }
+        $scope.distance = Math.round(($scope.settingsJSON.scale * Math.sqrt(Math.pow(latDelta,2) + Math.pow(lngDelta,2))) * 1000) / 1000;
         $scope.justCalcDist = true;
       }
 
@@ -340,10 +336,14 @@ angular.module('paradropApp')
         $scope.pickScale = false;
         var latDelta = Math.abs($scope.scaleArr[0].lat() - $scope.scaleArr[1].lat());
         var lngDelta = Math.abs($scope.scaleArr[0].lng() - $scope.scaleArr[1].lng());
-        if(latDelta > lngDelta){
-          $scope.settingsJSON.scale = Math.round(($scope.scaleDist / latDelta) * 1000) / 1000;
-        }else{
-          $scope.settingsJSON.scale = Math.round(($scope.scaleDist / lngDelta) * 1000) / 1000;
+        if($scope.euclideanScale){
+          $scope.settingsJSON.scale = Math.round(($scope.scaleDist / Math.sqrt(Math.pow(latDelta,2) + Math.pow(lngDelta,2))) * 1000) / 1000;
+        }else{  
+          if(latDelta > lngDelta){
+            $scope.settingsJSON.scale = Math.round(($scope.scaleDist / latDelta) * 1000) / 1000;
+          }else{
+            $scope.settingsJSON.scale = Math.round(($scope.scaleDist / lngDelta) * 1000) / 1000;
+          }
         }
         $scope.scaleWatch();
         $scope.justSetScale = true;
