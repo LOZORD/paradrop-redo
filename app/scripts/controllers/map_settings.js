@@ -329,6 +329,15 @@ angular.module('paradropApp')
         var latDelta = Math.abs($scope.distArr[0].lat() - $scope.distArr[1].lat());
         var lngDelta = Math.abs($scope.distArr[0].lng() - $scope.distArr[1].lng());
         $scope.distance = Math.round(($scope.settingsJSON.scale * Math.sqrt(Math.pow(latDelta,2) + Math.pow(lngDelta,2))) * 1000) / 1000;
+        if($scope.euclideanScale){
+          $scope.distance = Math.round(($scope.settingsJSON.scale * Math.sqrt(Math.pow(latDelta,2) + Math.pow(lngDelta,2))) * 1000) / 1000;
+        }else{  
+          if(latDelta > lngDelta){
+            $scope.distance = Math.round(($scope.settingsJSON.scale / latDelta) * 1000) / 1000;
+          }else{
+            $scope.distance = Math.round(($scope.settingsJSON.scale / lngDelta) * 1000) / 1000;
+          }
+        }
         $scope.justCalcDist = true;
       }
 
