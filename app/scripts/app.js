@@ -235,7 +235,7 @@ angular.module('paradropApp', [
       };
     });
   }])
-  .run(function($rootScope, $window, $location, $q, ipCookie){
+  .run(function($rootScope, $window, $location, $q){
     //create session promise
     $rootScope.sessionBuilt = $q.defer();
     var track = function() {
