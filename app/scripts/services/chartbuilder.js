@@ -251,7 +251,7 @@ angular.module('paradropApp')
       return chartInfo;
     };
 
-    charts.buildZoneChart = function(graphData, zones){
+    charts.buildZoneChart = function(){
       var chartInfo = {}; 
       var chartConfig = {
         //This is not a highcharts object. It just looks a little like one!

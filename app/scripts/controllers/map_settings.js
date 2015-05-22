@@ -170,13 +170,13 @@ angular.module('paradropApp')
         }
       };
 
-      var pendingChangePoll = $interval(checkForPendingChanges, 1000);
       //make sure to cancel the interval when the controller is destroyed
       $scope.$on('$destroy', function(){ $interval.cancel(pendingChangePoll);});
       function checkForPendingChanges(){
         $scope.updateMarkers();
         $scope.pendingChanges = !deepCompare($scope.settingsJSON, $scope.mapData);
-      };
+      }
+      var pendingChangePoll = $interval(checkForPendingChanges, 1000);
 
       $scope.onClick = function(event) {
         var ll = event.latLng;
@@ -321,8 +321,21 @@ angular.module('paradropApp')
       $scope.distMeasure = function(){
         $scope.measureMode = true;
         $scope.distArr = [];
-        $scope.scaleWatch = $scope.$watch(function(){if($scope.distArr){return $scope.distArr.length;}else{return 0;}},
-            function(newVal){if(newVal === 2){$scope.measureMode = false; calcDist()}});
+        $scope.scaleWatch = $scope.$watch(
+          function(){
+            if($scope.distArr){
+              return $scope.distArr.length;
+            }else{
+              return 0;
+            }
+          },
+          function(newVal){
+            if(newVal === 2){
+              $scope.measureMode = false;
+              calcDist();
+            }
+          }
+        );
       };
 
       function calcDist(){
@@ -373,17 +386,18 @@ angular.module('paradropApp')
       $scope.toggleZones = (function(){
         var zonesVisible = true;
         return function(hideZones){
+          var zone;
           if(!hideZones){
             zonesVisible = !zonesVisible;
-            for(var zone in $scope.map.polygons){
+            for(zone in $scope.map.polygons){
               $scope.map.polygons[zone].setVisible(zonesVisible);
             }
           }else if(hideZones === 'show'){
-            for(var zone in $scope.map.polygons){
+            for(zone in $scope.map.polygons){
               $scope.map.polygons[zone].setVisible(zonesVisible);
             }
           }else if (hideZones === 'hide'){
-            for(var zone in $scope.map.polygons){
+            for(zone in $scope.map.polygons){
               $scope.map.polygons[zone].setVisible(false);
             }
           }
@@ -459,7 +473,7 @@ angular.module('paradropApp')
         if(opts){
           polygon = gmapMaker.buildZone(opts, $scope.polyInfo);
         }else{
-          var opts = {};
+          opts = {};
           opts.name = $scope.zone.color.name;
           opts.color = $scope.zone.color.name;
           opts.name = $scope.zone.name;

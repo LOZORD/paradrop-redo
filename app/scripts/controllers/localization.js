@@ -81,7 +81,7 @@ angular.module('paradropApp')
       };
 
       $scope.setMap = function(map){
-        $rootScope.log(map);
+        $scope.log(map);
         if(map.data.invalid){
           for(var i in $scope.mapsArray){
             if($scope.mapsArray[i].data.invalid){

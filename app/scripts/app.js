@@ -243,25 +243,10 @@ angular.module('paradropApp', [
     };
     $rootScope.$on('$viewContentLoaded', track);
 
-    if(ipCookie('DEV_MODE') === undefined){
-      if($location.absUrl().indexOf('paradrop.io') != -1){
-        $rootScope.DEV_MODE = false;
-      }else{
-        $rootScope.DEV_MODE = true;
-      }
-    }else{
-      $rootScope.DEV_MODE = ipCookie('DEV_MODE');
-    }
-
   })
   .run(function($rootScope, Recon) {
-    //devmode logging system
-    $rootScope.log = function(log){
-      if($rootScope.DEV_MODE === true){
-        console.log(log);
-      }
-    };
-
+    //hack to avoid jshint complaint
+    Recon.nothing();
     //setup alert system
     $rootScope.closeAlerts = function(){
       $rootScope.showSuccessAlert = false;
@@ -305,8 +290,6 @@ angular.module('paradropApp', [
       $rootScope.infoText = text;
       $rootScope.showInfoAlert = true;
     };
-    //hack to avoid jshint complaint
-    Recon.nothing();
     //determine the date  and open times for recon fetching
       var openTime = new Date();
       var closeTime = new Date();

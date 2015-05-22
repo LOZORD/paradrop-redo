@@ -27,8 +27,9 @@ angular.module('paradropApp')
     // Public API here
     gmapFuncs.buildMap = function(mapData) {
       var gotMap = false;
-      var currMapTile = '';
 
+      /*
+      currMapTile = '';
       function getNormalizedCoord(coord, zoom) {
         var y = coord.y;
         var x = coord.x;
@@ -53,6 +54,7 @@ angular.module('paradropApp')
           y: y
         };
       }
+      */
       var newMap = {};
       newMap.onClick = function(event) {
           var ll = event.latLng;
@@ -63,7 +65,7 @@ angular.module('paradropApp')
 
       //Create the Options required to change the MapType
       var TypeOptions = {
-            getTileUrl: function(coord, zoom) {
+            getTileUrl: function(coord/*, zoom*/) {
                 //var normalizedCoord = getNormalizedCoord(coord, zoom);
                 //if (!normalizedCoord) {
                 //  return null;

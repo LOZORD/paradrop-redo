@@ -23,8 +23,8 @@ angular.module('paradropApp')
       }
       //enable bootstrap tooltips
       $(function () {
-          $('[data-toggle="tooltip"]').tooltip()
-      })
+          $('[data-toggle="tooltip"]').tooltip();
+      });
       $scope.authorizePage()
       .then(
         function(authorized){
@@ -52,7 +52,7 @@ angular.module('paradropApp')
                 $scope.$on('$destroy', function(){ $interval.cancel($scope.pingPoll);});
                 $scope.isPinging = true;
               }
-            }
+            };
 
             $scope.changePingRate = function(){
               if($scope.isPinging){
@@ -70,7 +70,7 @@ angular.module('paradropApp')
                 $scope.isPinging = false;
                 $scope.pingRate = $scope.pingRates[0];
               }
-            }
+            };
 
             $scope.start = function() {
               if(!$scope.mac){
@@ -215,7 +215,7 @@ angular.module('paradropApp')
                       $scope.heatmap.setMap(null);
                       delete $scope.heatmap;
                     }
-                    $scope.heatmap = new google.maps.visualization.HeatmapLayer({data: heatMapData, radius: 35, opacity: .75});
+                    $scope.heatmap = new google.maps.visualization.HeatmapLayer({data: heatMapData, radius: 35, opacity: 0.75});
                     if(!$scope.hideHeatmap){
                       $scope.heatmap.setMap($scope.map);
                     }

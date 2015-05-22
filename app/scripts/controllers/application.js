@@ -13,6 +13,17 @@ angular.module('paradropApp')
     function (snapRemote, $q, $scope, $location, AuthService, URLS, $rootScope, $routeParams, ipCookie, $window, $sce) {
       $scope.URL = URLS.current;
       $scope.currentUser = AuthService.getSession;
+
+      if(ipCookie('DEV_MODE') === undefined){
+        if($location.absUrl().indexOf('paradrop.io') !== -1){
+          $rootScope.DEV_MODE = false;
+        }else{
+          $rootScope.DEV_MODE = true;
+        }
+      }else{
+        $rootScope.DEV_MODE = ipCookie('DEV_MODE');
+      }
+
       $scope.toggleDevMode = function(){
         if($scope.currentUser().isAdmin){
           $rootScope.DEV_MODE = !$rootScope.DEV_MODE;
@@ -20,11 +31,18 @@ angular.module('paradropApp')
           $window.location.reload();
         }
       };
-      if($scope.DEV_MODE){
+      if($rootScope.DEV_MODE){
         $scope.reconURL = $sce.trustAsResourceUrl('https://www.paradrop.io/storage/recon.js');
       }else{
         $scope.reconURL = $sce.trustAsResourceUrl('https://www.paradrop.io/storage/recon.min.js');
       }
+
+      //devmode logging system
+      $rootScope.log = function(log){
+        if($rootScope.DEV_MODE === true){
+          console.log(log);
+        }
+      };
 
       //collapse dropdown on page changes
       $scope.$on('$routeChangeStart',
