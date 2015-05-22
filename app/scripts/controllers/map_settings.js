@@ -139,7 +139,7 @@ angular.module('paradropApp')
       };
 
       $scope.setMap = function(map){
-        console.log(map);
+        $scope.log(map);
         if(map.data.invalid){
           for(var i in $scope.mapsArray){
             if($scope.mapsArray[i].data.invalid){
@@ -836,7 +836,7 @@ angular.module('paradropApp')
               }
               if(test){
                 if($scope.coordsInside(lat, lng , boundaries)){
-                  console.log('CONFLICT!!! prexisting marker in new zone');
+                  $scope.log('CONFLICT!!! prexisting marker in new zone');
                   return true;
                 }
               }

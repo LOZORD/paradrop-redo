@@ -13,20 +13,10 @@ angular.module('paradropApp')
     function (snapRemote, $q, $scope, $location, AuthService, URLS, $rootScope, $routeParams, ipCookie, $window, $sce) {
       $scope.URL = URLS.current;
       $scope.currentUser = AuthService.getSession;
-      if(ipCookie('DEV_MODE') === undefined){
-        if($location.absUrl().indexOf('paradrop.io') != -1){
-          $scope.DEV_MODE = false;
-        }else{
-          $scope.DEV_MODE = true;
-        }
-      }else{
-        $scope.DEV_MODE = ipCookie('DEV_MODE');
-      }
-
       $scope.toggleDevMode = function(){
         if($scope.currentUser().isAdmin){
-          $scope.DEV_MODE = !$scope.DEV_MODE;
-          ipCookie('DEV_MODE', $scope.DEV_MODE, { expires: 7, path: '/' });
+          $rootScope.DEV_MODE = !$rootScope.DEV_MODE;
+          ipCookie('DEV_MODE', $rootScope.DEV_MODE, { expires: 7, path: '/' });
           $window.location.reload();
         }
       };
@@ -74,9 +64,9 @@ angular.module('paradropApp')
         };
       };
       $rootScope.reverter = function (origData, updateData, updateForm) {
-        console.log('orig', origData);
-        console.log('data', updateData);
-        console.log('form', updateForm);
+        $rootScope.log('orig', origData);
+        $rootScope.log('data', updateData);
+        $rootScope.log('form', updateForm);
         updateData = angular.copy(origData);
         updateForm.$setPristine(true);
       };

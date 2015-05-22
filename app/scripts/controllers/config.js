@@ -168,9 +168,9 @@ angular.module('paradropApp')
                     window.alert(result.data);
                   }
                 },
-                function () {
+                function (err) {
                   window.alert('Could not update config');
-                  //console.log(err);
+                  $scope.log(err);
                 }
               );
             };

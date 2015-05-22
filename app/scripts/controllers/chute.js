@@ -31,7 +31,6 @@ angular.module('paradropApp')
         $http.post(chuteListURL, chuteListPayload)
         .then(
           function(chuteList) {
-            //console.log('cl',chuteList);
             $scope.chutes = chuteList.data;
 
             //don't worry about LXC/lxc's for now

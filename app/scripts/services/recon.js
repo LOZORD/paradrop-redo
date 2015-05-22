@@ -24,13 +24,13 @@ angular.module('paradropApp')
         var post = function(url, args){
           //Inject the session token into the args list to POST
           args.sessionToken = Session.id;
-          //console.log('POST to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
+          $rootScope.log('POST to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
           var call = $http.post(URLS.current.substr(0, URLS.current.length-4) + url, args);
           return call;
         };
 
         var get = function(url){
-          console.log('GET to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
+          $rootScope.log('GET to: ' + URLS.current.substr(0, URLS.current.length-4) + url);
           var getCall = $http.get(URLS.current.substr(0, URLS.current.length-4) + url);
           return getCall;
         };

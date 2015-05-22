@@ -443,7 +443,7 @@ angular.module('paradropApp')
       };
 
       function heatDataError(error){
-        console.log(error);
+        $scope.log(error);
         //cancel the interval if we get a db error 
         $interval.cancel($scope.heatPoll);
         $scope.closeAlerts();

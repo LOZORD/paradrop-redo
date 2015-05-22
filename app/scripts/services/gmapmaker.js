@@ -8,7 +8,7 @@
  * Factory in the paradropApp.
  */
 angular.module('paradropApp')
-  .factory('gmapMaker',[function () {
+  .factory('gmapMaker',['$rootScope', function ($rootScope) {
     // Service logic
     // ...
     var colorNames = {
@@ -32,12 +32,11 @@ angular.module('paradropApp')
       function getNormalizedCoord(coord, zoom) {
         var y = coord.y;
         var x = coord.x;
-        //console.log('X: ' + x + ' Y: ' + y + ' ZOOM: ' + zoom);
 
         // tile range in one direction range is dependent on zoom level
         // 0 = 1 tile, 1 = 2 tiles, 2 = 4 tiles, 3 = 8 tiles, etc
         var tileRange = 1 << zoom;
-        console.log(tileRange);
+        $rootScope.log(tileRange);
 
         // don't repeat across y-axis (vertically)
         if (y < 0 || y >= tileRange) {
@@ -57,7 +56,7 @@ angular.module('paradropApp')
       var newMap = {};
       newMap.onClick = function(event) {
           var ll = event.latLng;
-          console.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
+          $rootScope.log('Lat: ' + ll.lat(), ' Lng: ' + ll.lng());
           //$scope.positions.push({lat: ll.lat(), lng: ll.lng()});
           //$scope.map.markers[$scope.markers.length].setMap($scope.map);
       };
@@ -66,27 +65,25 @@ angular.module('paradropApp')
       var TypeOptions = {
             getTileUrl: function(coord, zoom) {
                 //var normalizedCoord = getNormalizedCoord(coord, zoom);
-                //console.log(normalizedCoord);
                 //if (!normalizedCoord) {
                 //  return null;
                 //}
                 //
                 /*
                 if(gotMap === false) {
-                  //console.log('Returning one map');
                   gotMap = true;
                   currMapTile = coord.toString()
                   return mapData.url;
                 } else 
                 */
                 if(coord.toString() ===  mapData.imageTile) {
-                  console.log('getting original map tile');
-                  console.log(coord.toString());
+                  $rootScope.log('getting original map tile');
+                  $rootScope.log(coord.toString());
                   gotMap = true;
                   return mapData.url;
                 }else if(mapData.imageTile === 'INIT' && gotMap === false){
                   gotMap = true;
-                  console.log('******Initialize Map Tile to "' + coord.toString() + '".********');
+                  $rootScope.log('******Initialize Map Tile to "' + coord.toString() + '".********');
                   return mapData.url;
                   /*
                   var initTile = coord.toString();

@@ -209,7 +209,7 @@ angular.module('paradropApp', [
     }
   })
   .config(['$httpProvider', function ($httpProvider) {
-    //intercept http erros and show alert
+    //intercept http errors and show alert
     $httpProvider.interceptors.push(function ($q, $rootScope) {
 
       $rootScope.httpErrorAlert = function(text){
@@ -226,23 +226,42 @@ angular.module('paradropApp', [
           return response;
         },
         'responseError': function (rejection) {
-          console.log(rejection);
-          $rootScope.httpErrorAlert('<strong>' + rejection.status + ' Error: ' + rejection.statusText + 
-            '</strong><br>Additional Info: ' + rejection.data); 
+          if(rejection.status !== 403){
+            $rootScope.httpErrorAlert('<strong>' + rejection.status + ' Error: ' + rejection.statusText + 
+              '</strong><br>Additional Info: ' + rejection.data); 
+          }
           return $q.reject(rejection);
         }
       };
     });
   }])
-  .run(function($rootScope, $window, $location, $q){
+  .run(function($rootScope, $window, $location, $q, ipCookie){
     //create session promise
     $rootScope.sessionBuilt = $q.defer();
     var track = function() {
       $window.ga('send', 'pageview', { page: $location.path() });
     };
     $rootScope.$on('$viewContentLoaded', track);
+
+    if(ipCookie('DEV_MODE') === undefined){
+      if($location.absUrl().indexOf('paradrop.io') != -1){
+        $rootScope.DEV_MODE = false;
+      }else{
+        $rootScope.DEV_MODE = true;
+      }
+    }else{
+      $rootScope.DEV_MODE = ipCookie('DEV_MODE');
+    }
+
   })
   .run(function($rootScope, Recon) {
+    //devmode logging system
+    $rootScope.log = function(log){
+      if($rootScope.DEV_MODE === true){
+        console.log(log);
+      }
+    };
+
     //setup alert system
     $rootScope.closeAlerts = function(){
       $rootScope.showSuccessAlert = false;

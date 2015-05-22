@@ -164,7 +164,7 @@ angular.module('paradropApp')
           var error = 7;
 
           //heatmap stuff
-          console.log($scope.parsedData);
+          $scope.log($scope.parsedData);
           $scope.heatMapData = [];
           for(var i in $scope.parsedData){
             for(var k in $scope.parsedData[i].data){
@@ -176,7 +176,7 @@ angular.module('paradropApp')
 
           //polymode stuff
           var opts = getOpts();
-          console.log(opts);
+          $scope.log(opts);
           if($scope.polyMode && !$scope.isPaused){
             $scope.macData = Recon.today.getCoordData(opts);
             //Recon.today.printCoordData(coordData);
@@ -227,7 +227,7 @@ angular.module('paradropApp')
           updateChart($scope.macData);
 
           //heatmap stuff
-          console.log($scope.macData);
+          $scope.log($scope.macData);
           $scope.heatMapData = [];
           for(var i in $scope.macData){
             for(var k in $scope.macData[i].data){

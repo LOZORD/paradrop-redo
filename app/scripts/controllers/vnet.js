@@ -78,9 +78,9 @@ angular.module('paradropApp')
 
         $scope.submitUpdate = function (data, isValid) {
           if (!isValid) {
-            console.log('invalid form!');
-            console.log($scope.vnetUpdateForm);
-            console.log($scope.vnetUpdateForm.$error);
+            $scope.log('invalid form!');
+            $scope.log($scope.vnetUpdateForm);
+            $scope.log($scope.vnetUpdateForm.$error);
             return;
           }
 
@@ -110,7 +110,7 @@ angular.module('paradropApp')
             payload:      formattedData
           };
 
-          //console.log(vnetUpdatePackage);
+          $scope.log(vnetUpdatePackage);
 
           $http.post(vnetUpdateURL, vnetUpdatePackage)
           .then(
