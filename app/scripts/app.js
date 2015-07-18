@@ -190,6 +190,14 @@ angular.module('paradropApp', [
         controller: 'ReconTrackingCtrl',
         auths: { group: true, session: true}
       })
+      .when('/info/users', {
+        templateUrl: 'views/infousers.html',
+        controller: 'InfousersCtrl'
+      })
+      .when('/info/developers', {
+        templateUrl: 'views/infodevs.html',
+        controller: 'InfodevsCtrl'
+      })
       .otherwise({
         redirectTo: '/',
         auths: {}

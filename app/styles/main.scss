@@ -23,6 +23,48 @@ font-family: 'Century Gothic', sans-serif;
   overflow: auto;
 }
 
+.title {
+  font-family: serif;
+  font-size: 40px;
+  
+}
+
+// http://paletton.com/#uid=33r0u0koFASeAOhk3H1uyxqwzpa
+.btn-pdblue {
+  color: white;
+  background-color: #2f8cb2;
+  border-color: #2f8cb2;
+}
+
+.btn.btn-pdblue:hover {
+  cursor: pointer;
+  color: white;
+  opacity: 0.9;
+}
+
+.pdblue {
+  color: #2F8CB2;
+}
+
+.pdblue-light {
+  color: #7bbdda;
+}
+
+.pdblue-dark {
+  color: #065a7e;
+}
+.pdred {
+  color: #C92600;
+}
+
+.pdyellow {
+  color: #ffc73a;
+}
+
+.pdgrey {
+  color: #a3aaad;
+}
+
 .para-text {
   padding-left: 20px;
   font-family: 'Century Gothic', sans-serif;
