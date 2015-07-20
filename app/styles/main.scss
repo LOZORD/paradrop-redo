@@ -3,9 +3,25 @@ $icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/boots
 @import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
 // endbower
 
-p, h6, h5, h4, h3, h2, h1, a{
-font-family: 'Century Gothic', sans-serif;
+//p, h6, h5, h4, h3, h2, h1, a, li{
+body {
+  font-family: 'Century Gothic', sans-serif;
+  text-color: #58595B;
 }
+
+p {
+  font-size: 20px;
+}
+
+.landing-logo {
+  width: 50vw;
+}
+
+.img-team {
+  width: 25vw;
+  max-height: 500px;
+}
+
 .browsehappy {
   margin: 0.2em 0;
   background: #ccc;
@@ -26,7 +42,6 @@ font-family: 'Century Gothic', sans-serif;
 .title {
   font-family: serif;
   font-size: 40px;
-  
 }
 
 // http://paletton.com/#uid=33r0u0koFASeAOhk3H1uyxqwzpa

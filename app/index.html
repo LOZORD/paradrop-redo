@@ -161,7 +161,7 @@
                 <li ng-if="!isAuthenticated()"><a ng-href="/">Home</a></li>
                 <li><a ng-href="blog">Blog</a></li>
                 <li><a ng-href="about">About</a></li>
-                <li><a ng-href="contact">Contact Us</a></li>
+                <li><a ng-href="contact">Contact</a></li>
               </ul>
             </div>
           </nav>
@@ -213,6 +213,55 @@
       </div>
     </div snap-content>
 
+      <!-- Modal Contact Us-->
+      <div class="modal fade" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h3 class="modal-title" id="contactModalLabel">Interested in Paradrop?</h3>
+            </div>
+            <div class="modal-body">
+                Thank you for your interest in Paradrop.
+                We are excited about our accomplishments, and our path forward, so we’re happy to share updates with you from time to time.
+                If you would like to join our mailing list, please complete this form.
+                <hr />
+                <div ng-controller="FormCtrl">
+                  <form role="form" name="contactForm">
+                      <div class="form-group">
+                        <label for="InputName">Your Name</label>
+                        <div class="input-group">
+                          <input type="text" class="form-control" name="InputName" id="InputName" ng-model="contact.name" placeholder="Enter Name" required>
+                          <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="InputEmail">Your Email</label>
+                        <div class="input-group">
+                          <input type="email" class="form-control" id="InputEmail" name="InputEmail" ng-model="contact.email" placeholder="Enter Email" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,63}$" >
+                          <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="InputMessage">Any Message?</label>
+                        <div class="input-group">
+                          <textarea name="InputMessage" id="InputMessage" class="form-control" ng-model="contact.message" rows="5"></textarea>
+                          <span class="input-group-addon"><i class="glyphicon glyphicon-ok form-control-feedback"></i></span>
+                        </div>
+                      </div>
+                      <div>
+                        <span ng-switch="contactForm.$valid">
+                          <input ng-switch-when="true" type="submit" name="submit" id="submit" value="Submit" class="btn btn-pdblue" data-dismiss="modal" ng-click="submitContact()">
+                          <input ng-switch-default type="submit" name="submit" id="submit" value="Submit" class="btn btn-pdblue">
+                        </span>
+                      </div>
+                  </form>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal Contact Us-->
 
 
     <!-- build:js(.) scripts/oldieshim.js -->
@@ -274,6 +323,7 @@
     <script src="scripts/controllers/recon/tracking.js"></script>
     <script src="scripts/controllers/infousers.js"></script>
     <script src="scripts/controllers/infodevs.js"></script>
+    <script src="scripts/controllers/form.js"></script>
     <!-- endbuild -->
     <script src="https://code.highcharts.com/highcharts.src.js"></script>
     <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=visualization"></script>

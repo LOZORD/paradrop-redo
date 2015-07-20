@@ -3,7 +3,8 @@ dist
 .tmp
 .sass-cache
 bower_components
-
+.DS_Store
+*.swp
 api_changes.txt
 junk/
 snapshots/
