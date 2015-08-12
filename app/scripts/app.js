@@ -198,6 +198,12 @@ angular.module('paradropApp', [
         templateUrl: 'views/infodevs.html',
         controller: 'InfodevsCtrl'
       })
+      .when('/privacy-policy', {
+        templateUrl: 'views/privacy-policy.html',
+      })
+      .when('/terms-and-conditions', {
+        templateUrl: 'views/terms-and-conditions.html',
+      })
       .otherwise({
         redirectTo: '/',
         auths: {}
