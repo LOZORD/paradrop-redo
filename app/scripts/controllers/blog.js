@@ -28,39 +28,44 @@ angular.module('paradropApp')
         We actually download all the (most recent as defnd by API) blog posts.
         Then we just filter according to url's and such.
       */
-      $http.post(blogUrl, payload)
-        .success(
-          function(data) {
-            data.forEach(reformatPost);
+      $http.post(blogUrl, payload).then(function(response) {
+        // if we have nothing to work with, just return
+        if (!response.data) {
+          return;
+        }
 
-            //sort in descending order
-            data.sort(function (a,b) {
-              return b.ts - a.ts;
-            });
+        var data = response.data;
 
-            $scope.numTopics = 0;
+        // if we DO have data to work with...
+        data.forEach(reformatPost);
 
-            //gather extra data on the posts
-            data.forEach(function (post, index) {
-              tsToPostIndMap[post.ts] = index;
+        //sort in descending order
+        data.sort(function (a,b) {
+          return b.ts - a.ts;
+        });
 
-              if (!$scope.topicToPostMap.hasOwnProperty(post.topic)) {
-                $scope.topicToPostMap[post.topic] = [ index ];
-                $scope.numTopics++;
-              }
-              else {
-                $scope.topicToPostMap[post.topic].push(index);
-              }
-            });
+        $scope.numTopics = 0;
 
-            $scope.posts = data;
+        //gather extra data on the posts
+        data.forEach(function (post, index) {
+          tsToPostIndMap[post.ts] = index;
 
-            //first, check if the user wants to look at a specific post
-            checkForSpecific();
-            //then, if they want to look at a specific topic
-            checkForTopic();
+          if (!$scope.topicToPostMap.hasOwnProperty(post.topic)) {
+            $scope.topicToPostMap[post.topic] = [ index ];
+            $scope.numTopics++;
           }
-      );
+          else {
+            $scope.topicToPostMap[post.topic].push(index);
+          }
+        });
+
+        $scope.posts = data;
+
+        //first, check if the user wants to look at a specific post
+        checkForSpecific();
+        //then, if they want to look at a specific topic
+        checkForTopic();
+      }, angular.noop); // don't do anything on failure
 
       //can also take an index and the calling array as args
       function reformatPost (post) {
