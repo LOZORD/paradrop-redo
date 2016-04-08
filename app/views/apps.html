@@ -20,7 +20,7 @@
   <!-- TODO filter by genre and queryStr -->
   <div ng-repeat='_ in appData track by $index' ng-if='$index % 4 === 0' class='row'>
     <div ng-repeat='offset in [0, 1, 2, 3]' ng-init='app = appData[$index + ind]'>
-      <div class='col-xl-3 app-data-container' ng-if='app'>
+      <div class='col-lg-3 app-data-container' ng-if='app' id='paradrop-app-{{ app.id }}'>
         <div class='app-icon-container' ng-if='app.iconUrl'>
           <img src='{{ app.iconUrl }}' alt='{{ app.name }}'>
         </div>
@@ -29,7 +29,8 @@
           <h5 class='app-name'>{{ app.name }}</h5>
           <span class='app-author'>{{ app.author }}</span>
           <span class='app-genre'>{{ app.genre }}</span>
-          <span class='app-release-data'>{{ app.releaseDate }}</span>
+          <span class='app-release-data'>{{ app.releaseDate | date : shortDate }}</span>
+          <pre>{{ app.metaData | json }}</pre>
         </div>
       </div>
     </div>

@@ -22,7 +22,7 @@ angular.module('paradropApp')
             id: 2,
             genre: 'Entertainment',
             author: 'Alan Turing',
-            releasteDate: Date.now(),
+            releaseDate: Date.now(),
             metaData: {},
             iconUrl: ''
           }
@@ -30,7 +30,22 @@ angular.module('paradropApp')
 
         // Assuming the API call works...
 
-        $scope.appData = APP_DATA;
+        // Set default values
+        var processAppData = function(data) {
+          return data.map(function(someAppData) {
+            return {
+              name: someAppData.name,
+              id: someAppData.id,
+              genre: someAppData.genre            || 'Miscellaneous',
+              author: someAppData.author          || 'Unknown Author',
+              releaseDate: someAppData.releaseDate,
+              metaData: someAppData.metaData      || {},
+              iconUrl: someAppData.iconUrl        || 'images/logo.png'
+            };
+          });
+        };
+
+        $scope.appData = processAppData(APP_DATA);
         $scope.queryStr = '';
         $scope.genres = $scope.appData.reduce(function(prev, currData) {
           // if it's a new genre, add it
