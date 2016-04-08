@@ -204,6 +204,10 @@ angular.module('paradropApp', [
       .when('/terms-and-conditions', {
         templateUrl: 'views/terms-and-conditions.html',
       })
+      .when('/apps', {
+        templateUrl: 'views/apps.html',
+        controller: 'AppStoreCtrl'
+      })
       .otherwise({
         redirectTo: '/',
         auths: {}
