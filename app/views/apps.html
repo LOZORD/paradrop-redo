@@ -1,41 +1,50 @@
-<h1>Welcome to the App Store</h1>
-
 <div class='container'>
-  <div class='row'>
+  <h1>Welcome to the App Store</h1>
+
+  <div class='container'>
     <form name='searchForm'>
-      <label for='query-input'>Search</label>
-      <input name='query-input' class='form-control' placeholder='search term' ng-model='queryStr'></input>
-      <label for='genre-select'>Genre</label>
-      <select class='form-control' name='genre-select' ng-model='genreFilter'>
-        <option value='' selected>All genres</option>
-        <option ng-repeat='genre in genres' ng-value='{{ genre }}'>{{ genre }}</option>
-      </select>
+      <div class='row'>
+        <div class='form-group col-lg-6'>
+          <label for='query-input'>Search</label>
+          <input name='query-input' class='form-control' placeholder='Query' ng-model='queryStr'></input>
+        </div>
+        <div class='form-group col-lg-6'>
+          <label for='genre-select'>Genre</label>
+          <select class='form-control' name='genre-select' ng-model='genreFilter'>
+            <option value='' selected>All genres</option>
+            <option ng-repeat='genre in genres' ng-value='{{ genre }}'>{{ genre }}</option>
+          </select>
+        </div>
+      </div>
     </form>
   </div>
-</div>
 
-<hr>
-
-<div class='container'>
-  <pre>{{ queryStr }}</pre>
-  <pre>{{ genreFilter }}</pre>
-  <div class='row'>
-    <div ng-repeat='app in appData | filter : queryStr | filter : genreFilter'>
-      <div class='clearfix' ng-if='$index % 4 === 0'></div>
-      <div class='col-xs-3 app-data-container' id='paradrop-app-{{ app.id }}'>
-        <div class='app-icon-container' ng-if='app.iconUrl'>
-          <img src='{{ app.iconUrl }}' alt='{{ app.name }}' class='img-responsive img-thumnail'>
+  <div class='container'>
+    <div class='row'>
+      <div ng-repeat='app in appData | filter : queryStr | filter : genreFilter'>
+        <div class='clearfix' ng-if='$index % 4 === 0'>
+          <!-- &nbsp; -->
         </div>
-        <hr>
-        <div class='app-content-container'>
-          <h5 class='app-name'>{{ app.name }}</h5>
-          <span class='app-author'>{{ app.author }}</span>
-          <span class='app-genre'>{{ app.genre }}</span>
-          <span class='app-release-data'>{{ app.releaseDate | date : shortDate }}</span>
-        <pre>{{ app.metaData | json }}</pre>
+        <div class='col-lg-3'>
+          <div class='app-data-container' id='paradrop-app-{{ app.id }}' ng-click='doTheThing(app.id)'>
+            <div class='app-icon-container' ng-if='app.iconUrl'>
+              <img src='{{ app.iconUrl }}' alt='{{ app.name }}' class='img-responsive img-thumnail'>
+            </div>
+            <hr>
+            <div class='app-content-container'>
+              <h4 class='app-name'>{{ app.name }}</h4>
+              <ul class='list-unstyled'>
+                <li><span class='app-author'>{{ app.author }}</span></li>
+                <li><span class='app-genre'>{{ app.genre }}</span></li>
+                <li><span class='app-release-data'>{{ app.releaseDate | date : shortDate }}</span></li>
+              </ul>
+              <pre>{{ app.metaData | json }}</pre>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+<br>

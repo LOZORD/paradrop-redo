@@ -82,6 +82,11 @@ angular.module('paradropApp')
           });
         };
 
+        $scope.doTheThing = function(id) {
+          // TODO: maybe open a modal for details?
+          window.alert(id);
+        };
+
         $scope.appData = processAppData(APP_DATA);
         //$scope.queryStr = '';
         $scope.genres = $scope.appData.reduce(function(prev, currData) {
