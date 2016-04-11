@@ -6,8 +6,8 @@
       <label for='query-input'>Search</label>
       <input name='query-input' class='form-control' placeholder='search term' ng-model='queryStr'></input>
       <label for='genre-select'>Genre</label>
-      <select class='form-control' name='genre-select'>
-        <option ng-value='' selected disabled>Select a genre</option>
+      <select class='form-control' name='genre-select' ng-model='genreFilter'>
+        <option value='' selected>All genres</option>
         <option ng-repeat='genre in genres' ng-value='{{ genre }}'>{{ genre }}</option>
       </select>
     </form>
@@ -18,32 +18,9 @@
 
 <div class='container'>
   <pre>{{ queryStr }}</pre>
-<!-- TODO filter by genre and queryStr -->
-<!--<div ng-repeat='_ in appData track by $index' ng-if='$index % 4 === 0' class='row'>-->
-  <!--<div ng-repeat='_app in appData | orderBy : _app.name | filter : queryStr track by $index' ng-if='$index % 4 === 0' class='row'>-->
-    <!--<div ng-repeat='offset in [0, 1, 2, 3]' ng-init='app = appData[$index + ind]'>-->
-  <!--
-  <div ng-repeat='app in appData track by $index'>
-    <div class='col-lg-3 app-data-container' ng-if='app' id='paradrop-app-{{ app.id }}'>
-      <div class='app-icon-container' ng-if='app.iconUrl'>
-        <img src='{{ app.iconUrl }}' alt='{{ app.name }}'>
-      </div>
-      <hr>
-      <div class='app-content-container'>
-        <h5 class='app-name'>{{ app.name }}</h5>
-        <span class='app-author'>{{ app.author }}</span>
-        <span class='app-genre'>{{ app.genre }}</span>
-        <span class='app-release-data'>{{ app.releaseDate | date : shortDate }}</span>
-      <pre>{{ app.metaData | json }}</pre>
-        </div>
-      </div>
-    </div>
-    <div ng-if='$index % 4 == 0' class='row'>
-  </div>
-  -->
-
+  <pre>{{ genreFilter }}</pre>
   <div class='row'>
-    <div ng-repeat='app in appData | filter : queryStr'>
+    <div ng-repeat='app in appData | filter : queryStr | filter : genreFilter'>
       <div class='clearfix' ng-if='$index % 4 === 0'></div>
       <div class='col-xs-3 app-data-container' id='paradrop-app-{{ app.id }}'>
         <div class='app-icon-container' ng-if='app.iconUrl'>
