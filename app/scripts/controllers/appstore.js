@@ -82,9 +82,18 @@ angular.module('paradropApp')
           });
         };
 
-        $scope.doTheThing = function(id) {
-          // TODO: maybe open a modal for details?
-          window.alert(id);
+        // TODO: use routeParams
+        $scope.specificApp = null;
+
+        $scope.launchAppModal = function(appId) {
+          console.log('launching modal for app ', appId);
+
+          $scope.specificApp = $scope.appData.find(function(someApp) {
+            return someApp.id === appId;
+          });
+
+          // need to append to body so that modal appears on top of background
+          $('#appModal').appendTo('body').modal();
         };
 
         $scope.appData = processAppData(APP_DATA);
