@@ -68,16 +68,18 @@ angular.module('paradropApp')
         // Assuming the API call works...
 
         // Set default values
+        // TODO: make this a map of appId => appData
         var processAppData = function(data) {
           return data.map(function(someAppData) {
             return {
               name: someAppData.name,
               id: someAppData.id,
-              genre: someAppData.genre            || 'Miscellaneous',
-              author: someAppData.author          || 'Unknown Author',
+              genre: someAppData.genre              || 'Miscellaneous',
+              author: someAppData.author            || 'Unknown Author',
               releaseDate: someAppData.releaseDate,
-              metaData: someAppData.metaData      || {},
-              iconUrl: someAppData.iconUrl        || 'images/logo.png'
+              metaData: someAppData.metaData        || {},
+              iconUrl: someAppData.iconUrl          || 'images/logo.png',
+              description: someAppData.description  || 'No description given.'
             };
           });
         };
@@ -94,6 +96,10 @@ angular.module('paradropApp')
 
           // need to append to body so that modal appears on top of background
           $('#appModal').appendTo('body').modal();
+        };
+
+        $scope.modalClick = function(appId) {
+          window.alert('modal click: ' + appId.toString());
         };
 
         $scope.appData = processAppData(APP_DATA);

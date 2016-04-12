@@ -28,7 +28,7 @@
         <div class='col-lg-3'>
           <div class='app-data-container' id='paradrop-app-{{ app.id }}' ng-click='launchAppModal(app.id)'>
             <div class='app-icon-container' ng-if='app.iconUrl'>
-              <img src='{{ app.iconUrl }}' alt='{{ app.name }}' class='img-responsive img-thumnail'>
+              <img ng-src='{{ app.iconUrl }}' alt='{{ app.name }}' class='img-responsive img-thumbnail'>
             </div>
             <hr>
             <div class='app-content-container'>
@@ -49,27 +49,40 @@
 </div>
 
 <!-- specific app modal -->
-<div class='container'>
-  <div class='modal fade' tabindex='-1' role='dialog' id='appModal'>
-    <div class='modal-dialog'>
-      <div class='modal-content'>
-        <div class='modal-header'>
-          <button type='button' class='close' data-dismiss='modal'
-            aria-label='Close'>
-            <span aria-hidden='true'>&times;</span>
-          </button>
-          <h4 class='modal-title'>TITLE GOES HERE</h4>
+<div class='modal fade' tabindex='-1' role='dialog' id='appModal'>
+  <div class='modal-dialog'>
+    <div class='modal-content'>
+      <div class='modal-header'>
+        <button type='button' class='close' data-dismiss='modal'
+          aria-label='Close'>
+          <span aria-hidden='true'>&times;</span>
+        </button>
+        <h3 class='modal-title'>{{ specificApp.name }}</h3>
+      </div>
+      <div class='modal-body'>
+        <div class='container'>
+          <div class='row'>
+            <div class='col-lg-3'>
+              <img ng-src='{{ specificApp.iconUrl }}' alt='{{ specificApp.name }}' class='img-responsive img-thumbnail'>
+            </div>
+            <div class='col-lg-9'>
+              <ul class='list-unstyled'>
+                <li><span class='app-author'>{{ specificApp.author }}</span></li>
+                <li><span class='app-genre'>{{ specificApp.genre }}</span></li>
+                <li><span class='app-release-data'>{{ specificApp.releaseDate | date : shortDate }}</span></li>
+                <li><p>{{ specificApp.description}}</p></li>
+              </ul>
+            </div>
+          </div>
         </div>
-        <div class='modal-body'>
-          <p>Content goes here</p>
-        </div>
-        <div class='modal-footer'>
-          <button type='button' class='btn btn-default'
-            data-dismiss='modal'>
-            Close
-          </button>
-          <button type='button' class='btn btn-primary'>Do thing</button>
-        </div>
+      </div>
+      <div class='modal-footer'>
+        <button type='button' class='btn btn-default' data-dismiss='modal'>
+          Close
+        </button>
+        <button type='button' class='btn btn-primary' ng-click='modalClick(specificApp.id)'>
+          Do thing
+        </button>
       </div>
     </div>
   </div>
