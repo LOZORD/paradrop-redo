@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('paradropApp')
-  .controller('AppStoreCtrl', ['$scope', '$http', 'URLS', '$rootScope',
-      function ($scope /*, $http, URLS, $rootScope*/) {
+  .controller('AppStoreCtrl', ['$scope', '$routeParams',
+      function ($scope, $routeParams) {
         $scope.appData = null;
+        $scope.specificApp = null;
         // TODO: Eventually check if they have a session
 
         // TODO: make API call
-
         var APP_DATA = [
           {
             name: 'App1',
@@ -84,12 +84,7 @@ angular.module('paradropApp')
           });
         };
 
-        // TODO: use routeParams
-        $scope.specificApp = null;
-
         $scope.launchAppModal = function(appId) {
-          console.log('launching modal for app ', appId);
-
           $scope.specificApp = $scope.appData.find(function(someApp) {
             return someApp.id === appId;
           });
@@ -103,15 +98,20 @@ angular.module('paradropApp')
         };
 
         $scope.appData = processAppData(APP_DATA);
-        //$scope.queryStr = '';
-        $scope.genres = $scope.appData.reduce(function(prev, currData) {
+        $scope.genres = $scope.appData.reduce(function(prevResult, currData) {
           // if it's a new genre, add it
-          if (prev.indexOf(currData.genre) === -1) {
-            prev.push(currData.genre);
+          if (prevResult.indexOf(currData.genre) === -1) {
+            prevResult.push(currData.genre);
           } else {
             // do nothing
           }
 
-          return prev;
+          return prevResult;
         }, []);
+
+        if ($routeParams.appId) {
+          // XXX: expecting int id
+          var appId = parseInt($routeParams.appId, 10);
+          $scope.launchAppModal(appId);
+        }
       }]);
