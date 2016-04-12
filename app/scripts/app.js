@@ -208,6 +208,11 @@ angular.module('paradropApp', [
         templateUrl: 'views/apps.html',
         controller: 'AppStoreCtrl'
       })
+      .when('/dashboard', {
+        templateUrl: 'views/dashboard.html',
+        controller: 'DashboardCtrl'
+        // TODO: auth needed later...
+      })
       .otherwise({
         redirectTo: '/',
         auths: {}
